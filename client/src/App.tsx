@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Acceuil from "./pages/home/"
+import Acceuil from "./pages/home/home"
 import Connec from "./pages/connection/connection"
 import Inscrip from "./pages/connection/inscription"
 
