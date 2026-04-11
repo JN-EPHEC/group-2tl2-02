@@ -26,3 +26,33 @@ PROJET_DEV3/
 │   └── package.json  # Configuration et scripts
 ├── .gitignore        # Fichiers exclus de Git
 └── README.md
+```
+
+## Trucs a installer 
+### FullStack
+- node module a faire dans le back et front
+```bash
+cd client
+npm install
+cd ../server
+npm install
+```
+- truc a faire a la racine
+`npm init -y`
+- Puis remplacer le **script** du `package.json` de la racine par :
+```json
+"scripts": {
+  "setup": "npm install --prefix server && npm install --prefix client",
+  "start:server": "npm run dev --prefix server",
+  "start:client": "npm run dev --prefix client",
+  "dev": "concurrently \"npm run start:server\" \"npm run start:client\""
+},
+```
+
+### Frontend : 
+- redirection pour les differentes pages :
+`npm install react-router-dom`
+
+### Backend :
+- postgres (la db)
+> https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
