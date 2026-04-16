@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-//import "./index.css"
+import "./home.css"
 
 function Acceuil() {
     const navigate = useNavigate()
