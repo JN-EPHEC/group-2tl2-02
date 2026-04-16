@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import User from '../models/project.user';
 import { validatePassword, hashPassword, comparePassword } from '../utils/Password'; 
 import { isValidEmail } from '../utils/emailValidator';
+import Project from '../models/project.create';
 
 export const registerUser = async (req: Request, res: Response) => {
     try {
@@ -69,5 +70,23 @@ export const loginUser = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Erreur lors de la connexion" });
+    }
+};
+export const createProject = async (req: Request, res: Response) => {
+    try {
+        const { title, description } = req.body;
+        const newProject = await Project.create({ title, description });
+        res.status(201).json({ message: "Projet créé !", project: newProject });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la création", error });
+    }
+};
+
+export const getAllProjects = async (req: Request, res: Response) => {
+    try {
+        const projects = await Project.findAll();
+        res.status(200).json(projects);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la récupération", error });
     }
 };
