@@ -39,6 +39,7 @@ npm install
 ```
 - truc a faire a la racine
 `npm init -y`
+`npm install concurrently --save-dev`
 - Puis remplacer le **script** du `package.json` de la racine par :
 ```json
 "scripts": {
