@@ -17,20 +17,20 @@ function Connec() {
             </header>
 
             <main className={style.mainConnection}>
-                <div>
+                <div className={style.mainCard}>
                     <h3>Bon retour !</h3>
-                    <form action="">
-                        <div>
+                    <form>
+                        <div className={style.inputGroup}>
                             <label htmlFor="email">Email : </label>
                             <input type="email" id="email" name="email" placeholder="Entrez votre email" required />
                         </div>
-                        <div>
+                        <div className={style.inputGroup}>
                             <label htmlFor="password">Mot de passe : </label>
                             <input type="password" id="password" name="password" placeholder="••••••••" required />
                         </div>
-                        <button className={style.btnConnection} type="submit">Se connecter</button>
+                        <button className={style.btnFull} type="submit">Se connecter</button>
                     </form>
-                    <p>Vous n'avez pas de compte ? <button className={style.btnConnection} onClick={function () {navigate("/inscription")}}>Créer un compte</button></p>
+                    <p className={style.mainSwitch}>Vous n'avez pas de compte ? <button className={style.btnConnection} onClick={function () {navigate("/inscription")}}>Créer un compte</button></p>
                 </div>
             </main>
         </div>
