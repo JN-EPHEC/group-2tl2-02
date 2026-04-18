@@ -1,23 +1,23 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import "./profil.css"
+import styles from "./profil.module.css"
 
 function Profil() {
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState("projets")
 
     return (
-        <div className="profil-page">
-            <header>
-                <button className="profilBoutton back-button" onClick={function (){ navigate("/")}}>retours</button>
+        <div className={styles.profilPage}>
+            <header className={styles.pageHeader}>
+                <button className={`${styles.profilButton} ${styles.backButton}`} onClick={function () { navigate("/") }}>retours</button>
                 <h1>Votre profil</h1>
             </header>
-            <div className="profil-columns">
-                <div id="profilInfo">
-                    <img className="avatar-image" src="" alt="pdp" />
-                    <h1 id="profilPseudo">LE PSEUUUUUUUUUUUUUUUUUUUUDO</h1>
-                    <h3 id="profilStatus">le tstatus (inventeur passionner)</h3>
-                    <table id="profilTabInfo">
+            <div className={styles.profilColumns}>
+                <div className={styles.profilInfo}>
+                    <img className={styles.avatarImage} src="" alt="pdp" />
+                    <h1 className={styles.profilPseudo}>LE PSEUUUUUUUUUUUUUUUUUUUUDO</h1>
+                    <h3 className={styles.profilStatus}>le tstatus (inventeur passionner)</h3>
+                    <table className={styles.profilTabInfo}>
                         <thead>
                             <tr><td>42</td><td>25</td><td>6</td></tr>
                         </thead>
@@ -25,87 +25,87 @@ function Profil() {
                             <tr><td>Projets</td><td>Favorits</td><td>nBadges</td></tr>
                         </tbody>
                     </table>
-                    <div id="profilBio">
+                    <div className={styles.profilBio}>
                         <h3>Bio</h3>
-                        <span id="profilDescription">
+                        <span className={styles.profilDescription}>
                             en sah joyeux annif rayan
                         </span>
                     </div>
-                    <button className="profilBoutton">Modifier le profil</button>
+                    <button className={styles.profilButton}>Modifier le profil</button>
                 </div>
-                <div id="profilFenetre">
-                    <span id="profilBoutton" className="tabs-row">
-                    <button
-                        className={`profilBoutton tab-button ${activeTab === "projets" ? "active" : ""}`}
-                        onClick={function (){setActiveTab("projets")}}
-                    >Mes projets</button>
-                    <button
-                        className={`profilBoutton tab-button ${activeTab === "favorits" ? "active" : ""}`}
-                        onClick={function (){ setActiveTab("favorits")}}
-                    >Mes Favorits</button>
-                    <button
-                        className={`profilBoutton tab-button ${activeTab === "badges" ? "active" : ""}`}
-                        onClick={function (){setActiveTab("badges")}}
-                    >Mes badges</button>
-                </span>
-                <section id="profilProjet" className={`tab-panel ${activeTab === "projets" ? "visible" : "hidden"}`} style={{ display: activeTab === "projets" ? "grid" : "none" }}>
-                    <div className="profilProjetProjet">
-                        <img src="" alt="img du projet" />
-                        <h2>titre du projet</h2>
-                        <span>modification temps</span>
-                        <button className="profilBoutton">Modifier</button>
-                        <button className="profilBoutton secondary">supprimer</button>
+                <div className={styles.profilFenetre}>
+                    <div className={styles.tabsRow}>
+                        <button
+                            className={`${styles.profilButton} ${styles.tabButton} ${activeTab === "projets" ? styles.active : ""}`}
+                            onClick={function () { setActiveTab("projets") }}
+                        >Mes projets</button>
+                        <button
+                            className={`${styles.profilButton} ${styles.tabButton} ${activeTab === "favorits" ? styles.active : ""}`}
+                            onClick={function () { setActiveTab("favorits") }}
+                        >Mes Favorits</button>
+                        <button
+                            className={`${styles.profilButton} ${styles.tabButton} ${activeTab === "badges" ? styles.active : ""}`}
+                            onClick={function () { setActiveTab("badges") }}
+                        >Mes badges</button>
                     </div>
-                    <div className="profilProjetProjet">
-                        <img src="" alt="img du projet" />
-                        <h2>titre du projet</h2>
-                        <span>modification temps</span>
-                        <button className="profilBoutton">Modifier</button>
-                        <button className="profilBoutton secondary">supprimer</button>
-                    </div>
-                    <div className="profilProjetProjet">
-                        <img src="" alt="img du projet" />
-                        <h2>titre du projet</h2>
-                        <span>modification temps</span>
-                        <button className="profilBoutton">Modifier</button>
-                        <button className="profilBoutton secondary">supprimer</button>
-                    </div>
-                </section>
-                <section id="profilFavorit" className={`tab-panel ${activeTab === "favorits" ? "visible" : "hidden"}`} style={{ display: activeTab === "favorits" ? "grid" : "none" }}>
-                    <div className="profilFavoritProjet">
-                        <img src="" alt="img du projet" />
-                        <h2>titre du projet</h2>
-                        <span>modification temps</span>
-                        <button className="profilBoutton">Modifier</button>
-                        <button className="profilBoutton secondary">supprimer</button>
-                    </div>
-                    <div className="profilFavoritProjet">
-                        <img src="" alt="img du projet" />
-                        <h2>titre du projet</h2>
-                        <span>modification temps</span>
-                        <button className="profilBoutton">Modifier</button>
-                        <button className="profilBoutton secondary">supprimer</button>
-                    </div>
-                    <div className="profilFavoritProjet">
-                        <img src="" alt="img du projet" />
-                        <h2>titre du projet</h2>
-                        <span>modification temps</span>
-                        <button className="profilBoutton">Modifier</button>
-                        <button className="profilBoutton secondary">supprimer</button>
-                    </div>
-                </section>
-                <section id="profilBadge" className={`tab-panel ${activeTab === "badges" ? "visible" : "hidden"}`} style={{ display: activeTab === "badges" ? "grid" : "none" }}>
-                    <div className="badge-card">
-                        <h2>Badge 1</h2>
-                        <p>Description du badge</p>
-                    </div>
-                    <div className="badge-card">
-                        <h2>Badge 2</h2>
-                        <p>Description du badge</p>
-                    </div>
-                </section>
+                    <section className={`${styles.tabPanel} ${activeTab === "projets" ? styles.visible : styles.hidden}`}>
+                        <div className={styles.projectCard}>
+                            <img className={styles.projectImage} src="" alt="img du projet" />
+                            <h2 className={styles.projectTitle}>titre du projet</h2>
+                            <span className={styles.projectMeta}>modification temps</span>
+                            <button className={styles.profilButton}>Modifier</button>
+                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
+                        </div>
+                        <div className={styles.projectCard}>
+                            <img className={styles.projectImage} src="" alt="img du projet" />
+                            <h2 className={styles.projectTitle}>titre du projet</h2>
+                            <span className={styles.projectMeta}>modification temps</span>
+                            <button className={styles.profilButton}>Modifier</button>
+                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
+                        </div>
+                        <div className={styles.projectCard}>
+                            <img className={styles.projectImage} src="" alt="img du projet" />
+                            <h2 className={styles.projectTitle}>titre du projet</h2>
+                            <span className={styles.projectMeta}>modification temps</span>
+                            <button className={styles.profilButton}>Modifier</button>
+                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
+                        </div>
+                    </section>
+                    <section className={`${styles.tabPanel} ${activeTab === "favorits" ? styles.visible : styles.hidden}`}>
+                        <div className={styles.projectCard}>
+                            <img className={styles.projectImage} src="" alt="img du projet" />
+                            <h2 className={styles.projectTitle}>titre du projet</h2>
+                            <span className={styles.projectMeta}>modification temps</span>
+                            <button className={styles.profilButton}>Modifier</button>
+                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
+                        </div>
+                        <div className={styles.projectCard}>
+                            <img className={styles.projectImage} src="" alt="img du projet" />
+                            <h2 className={styles.projectTitle}>titre du projet</h2>
+                            <span className={styles.projectMeta}>modification temps</span>
+                            <button className={styles.profilButton}>Modifier</button>
+                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
+                        </div>
+                        <div className={styles.projectCard}>
+                            <img className={styles.projectImage} src="" alt="img du projet" />
+                            <h2 className={styles.projectTitle}>titre du projet</h2>
+                            <span className={styles.projectMeta}>modification temps</span>
+                            <button className={styles.profilButton}>Modifier</button>
+                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
+                        </div>
+                    </section>
+                    <section className={`${styles.tabPanel} ${activeTab === "badges" ? styles.visible : styles.hidden}`}>
+                        <div className={styles.badgeCard}>
+                            <h2>Badge 1</h2>
+                            <p>Description du badge</p>
+                        </div>
+                        <div className={styles.badgeCard}>
+                            <h2>Badge 2</h2>
+                            <p>Description du badge</p>
+                        </div>
+                    </section>
+                </div>
             </div>
-        </div>
         </div>
     )
 }
