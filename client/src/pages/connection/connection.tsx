@@ -6,7 +6,7 @@ function Connec() {
     return (
         <div>
             <header>
-                <div className="{style.logoContainer}">
+                <div className={style.logoContainer}>
                     <img src="./Logo_electronique_dynamique_avec_ampoule.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>
