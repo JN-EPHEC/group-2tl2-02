@@ -8,9 +8,14 @@ function Profil() {
 
     return (
         <div className={styles.profilPage}>
-            <header className={styles.pageHeader}>
-                <button className={`${styles.profilButton} ${styles.backButton}`} onClick={function () { navigate("/") }}>retours</button>
-                <h1>Votre profil</h1>
+            <header>
+                <div className="logoContainer">
+                    <img src="./Logo_electronique_dynamique_avec_ampoule.png" alt="logo" />
+                    <h2>ProjetHub</h2>
+                </div>
+                <div>
+                    <button className="btnConnection" onClick={function () { navigate("/") }}>Accueil</button>
+                </div>
             </header>
             <div className={styles.profilColumns}>
                 <div className={styles.profilInfo}>
