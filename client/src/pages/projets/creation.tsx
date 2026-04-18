@@ -10,6 +10,8 @@ function Crea() {
     const [projectImage, setProjectImage] = useState("")
     const [previewTitle, setPreviewTitle] = useState("Titre du projet")
     const [previewDescription, setPreviewDescription] = useState("Description du projet")
+    const [composants, setComposants] = useState([])
+    const [nextComposantId, setNextComposantId] = useState(1)
     const [etapes, setEtapes] = useState([
         { id: 1, titre: "", image: "", description: "" },
         { id: 2, titre: "", image: "", description: "" }
@@ -47,11 +49,32 @@ function Crea() {
         setProjectDescription("")
         setProjectImage("")
     }
+
+    const ajouterComposant = () => {
+        const nouveauComposant = { id: nextComposantId, nom: "", nombre: 1 }
+        setComposants([...composants, nouveauComposant])
+        setNextComposantId(nextComposantId + 1)
+    }
+
+    const supprimerComposant = (id) => {
+        setComposants(composants.filter(comp => comp.id !== id))
+    }
+
+    const mettreAJourComposant = (id, champ, valeur) => {
+        setComposants(composants.map(comp =>
+            comp.id === id ? { ...comp, [champ]: valeur } : comp
+        ))
+    }
     return (
         <div className={styles.creationPage}>
-            <header className={styles.pageHeader}>
-                <button className={styles.backButton} onClick={function () { navigate("/") }}>Acceuil</button>
-                <h1>Créer un projet</h1>
+            <header>
+                <div className="logoContainer">
+                    <img src="./Logo_electronique_dynamique_avec_ampoule.png" alt="logo" />
+                    <h2>ProjetHub</h2>
+                </div>
+                <div>
+                    <button className="btnConnection" onClick={function () { navigate("/") }}>Accueil</button>
+                </div>
             </header>
             <div className={styles.contentContainer}>
                 <form className={styles.projectForm} onSubmit={handleEnregistrer}>
@@ -183,6 +206,50 @@ function Crea() {
                         <button onClick={handleEffacer}>Effacer</button>
                         <button type="submit">Enregistrer</button>
                     </form>
+                </div>
+                <div id="composant" className={styles.componentSection}>
+                    <h2>Composants nécessaires :</h2>
+                    <div className={styles.componentList}>
+                        {composants.map((comp, index) => (
+                            <div key={comp.id} className={styles.componentItem}>
+                                <label htmlFor={`compo${comp.id}`}>Composant {index + 1} : </label>
+                                <div className={styles.componentInputGroup}>
+                                    <input 
+                                        className={styles.formInput}
+                                        type="text" 
+                                        name={`compo${comp.id}`}
+                                        id={`compo${comp.id}`}
+                                        placeholder="Nom du composant"
+                                        value={comp.nom}
+                                        onChange={(e) => mettreAJourComposant(comp.id, 'nom', e.target.value)}
+                                    />
+                                    <input 
+                                        className={styles.numberInput}
+                                        type="number" 
+                                        name={`nombre${comp.id}`}
+                                        min="1"
+                                        placeholder="Qté"
+                                        value={comp.nombre}
+                                        onChange={(e) => mettreAJourComposant(comp.id, 'nombre', parseInt(e.target.value) || 1)}
+                                    />
+                                    <button 
+                                        className={styles.deleteButton}
+                                        type="button"
+                                        onClick={() => supprimerComposant(comp.id)}
+                                    >
+                                        Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <button 
+                        className={styles.addButton}
+                        type="button"
+                        onClick={ajouterComposant}
+                    >
+                        Ajouter un composant
+                    </button>
                 </div>
             </div>
         </div>
