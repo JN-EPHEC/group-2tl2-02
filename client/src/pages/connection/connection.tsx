@@ -4,7 +4,7 @@ import style from "./connection.module.css"
 function Connec() {
     const navigate = useNavigate()
     return (
-        <div>
+        <div className={style.authPage}>
             <header>
                 <div className={style.logoContainer}>
                     <img src="./Logo_electronique_dynamique_avec_ampoule.png" alt="logo" />
@@ -30,7 +30,8 @@ function Connec() {
                         </div>
                         <button className={style.btnFull} type="submit">Se connecter</button>
                     </form>
-                    <p className={style.mainSwitch}>Vous n'avez pas de compte ? <button className={style.btnConnection} onClick={function () {navigate("/inscription")}}>Créer un compte</button></p>
+                    <p className={style.mainSwitch}>Vous n'avez pas de compte ? </p>
+                    <button className={style.btnConnection} onClick={function () {navigate("/inscription")}}>Créer un compte</button>
                 </div>
             </main>
         </div>
