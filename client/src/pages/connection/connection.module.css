@@ -58,6 +58,7 @@
     transition: 0.3s;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     display: inline-block;
+    border: none;
 }
 
 .btnConnection:hover {
@@ -104,6 +105,7 @@
     transition: 0.3s;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     display: inline-block;
+    border: none;
 }
 
 .btnFull:hover {
