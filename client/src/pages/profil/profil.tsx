@@ -21,13 +21,13 @@ function Profil() {
                 <div className={styles.profilInfo}>
                     <img className={styles.avatarImage} src="" alt="pdp" />
                     <h1 className={styles.profilPseudo}>LE PSEUUUUUUUUUUUUUUUUUUUUDO</h1>
-                    <h3 className={styles.profilStatus}>le tstatus (inventeur passionner)</h3>
+                    <h3 className={styles.profilStatus}>le tsatus </h3>
                     <table className={styles.profilTabInfo}>
                         <thead>
                             <tr><td>42</td><td>25</td><td>6</td></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Projets</td><td>Favorits</td><td>nBadges</td></tr>
+                            <tr><td>Projets</td><td>Favorits</td><td>Badges</td></tr>
                         </tbody>
                     </table>
                     <div className={styles.profilBio}>
