@@ -1,0 +1,189 @@
+.authPage {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #dbeafe, #eef2ff);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logoContainer img {
+    width: 45px;
+}
+
+.logoContainer h2 {
+    color: #2563eb;
+    margin: 0;
+}
+
+.apres {
+    display: none;
+}
+
+.btnConnection {
+    text-decoration: none;
+    margin: 5px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    display: inline-block;
+    border: none;
+}
+
+.btnConnection:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    color: white; /* Garde le texte blanc au survol */
+}
+
+.mainBox {
+    display: flex;
+    gap: 25px;
+    padding: 30px;
+}
+
+.box {
+    width: 20%;
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(12px);
+    height: fit-content;
+}
+
+.box h3 { 
+    color: #2563eb; 
+    margin-top: 0; 
+}
+
+.box button { 
+    display: block; 
+    margin-top: 10px; 
+    color: #333; 
+    transition: 0.2s; 
+    border: none;
+}
+
+.box button:hover { 
+    color: #2563eb; 
+}
+
+.sectionCenter {
+    width: 60%;
+}
+
+.searchBar {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.searchBar input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 1rem;
+}
+
+.projectList {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 15px;
+}
+
+.projectCard {
+    background: white; /* Fond blanc comme la maquette */
+    border: none;      /* Supprime la bordure par défaut du bouton */
+    padding: 0;        /* Enlève les marges internes par défaut */
+    cursor: pointer;   /* Redonne la petite main au survol */
+    text-align: left;  /* Aligne le texte à gauche (les boutons centrent souvent) */
+    font-family: inherit; /* Utilise la même police que le reste */
+    
+    /* Tes styles de la maquette */
+    border-radius: 20px;
+    overflow: hidden;
+    transition: 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.projectCard:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.imageProject {
+    width: 100%;
+    height: 150px; /* Force la hauteur */
+    overflow: hidden;
+}
+
+.imageProject img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Important : pour que l'image ne soit pas écrasée */
+}
+
+.projectInfo {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Espace automatique entre le titre, la description et les infos */
+}
+
+.projectInfo h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: #2563eb;
+}
+
+.projectInfo p {
+    font-size: 0.8rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+.extra {
+    display: flex;
+    gap: 5px;
+    color: #2563eb;
+    font-size: 0.7em;
+    font-weight: bold;
+}
+
+.tags {
+    display: flex;
+    gap: 8px;
+    padding: 0 15px 15px; /* Un peu d'espace en bas et sur les côtés */
+    margin-top: auto;      /* Pousse les tags tout en bas de la carte */
+}
+
+.tags span {
+    background-color: #2563eb;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+small { 
+    color: #888; 
+    font-size: 0.7rem; 
+}
