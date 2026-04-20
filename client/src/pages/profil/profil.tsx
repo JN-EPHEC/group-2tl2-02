@@ -36,7 +36,7 @@ function Profil() {
                             en sah joyeux annif rayan
                         </span>
                     </div>
-                    <button className={styles.profilButton}>Modifier le profil</button>
+                    <button className={styles.profilButton} onClick={function () { navigate("/modifprofil") }}>Modifier le profil</button>
                 </div>
                 <div className={styles.profilFenetre}>
                     <div className={styles.tabsRow}>
