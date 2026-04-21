@@ -7,7 +7,7 @@ function Inscrip() {
         <div className={style.authPage}>
             <header>
                 <div className={style.logoContainer}>
-                    <img src="./Logo_electronique_dynamique_avec_ampoule.png" alt="logo" />
+                    <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>
 

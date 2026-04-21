@@ -69,7 +69,7 @@ function Crea() {
         <div className={styles.creationPage}>
             <header>
                 <div className="logoContainer">
-                    <img src="./Logo_electronique_dynamique_avec_ampoule.png" alt="logo" />
+                    <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>
                 <div>

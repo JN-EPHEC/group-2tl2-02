@@ -11,7 +11,7 @@ const PROJETS_MOCK = [
         auteur: "Eliott",
         date: "26/03/2026",
         tags: ["IoT", "Arduino"],
-        image: "./Logo_electronique_dynamique_avec_ampoule.png"
+        image: "./logo.png"
     },
     {
         id: 2,
@@ -22,7 +22,7 @@ const PROJETS_MOCK = [
         auteur: "Marc",
         date: "25/03/2026",
         tags: ["Réseau", "RPi"],
-        image: "./Logo_electronique_dynamique_avec_ampoule.png"
+        image: "./logo.png"
     },
     {
         id: 3,
@@ -33,7 +33,7 @@ const PROJETS_MOCK = [
         auteur: "Sophie",
         date: "24/03/2026",
         tags: ["Sécurité", "Arduino"],
-        image: "./Logo_electronique_dynamique_avec_ampoule.png"
+        image: "./logo.png"
     },
     {
         id: 4,
@@ -44,7 +44,7 @@ const PROJETS_MOCK = [
         auteur: "Léa",
         date: "23/03/2026",
         tags: ["Robotique", "Arduino"],
-        image: "./Logo_electronique_dynamique_avec_ampoule.png"
+        image: "./logo.png"
     },
 ];
 
@@ -55,7 +55,7 @@ function Acceuil() {
         <div className={style.authPage}>
             <header>
                 <div className={style.logoContainer}>
-                    <img src="./Logo_electronique_dynamique_avec_ampoule.png" alt="logo" />
+                    <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>
                 <div>
