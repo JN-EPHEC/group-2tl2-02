@@ -5,14 +5,51 @@ class Project extends Model {
     declare id: number;
     declare title: string;
     declare description: string;
+    declare difficulty: string;
+    declare duration: string;
+    declare date: Date;
+    declare I_id: number | null;
 }
 
 Project.init({
-    title: { type: DataTypes.STRING, allowNull: false },
-    description: { type: DataTypes.STRING, allowNull: false },
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    difficulty: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    duration: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    date: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    // --- LA CLÉ ÉTRANGÈRE POUR L'IMAGE ---
+    I_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'Image',
+            key: 'I_id'
+        }
+    }
 }, {
     sequelize,
-    modelName: 'Project'
+    modelName: 'Project',
+    tableName: 'Projet'
 });
 
 export default Project;

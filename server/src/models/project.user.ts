@@ -7,7 +7,8 @@ class User extends Model {
   declare lastName: string;
   declare email: string;
   declare password: string;
-  declare age: number;
+  declare bio: string;
+  declare pseudo: string;
 }
 
 User.init({
@@ -15,7 +16,17 @@ User.init({
   lastName: { type: DataTypes.STRING, allowNull: false },
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   password: { type: DataTypes.STRING, allowNull: false },
-  age: { type: DataTypes.INTEGER, allowNull: false },
+  bio: { type: DataTypes.STRING, allowNull: true },
+  pseudo: { type: DataTypes.STRING, allowNull: false },
+  I_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    unique: true, // INDISPENSABLE pour le 1:1
+    references: {
+      model: 'Image', // Nom de la table dans la DB
+      key: 'I_id'
+    }
+  }
 }, {
   sequelize,
   modelName: 'User'
