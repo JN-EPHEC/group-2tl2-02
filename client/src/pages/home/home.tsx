@@ -61,6 +61,7 @@ function Acceuil() {
                 <div>
                     <button className={style.btnConnection} onClick={() => navigate("/connection")}>Connexion</button>
                     <button className={style.btnConnection} onClick={() => navigate("/inscription")}>Inscription</button>
+                    <button className={style.apres} onClick={() => navigate("/profil")}>Profil</button>
                 </div>
             </header>
 
