@@ -8,7 +8,7 @@ import { Project, Image, User, video } from '../models/lien_inter/index';
 export const registerUser = async (req: Request, res: Response) => {
     try {
 
-        const { firstName, lastName, email, password, age } = req.body;
+        const { firstName, lastName, email, password, age, bio, pseudo } = req.body;
 
 
         if (!validatePassword(password, age)) {
@@ -27,7 +27,9 @@ export const registerUser = async (req: Request, res: Response) => {
             lastName,
             email,
             password: hashedPassword,
-            age 
+            age,
+            bio,
+            pseudo
         });
 
         res.status(201).json({
@@ -65,7 +67,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
         res.status(200).json({
             message: `Bienvenue ${user.firstName} !`,
-            user: { id: user.id, email: user.email }
+            user: { id: user.Uid, email: user.email }
         });
 
     } catch (error) {
