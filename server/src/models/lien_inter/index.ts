@@ -3,6 +3,9 @@ import Image from '../project.image';
 import User from '../project.user';
 import video from '../project.video';
 import Badge from '../project.badge';
+import Composant from '../project.composant';
+import Tâche from '../project.tâche';
+import { table } from 'console';
 
 // Proj_image
 Project.belongsTo(Image, { foreignKey: 'I_id', as: 'Image' });
@@ -70,4 +73,32 @@ Badge.belongsToMany(User, {
     foreignKey: 'BId', 
     otherKey: 'Uid'
 });
-export { Project, Image, User, video, Badge };
+
+// Project_composant
+Project.belongsToMany(Composant, {
+    through: 'Proj_composant',
+    foreignKey: 'PId',
+    otherKey: 'CId',
+    as: 'composant'
+})
+
+Composant.belongsToMany( Project, {
+    through: 'Proj_composant',
+    foreignKey: 'CId',
+    otherKey: 'PId'
+})
+
+// Project.Tâche
+
+Project.belongsToMany(Tâche, {
+    through: 'Proj_Tâche',
+    foreignKey: 'PId',
+    otherKey: 'TId',
+    as: 'Tâche'
+}) 
+Tâche.belongsToMany( Project, {
+    through: 'Proj_Tâche',
+    foreignKey: 'TId',
+    otherKey: 'PId'
+})
+export { Project, Image, User, video, Badge, Tâche };
