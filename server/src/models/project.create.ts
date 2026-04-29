@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 
 class Project extends Model {
-    declare id: number;
+    declare PId: number;
     declare title: string;
     declare description: string;
     declare difficulty: string;
