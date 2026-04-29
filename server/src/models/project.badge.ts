@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database'; 
 
 class Badge extends Model {
-  declare id: number;
+  declare BId: number;
   declare img: string;
   declare title: string;
 }
