@@ -2,6 +2,7 @@ import Project from '../project.create';
 import Image from '../project.image';
 import User from '../project.user';
 import video from '../project.video';
+import Badge from '../project.badge';
 
 // Proj_image
 Project.belongsTo(Image, { foreignKey: 'I_id', as: 'Image' });
@@ -55,4 +56,18 @@ Project.belongsToMany(User, {
     as: 'favoris'
 });
 
-export { Project, Image, User, video };
+// user_badge
+
+User.belongsToMany(Badge, { 
+    through: 'User_badge',
+    foreignKey: 'Uid',
+    otherKey: 'BId',
+    as: 'Badge'
+})
+
+Badge.belongsToMany(User, { 
+    through: 'User_badge', 
+    foreignKey: 'BId', 
+    otherKey: 'Uid'
+});
+export { Project, Image, User, video, Badge };
