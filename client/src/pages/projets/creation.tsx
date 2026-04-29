@@ -13,8 +13,7 @@ function Crea() {
     const [composants, setComposants] = useState([])
     const [nextComposantId, setNextComposantId] = useState(1)
     const [etapes, setEtapes] = useState([
-        { id: 1, titre: "", image: "", description: "" },
-        { id: 2, titre: "", image: "", description: "" }
+        { id: 1, titre: "", image: "", description: "" }
     ])
     const [nextId, setNextId] = useState(3)
 
@@ -203,8 +202,8 @@ function Crea() {
                                     </button>
                                 </p>
                         </fieldset>
-                        <button onClick={handleEffacer}>Effacer</button>
-                        <button type="submit">Enregistrer</button>
+                        <button className={styles.resetButton} onClick={handleEffacer}>Effacer</button>
+                        <button className={styles.submitButton} type="submit">Enregistrer</button>
                     </form>
                 </div>
                 <div id="composant" className={styles.componentSection}>

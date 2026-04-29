@@ -42,7 +42,7 @@
 
 .contentContainer {
     display: grid;
-    grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+    grid-template-columns: minmax(300px, 380px) minmax(0, 1fr) minmax(260px, 320px);
     gap: 28px;
     align-items: start;
 }
