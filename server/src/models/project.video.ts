@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database'; 
 
 class video extends Model {
-  declare id: number;
+  declare VId: number;
   declare mp4: string;
   declare lien: string;
 }
