@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 
 class Composant extends Model {
-    declare id: number;
+    declare CId: number;
     declare nom: string;
     declare possédé: boolean;
 }
