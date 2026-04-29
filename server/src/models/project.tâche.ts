@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 
 class Tâche extends Model {
-    declare id: number;
+    declare TId: number;
     declare title: string;
     declare instruction: string;
 }
