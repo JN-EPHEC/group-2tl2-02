@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { validatePassword, hashPassword, comparePassword } from '../utils/Password'; 
 import { isValidEmail } from '../utils/emailValidator';
-import { Project, Image, User, video } from '../models/lien_inter/index';
+import { Project, Image, User, video, Tâche } from '../models/lien_inter/index';
+import { Model } from 'sequelize';
+import Composant from '../models/project.composant';
 
 
 // login et inscription :
@@ -79,7 +81,7 @@ export const loginUser = async (req: Request, res: Response) => {
 // get project et nouveau projet :
 export const createProject = async (req: Request, res: Response) => {
     try {
-        const { title, description, difficulty, duration, date, imageUrl, Uid, VId } = req.body;
+        const { title, description, difficulty, duration, date, imageUrl, Uid, VId, CId, TId } = req.body;
 
 
         let newImage = null;
@@ -108,6 +110,15 @@ export const createProject = async (req: Request, res: Response) => {
 
             await (newProject as any).addFavoris(Uid);
         }
+
+        if (CId) {
+
+            await (newProject as any).addComposant(CId);
+        }
+        if (TId) {
+            await (newProject as any).addTâche(TId);
+        }
+
         res.status(201).json(newProject);
     } catch (error) {
         console.error("Détail de l'erreur :", error);
@@ -140,6 +151,18 @@ export const getAllProjects = async (req: Request, res: Response) => {
                 {
                     model: User,
                     as: 'favoris'
+                },
+                {
+                    model: Composant,
+                    as: 'composant',
+                    attributes: ['nom', 'possédé'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Tâche,
+                    as: 'Tâche',
+                    attributes: ['title', 'instruction'],
+                    through: { attributes: [] }
                 }
             ]
         });
