@@ -1,9 +1,9 @@
 import { displayBanner } from './startup';
 import express from 'express';
-import User from './models/project.user'; // Vérifie bien que le nom du fichier est correct
+import { User, Project, Image } from './models/lien_inter/index' // Vérifie bien que le nom du fichier est correct
 import sequelize from './config/database';
 import userRoutes from './routes/user.routes'; // 1. Importation
-import projectRoutes from './routes/user.routes';
+
 
 const app = express();
 app.use(express.json());
@@ -15,8 +15,7 @@ app.use(requestLogger);
 // ... après app.use(express.json())
 app.use('/api/users', userRoutes); // 2. Utilisation
 
-//new project
-app.use('/api/projects', projectRoutes);
+
 
 // Ta route pour la bannière
 app.get('/api/data', (req, res) => {
@@ -31,7 +30,7 @@ sequelize.sync({ alter: true })
         // On lance le serveur SEULEMENT quand la DB est prête
         app.listen(port, () => {
             console.log(displayBanner()); // On affiche la bannière dans la console
-            console.log(`🚀 Serveur lancé sur : http://localhost:${port}`);
+            console.log(`🚀 Serveur lancé sur : http://localhost:${port}/api/users`);
         });
     })
     .catch((error) => {

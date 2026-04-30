@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
-import User from '../models/project.user';
 import { validatePassword, hashPassword, comparePassword } from '../utils/Password'; 
 import { isValidEmail } from '../utils/emailValidator';
-import Project from '../models/project.create';
+import { Project, Image, User, video, Tâche } from '../models/lien_inter/index';
+import { Model } from 'sequelize';
+import Composant from '../models/project.composant';
 
+
+// login et inscription :
 export const registerUser = async (req: Request, res: Response) => {
     try {
 
-        const { firstName, lastName, email, password, age } = req.body;
+        const { firstName, lastName, email, password, age, bio, pseudo } = req.body;
 
 
         if (!validatePassword(password, age)) {
@@ -26,12 +29,14 @@ export const registerUser = async (req: Request, res: Response) => {
             lastName,
             email,
             password: hashedPassword,
-            age 
+            age,
+            bio,
+            pseudo
         });
 
         res.status(201).json({
             message: "Utilisateur créé avec succès !",
-            user: { id: newUser.id, email: newUser.email }
+            user: { id: newUser.getDataValue('Uid'), email: newUser.email }
         });
 
     } catch (error) {
@@ -64,7 +69,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
         res.status(200).json({
             message: `Bienvenue ${user.firstName} !`,
-            user: { id: user.id, email: user.email }
+            user: { id: user.Uid, email: user.email }
         });
 
     } catch (error) {
@@ -72,21 +77,99 @@ export const loginUser = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Erreur lors de la connexion" });
     }
 };
+
+// get project et nouveau projet :
 export const createProject = async (req: Request, res: Response) => {
     try {
-        const { title, description } = req.body;
-        const newProject = await Project.create({ title, description });
-        res.status(201).json({ message: "Projet créé !", project: newProject });
+        const { title, description, difficulty, duration, date, imageUrl, Uid, VId, CId, TId } = req.body;
+
+
+        let newImage = null;
+        if (imageUrl) {
+            newImage = await Image.create({ I_img: imageUrl });
+        }
+
+        const newProject = await Project.create({
+            title,
+            description,
+            difficulty,
+            duration,
+            date,
+            I_id: newImage ? newImage.getDataValue('I_id') : null
+        });
+
+        if (Uid) {
+
+            await (newProject as any).addAuteurs(Uid);
+        }
+        if (VId) {
+            await (newProject as any).addVideo(VId);
+
+        }
+        if (Uid) {
+
+            await (newProject as any).addFavoris(Uid);
+        }
+
+        if (CId) {
+
+            await (newProject as any).addComposant(CId);
+        }
+        if (TId) {
+            await (newProject as any).addTâche(TId);
+        }
+
+        res.status(201).json(newProject);
     } catch (error) {
-        res.status(500).json({ message: "Erreur lors de la création", error });
+        console.error("Détail de l'erreur :", error);
+        res.status(500).json({ message: "Erreur creation", error });
     }
 };
 
 export const getAllProjects = async (req: Request, res: Response) => {
     try {
-        const projects = await Project.findAll();
+        const projects = await Project.findAll({
+            include: [
+                {
+                    model: Image,
+                    as: 'Image', // Doit être identique à l'alias dans index.ts
+                    attributes: ['I_id', 'I_img'] // Optionnel : pour être sûr d'avoir les bons champs
+                },
+
+                {
+                    model: User,
+                    as: 'Auteurs',
+                    attributes: ['pseudo'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: video,
+                    as: 'video',
+                    attributes: ['mp4', 'lien'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: User,
+                    as: 'favoris'
+                },
+                {
+                    model: Composant,
+                    as: 'composant',
+                    attributes: ['nom', 'possédé'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: Tâche,
+                    as: 'Tâche',
+                    attributes: ['title', 'instruction'],
+                    through: { attributes: [] }
+                }
+            ]
+        });
+
         res.status(200).json(projects);
     } catch (error) {
+        console.error("Erreur récup :", error);
         res.status(500).json({ message: "Erreur lors de la récupération", error });
     }
 };
