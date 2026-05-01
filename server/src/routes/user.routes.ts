@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import User from '../models/project.user';
 import { loginUser, registerUser } from '../controllers/projects.controller';
+import { createProject, getAllProjects } from '../controllers/projects.controller'
 
 const router = Router();
 
@@ -17,5 +18,9 @@ router.get('/', async (req, res) => {
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+
+router.post('/NewProject', createProject);
+router.get('/AllProject', getAllProjects);
+
 
 export default router;
