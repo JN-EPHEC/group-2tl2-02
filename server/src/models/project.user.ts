@@ -20,15 +20,6 @@ User.init({
   age: { type: DataTypes.STRING, allowNull: true },
   bio: { type: DataTypes.STRING, allowNull: true },
   pseudo: { type: DataTypes.STRING, allowNull: false },
-  I_id: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    unique: true, // INDISPENSABLE pour le 1:1
-    references: {
-      model: 'Image', // Nom de la table dans la DB
-      key: 'I_id'
-    }
-  }
 }, {
   sequelize,
   modelName: 'User'
