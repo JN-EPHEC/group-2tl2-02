@@ -120,4 +120,4 @@ Tâche.belongsToMany( Project, {
     foreignKey: 'TId',
     otherKey: 'PId'
 })
-export { Project, Image, User, video, Badge, Tâche };
+export { Project, Image, User, video, Badge, Tâche, Composant };
