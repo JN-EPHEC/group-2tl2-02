@@ -3,7 +3,7 @@ import express from 'express';
 import { User, Project, Image } from './models/lien_inter/index' // Vérifie bien que le nom du fichier est correct
 import sequelize from './config/database';
 import userRoutes from './routes/user.routes'; // 1. Importation
-
+import { requestLogger } from './middlewars/logger'
 
 const app = express();
 app.use(express.json());
