@@ -8,6 +8,8 @@ function Crea() {
     const [projectTitle, setProjectTitle] = useState("")
     const [projectDescription, setProjectDescription] = useState("")
     const [projectImage, setProjectImage] = useState("")
+    const [estimatedDuration, setEstimatedDuration] = useState("")
+    const [difficulty, setDifficulty] = useState("")
     const [previewTitle, setPreviewTitle] = useState("Titre du projet")
     const [previewDescription, setPreviewDescription] = useState("Description du projet")
     const [composants, setComposants] = useState([])
@@ -47,6 +49,8 @@ function Crea() {
         setProjectTitle("")
         setProjectDescription("")
         setProjectImage("")
+        setEstimatedDuration("")
+        setDifficulty("")
     }
 
     const ajouterComposant = () => {
@@ -97,6 +101,7 @@ function Crea() {
                                 }
                             }}
                         />
+
                     </div>
                     <div className={styles.formGroup}>
                         <label className={styles.formLabel} htmlFor="titre">Titre :</label>
@@ -109,6 +114,41 @@ function Crea() {
                             onChange={(e) => setProjectTitle(e.target.value)}
                             required
                         />
+                        <p className={styles.difficultySection}>
+                            <label htmlFor="difficulte">Difficulté :</label>
+                            <input 
+                                type="radio" 
+                                name="difficulte" 
+                                id="debutant"
+                                value="debutant"
+                                checked={difficulty === "debutant"}
+                                onChange={(e) => setDifficulty(e.target.value)}
+                            /> <label htmlFor="debutant" style={{display: 'inline', marginBottom: 0}}>Débutant</label> <br />
+                            <input 
+                                type="radio" 
+                                name="difficulte" 
+                                id="moyen"
+                                value="moyen"
+                                checked={difficulty === "moyen"}
+                                onChange={(e) => setDifficulty(e.target.value)}
+                            /> <label htmlFor="moyen" style={{display: 'inline', marginBottom: 0}}>Moyen</label> <br />
+                            <input 
+                                type="radio" 
+                                name="difficulte" 
+                                id="avancer"
+                                value="avancer"
+                                checked={difficulty === "avancer"}
+                                onChange={(e) => setDifficulty(e.target.value)}
+                            /> <label htmlFor="avancer" style={{display: 'inline', marginBottom: 0}}>Avancé</label> <br />
+                            <input 
+                                type="radio" 
+                                name="difficulte" 
+                                id="expert"
+                                value="expert"
+                                checked={difficulty === "expert"}
+                                onChange={(e) => setDifficulty(e.target.value)}
+                            /> <label htmlFor="expert" style={{display: 'inline', marginBottom: 0}}>Expert</label>
+                        </p>
                     </div>
                     <div className={styles.descriptionSection}>
                         <h3>Description du projet</h3>
@@ -121,6 +161,22 @@ function Crea() {
                             value={projectDescription}
                             onChange={(e) => setProjectDescription(e.target.value)}
                         ></textarea>
+                    </div>
+                    <div className={styles.durationSection}>
+                        <label htmlFor="duree">Durée estimée :</label>
+                        <p>
+                            <input 
+                                className={styles.durationInput}
+                                type="number" 
+                                name="duree"
+                                id="duree"
+                                placeholder="Entrez la durée en heures"
+                                value={estimatedDuration}
+                                onChange={(e) => setEstimatedDuration(e.target.value)}
+                                min="0"
+                                max="1000"
+                            />
+                        </p>
                     </div>
                     <div className={styles.buttonGroup}>
                         <button className={styles.resetButton} type="button" onClick={handleEffacer}>Effacer</button>
