@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { validatePassword, hashPassword, comparePassword } from '../utils/Password'; 
 import { isValidEmail } from '../utils/emailValidator';
-import { Project, Image, User, video, Tâche } from '../models/lien_inter/index';
+import { Project, Image, User, video, Tâche, Composant } from '../models/lien_inter/index';
 import { Model } from 'sequelize';
-import Composant from '../models/project.composant';
+
 
 
 // login et inscription :
@@ -81,7 +81,7 @@ export const loginUser = async (req: Request, res: Response) => {
 // get project et nouveau projet :
 export const createProject = async (req: Request, res: Response) => {
     try {
-        const { title, description, difficulty, duration, date, imageUrl, Uid, VId, CId, TId } = req.body;
+        const { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId } = req.body;
 
 
         
@@ -92,6 +92,7 @@ export const createProject = async (req: Request, res: Response) => {
             difficulty,
             duration,
             date,
+            isPublic
         });
 
         if (imageUrl) {
@@ -171,5 +172,39 @@ export const getAllProjects = async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Erreur récup :", error);
         res.status(500).json({ message: "Erreur lors de la récupération", error });
+    }
+};
+export const deleteProject = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params; // On récupère l'ID dans l'URL (ex: /projects/5)
+
+        const deleted = await Project.destroy({
+            where: { id: id }
+        });
+
+        if (deleted) {
+            return res.status(200).json({ message: "Projet supprimé avec succès." });
+        }
+
+        return res.status(404).json({ message: "Projet non trouvé." });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la suppression du projet", error });
+    }
+};
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        const deleted = await User.destroy({
+            where: { id: id }
+        });
+
+        if (deleted) {
+            return res.status(200).json({ message: "Utilisateur supprimé." });
+        }
+
+        return res.status(404).json({ message: "Utilisateur non trouvé." });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur", error });
     }
 };
