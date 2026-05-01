@@ -19,7 +19,7 @@ User.init({
   password: { type: DataTypes.STRING, allowNull: false },
   age: { type: DataTypes.STRING, allowNull: true },
   bio: { type: DataTypes.STRING, allowNull: true },
-  pseudo: { type: DataTypes.STRING, allowNull: false },
+  pseudo: { type: DataTypes.STRING, allowNull: false, unique: true },
 }, {
   sequelize,
   modelName: 'User'
