@@ -10,6 +10,8 @@ app.use(express.json());
 const port = 3000;
 
 
+app.use(requestLogger);
+
 // ... après app.use(express.json())
 app.use('/api/users', userRoutes); // 2. Utilisation
 
