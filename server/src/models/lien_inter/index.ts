@@ -5,11 +5,20 @@ import video from '../project.video';
 import Badge from '../project.badge';
 import Composant from '../project.composant';
 import Tâche from '../project.tâche';
-import { table } from 'console';
+
 
 // Proj_image
-Project.belongsTo(Image, { foreignKey: 'I_id', as: 'Image' });
-Image.hasMany(Project, { foreignKey: 'I_id' });
+Project.belongsToMany(Image, {
+    through: 'Project_Images',
+    foreignKey: 'PId',
+    otherKey: 'I_id',
+    as: 'Image'
+});
+Image.belongsToMany(Project, {
+    through: 'Project_Images',
+    foreignKey: 'I_id',
+    otherKey: 'PId'
+});
 
 
 // Proj_user
@@ -27,8 +36,18 @@ Project.belongsToMany(User, {
 });
 
 // User_img
-User.belongsTo(Image, { foreignKey: 'I_id', as: 'Avatar' });
-Image.hasOne(User, { foreignKey: 'I_id', as: 'Proprietaire' });
+User.belongsToMany(Image, {
+    through: 'User_Images',
+    foreignKey: 'userId',
+    otherKey: 'imageId',
+    as: 'Avatar'
+});
+
+Image.belongsToMany(User, {
+    through: 'User_Images',
+    foreignKey: 'imageId',
+    otherKey: 'userId'
+});
 
 // video_projet
 
