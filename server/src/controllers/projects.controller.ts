@@ -84,10 +84,7 @@ export const createProject = async (req: Request, res: Response) => {
         const { title, description, difficulty, duration, date, imageUrl, Uid, VId, CId, TId } = req.body;
 
 
-        let newImage = null;
-        if (imageUrl) {
-            newImage = await Image.create({ I_img: imageUrl });
-        }
+        
 
         const newProject = await Project.create({
             title,
@@ -95,9 +92,12 @@ export const createProject = async (req: Request, res: Response) => {
             difficulty,
             duration,
             date,
-            I_id: newImage ? newImage.getDataValue('I_id') : null
         });
 
+        if (imageUrl) {
+            const newImage = await Image.create({ I_img: imageUrl });
+            await (newProject as any).addImage(newImage); 
+        }
         if (Uid) {
 
             await (newProject as any).addAuteurs(Uid);
