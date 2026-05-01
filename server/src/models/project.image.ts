@@ -15,7 +15,7 @@ Image.init({
     I_img: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+
     }
 }, {
     sequelize,
