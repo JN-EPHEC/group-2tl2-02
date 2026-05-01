@@ -36,16 +36,8 @@ Project.init({
     date: {
         type: DataTypes.DATEONLY,
         allowNull: false
-    },
-    // --- LA CLÉ ÉTRANGÈRE POUR L'IMAGE ---
-    I_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: 'Image',
-            key: 'I_id'
-        }
     }
+   
 }, {
     sequelize,
     modelName: 'Project',
