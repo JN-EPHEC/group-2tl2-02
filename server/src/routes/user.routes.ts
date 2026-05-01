@@ -1,8 +1,8 @@
 // server/src/routes/user.routes.ts
 import { Router } from 'express';
 import User from '../models/project.user';
-import { loginUser, registerUser } from '../controllers/projects.controller';
-import { createProject, getAllProjects } from '../controllers/projects.controller'
+import { loginUser, registerUser, deleteUser } from '../controllers/projects.controller';
+import { createProject, getAllProjects, deleteProject } from '../controllers/projects.controller'
 
 const router = Router();
 
@@ -22,5 +22,7 @@ router.post('/login', loginUser);
 router.post('/NewProject', createProject);
 router.get('/AllProject', getAllProjects);
 
+router.delete('/:id', deleteUser);
+router.delete('/project/:id', deleteProject);
 
 export default router;
