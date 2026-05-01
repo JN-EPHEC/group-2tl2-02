@@ -8,7 +8,7 @@ class Project extends Model {
     declare difficulty: string;
     declare duration: string;
     declare date: Date;
-    declare I_id: number | null;
+    declare isPublic: Boolean;
 }
 
 Project.init({
@@ -36,8 +36,11 @@ Project.init({
     date: {
         type: DataTypes.DATEONLY,
         allowNull: false
+    },
+    isPublic: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
-   
 }, {
     sequelize,
     modelName: 'Project',
