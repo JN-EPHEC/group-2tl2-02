@@ -30,3 +30,5 @@ yarn-error.log*
 *.sw?
 package.json
 package-lock.json
+
+database.ts
