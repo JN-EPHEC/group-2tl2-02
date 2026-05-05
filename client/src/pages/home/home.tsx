@@ -121,6 +121,21 @@ function Acceuil() {
                     <button onClick={() => navigate("/composants")}>• Voir composants</button>
                 </aside>
             </main>
+            <footer className={style.footer}>
+                <p>© 2026 ProjetHub. Tous droits réservés.</p>
+                
+                <div className={style.footerNav}>
+                    <button className={style.footerBtn} onClick={() => navigate("/contact")}>
+                        Contact
+                    </button>
+                    <button className={style.footerBtn} onClick={() => navigate("/a-propos")}>
+                        À propos
+                    </button>
+                    <button className={style.footerBtn} onClick={() => navigate("/faq")}>
+                        FAQ
+                    </button>
+                </div>
+            </footer>
         </div>
     );
 }
