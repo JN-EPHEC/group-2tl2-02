@@ -38,7 +38,7 @@ function Contact() {
                     <form className={style.contactForm}>
                         <div className={style.inputGroup}>
                             <label htmlFor="name">Nom complet du projet</label>
-                            <input type="text" id="name" placeholder="ProjetHub" required />
+                            <input type="text" id="name" placeholder="ProjetHub #12" required />
                         </div>
 
                         <div className={style.inputGroup}>
@@ -51,9 +51,7 @@ function Contact() {
                             <textarea id="message" rows={5} placeholder="Comment pouvons-nous vous aider ?" required></textarea>
                         </div>
 
-                        <button type="submit" className={style.btnSend}>
-                            Envoyer le message
-                        </button>
+                        <button type="submit" className={style.btnSend}>Envoyer le message</button>
                     </form>
                 </section>
             </main>
