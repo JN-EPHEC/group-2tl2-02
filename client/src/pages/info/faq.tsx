@@ -11,12 +11,12 @@ const FAQ_DATA = [
     {
         id: 2,
         question: "Comment soumettre un projet ?",
-        reponse: "Une fois connecté, cliquez sur 'Créer un projet' dans votre profil, remplissez les détails de votre projet et soumettez-le pour que la communauté puisse le découvrir."
+        reponse: "Une fois connecté, cliquez sur 'Nouveau projet' dans votre profil, remplissez les détails de votre projet et soumettez-le pour que la communauté puisse le découvrir."
     },
     {
         id: 3,
         question: "Comment contacter le support ?",
-        reponse: "Si vous avez besoin d'aide, n'hésitez pas à nous contacter via la page 'Contact' accessible depuis le menu en bas de chaque page."
+        reponse: "Si vous avez besoin d'aide, n'hésitez pas à nous contacter via la page 'Contact' accessible depuis la page d'accueil."
     },
     {
         id: 4,
