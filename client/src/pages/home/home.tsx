@@ -128,7 +128,7 @@ function Acceuil() {
                     <button className={style.footerBtn} onClick={() => navigate("/contact")}>
                         Contact
                     </button>
-                    <button className={style.footerBtn} onClick={() => navigate("/a-propos")}>
+                    <button className={style.footerBtn} onClick={() => navigate("/a_propos")}>
                         À propos
                     </button>
                     <button className={style.footerBtn} onClick={() => navigate("/faq")}>

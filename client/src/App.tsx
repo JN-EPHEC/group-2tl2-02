@@ -7,6 +7,7 @@ import MProfil from "./pages/profil/mprofil"
 import Crea from "./pages/projets/creation"
 import Projet from "./pages/projets/projet"
 import ConContact from "./pages/info/contact"
+import APropos from "./pages/info/a_propos"
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/creation" element={<Crea />} />
         <Route path="/projet" element={<Projet />} />
         <Route path="/contact" element={<ConContact />} />
+        <Route path="/a_propos" element={<APropos />} />
       </Routes>
     </BrowserRouter>
   )
