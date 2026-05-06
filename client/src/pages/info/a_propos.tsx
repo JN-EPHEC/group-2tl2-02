@@ -33,6 +33,7 @@ const TEAM_MEMBERS = [
     },
 ];
 
+
 function APropos() {
     const navigate = useNavigate();
     const [selectedMember, setSelectedMember] = useState<any>(null);
