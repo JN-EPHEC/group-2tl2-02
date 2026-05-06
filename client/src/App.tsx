@@ -6,6 +6,7 @@ import Profil from "./pages/profil/profil"
 import MProfil from "./pages/profil/mprofil"
 import Crea from "./pages/projets/creation"
 import Projet from "./pages/projets/projet"
+import ConContact from "./pages/info/contact"
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/modifprofil" element={<MProfil />} />
         <Route path="/creation" element={<Crea />} />
         <Route path="/projet" element={<Projet />} />
+        <Route path="/contact" element={<ConContact />} />
       </Routes>
     </BrowserRouter>
   )

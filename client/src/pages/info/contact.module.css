@@ -1,0 +1,168 @@
+.contactPage {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #dbeafe, #eef2ff);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logoContainer img {
+    width: 45px;
+}
+
+.logoContainer h2 {
+    color: #2563eb;
+    margin: 0;
+}
+
+.btnConnection {
+    text-decoration: none;
+    margin: 5px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    display: inline-block;
+    border: none;
+}
+
+.btnConnection:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    color: white; /* Garde le texte blanc au survol */
+}
+
+.mainContent {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.contactCard {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr; /* 2 colonnes */
+    overflow: hidden;
+}
+
+/* Section de gauche (Infos) */
+.infoSection {
+    background: #2563eb;
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.infoSection h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.details {
+    margin-top: 30px;
+}
+
+.detailItem {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Section de droite (Formulaire) */
+.contactForm {
+    padding: 40px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inputGroup label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.inputGroup input, .inputGroup textarea {
+    padding: 12px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.inputGroup input:focus, .inputGroup textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.btnSend {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btnSend:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.footer {
+    margin-top: auto;
+    padding: 20px 40px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(37, 99, 235, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contactCard {
+        grid-template-columns: 1fr;
+    }
+    .infoSection {
+        padding: 30px;
+    }
+}
