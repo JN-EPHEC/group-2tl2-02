@@ -4,56 +4,74 @@ import style from "./contact.module.css";
 
 function Contact() {
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        alert("Message envoyé avec succès !");
+        setIsModalOpen(false);
+    };
 
     return (
         <div className={style.contactPage}>
-            <header>
+            <header className={style.header}>
                 <div className={style.logoContainer}>
                     <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>
-                <div>
-                    <button className={style.btnConnection} onClick={() => navigate("/")}>Accueil</button>
-                </div>
+                <button className={style.btnHome} onClick={() => navigate("/")}>Accueil</button>
             </header>
             
             <main className={style.mainContent}>
-                <section className={style.contactCard}>
-                    <div className={style.infoSection}>
-                        <h1>Contactez-nous</h1>
-                        <p>Une question sur un projet ? Notre équipe de passionnés d'électronique vous répond dans les plus brefs délais.</p>
-                        
-                        <div className={style.details}>
-                            <div className={style.detailItem}>
-                                <span>📍</span>
-                                <p>EPHEC - Louvain La Neuve, Belgique</p>
-                            </div>
-                            <div className={style.detailItem}>
-                                <span>✉️</span>
-                                <p>projethub@gmail.com</p>
-                            </div>
+                <section className={style.heroContact}>
+                    <h1>Une question ? <br/><span>On est là pour vous aider.</span></h1>
+                    <p>Que vous soyez étudiant à l'EPHEC ou passionné d'électronique, notre équipe vous répond avec plaisir.</p>
+                    
+                    <div className={style.infoGrid}>
+                        <div className={style.infoCard}>
+                            <div className={style.iconCircle}>📍</div>
+                            <h3>Localisation</h3>
+                            <p>EPHEC - Louvain-la-Neuve</p>
+                        </div>
+                        <div className={style.infoCard}>
+                            <div className={style.iconCircle}>✉️</div>
+                            <h3>Email</h3>
+                            <p>projethub@gmail.com</p>
                         </div>
                     </div>
 
-                    <form className={style.contactForm}>
-                        <div className={style.inputGroup}>
-                            <label htmlFor="name">Nom complet du projet</label>
-                            <input type="text" id="name" placeholder="ProjetHub #12" required />
-                        </div>
-
-                        <div className={style.inputGroup}>
-                            <label htmlFor="email">Email</label>
-                            <input type="email" id="email" placeholder="projethub@gmail.com" required />
-                        </div>
-
-                        <div className={style.inputGroup}>
-                            <label htmlFor="message">Votre message</label>
-                            <textarea id="message" rows={5} placeholder="Comment pouvons-nous vous aider ?" required></textarea>
-                        </div>
-
-                        <button type="submit" className={style.btnSend}>Envoyer le message</button>
-                    </form>
+                    <button className={style.btnOpenPopup} onClick={() => setIsModalOpen(true)}>
+                        Nous envoyer un message
+                    </button>
                 </section>
+
+                {/* MODAL / POPUP */}
+                {isModalOpen && (
+                    <div className={style.modalOverlay} onClick={() => setIsModalOpen(false)}>
+                        <div className={style.modalContent} onClick={(e) => e.stopPropagation()}>
+                            <button className={style.btnClose} onClick={() => setIsModalOpen(false)}>×</button>
+                            
+                            <h2>Envoyez-nous un message</h2>
+                            <p>Nous vous répondrons sous 24h à 48h.</p>
+
+                            <form className={style.contactForm} onSubmit={handleSubmit}>
+                                <div className={style.inputGroup}>
+                                    <label>Nom complet</label>
+                                    <input type="text" placeholder="Ex: Jean Dupont" required />
+                                </div>
+                                <div className={style.inputGroup}>
+                                    <label>Email</label>
+                                    <input type="email" placeholder="votre@email.com" required />
+                                </div>
+                                <div className={style.inputGroup}>
+                                    <label>Message</label>
+                                    <textarea rows={4} placeholder="Comment pouvons-nous vous aider ?" required></textarea>
+                                </div>
+                                <button type="submit" className={style.btnSend}>Envoyer</button>
+                            </form>
+                        </div>
+                    </div>
+                )}
             </main>
 
             <footer className={style.footer}>
