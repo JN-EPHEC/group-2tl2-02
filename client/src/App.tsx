@@ -8,6 +8,7 @@ import Crea from "./pages/projets/creation"
 import Projet from "./pages/projets/projet"
 import ConContact from "./pages/info/contact"
 import APropos from "./pages/info/a_propos"
+import Faq from "./pages/info/faq"
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/projet" element={<Projet />} />
         <Route path="/contact" element={<ConContact />} />
         <Route path="/a_propos" element={<APropos />} />
+        <Route path="/faq" element={<Faq />} />
       </Routes>
     </BrowserRouter>
   )
