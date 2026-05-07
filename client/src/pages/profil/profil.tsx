@@ -10,7 +10,7 @@ function Profil() {
         <div className={styles.profilPage}>
             <header>
                 <div className="logoContainer">
-                    <img src="./Logo_electronique_dynamique_avec_ampoule.png" alt="logo" />
+                    <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>
                 <div>
@@ -19,9 +19,9 @@ function Profil() {
             </header>
             <div className={styles.profilColumns}>
                 <div className={styles.profilInfo}>
-                    <img className={styles.avatarImage} src="" alt="pdp" />
-                    <h1 className={styles.profilPseudo}>LE PSEUUUUUUUUUUUUUUUUUUUUDO</h1>
-                    <h3 className={styles.profilStatus}>le tsatus </h3>
+                    <img className={styles.avatarImage} src="./logo.png" alt="pdp" />
+                    <h1 className={styles.profilPseudo}>Pseudo</h1>
+                    <h3 className={styles.profilStatus}>Le statut</h3>
                     <table className={styles.profilTabInfo}>
                         <thead>
                             <tr><td>42</td><td>25</td><td>6</td></tr>
@@ -33,10 +33,9 @@ function Profil() {
                     <div className={styles.profilBio}>
                         <h3>Bio</h3>
                         <span className={styles.profilDescription}>
-                            en sah joyeux annif rayan
+                            Ma petite bio, elle est pas très longue, mais elle est là pour dire que j'aime les projets électroniques et que je suis un passionné de technologie. J'adore partager mes créations et découvrir celles des autres sur ProjetHub !
                         </span>
                     </div>
-                    <button className={styles.profilButton} onClick={function () { navigate("/modifprofil") }}>Modifier le profil</button>
                 </div>
                 <div className={styles.profilFenetre}>
                     <div className={styles.tabsRow}>
@@ -111,6 +110,9 @@ function Profil() {
                     </section>
                 </div>
             </div>
+            <footer className={styles.footer}>
+                <p>© 2026 ProjetHub. Tous droits réservés.</p>
+            </footer>
         </div>
     )
 }
