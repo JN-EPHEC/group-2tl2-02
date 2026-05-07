@@ -1,0 +1,192 @@
+.profilPage {
+    background: linear-gradient(135deg, #dbeafe, #eef2ff);
+    /* 1. Force la hauteur sur tout l'écran */
+    min-height: 100vh; 
+    /* 2. Active le Flexbox vertical */
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.headerMain {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.logoContainer { display: flex; align-items: center; gap: 10px; }
+.logoContainer img { width: 40px; }
+.logoContainer h2 { color: #2563eb; margin: 0; }
+
+.btnNav {
+    padding: 8px 20px;
+    border-radius: 20px;
+    /* On applique le dégradé bleu identique aux autres pages */
+    background: linear-gradient(135deg, #3b82f6, #2563eb); 
+    color: white; /* Le texte passe en blanc pour être lisible */
+    font-weight: bold;
+    border: none; /* On enlève la bordure bleue */
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.btnNav:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    filter: brightness(1.1);
+}
+
+.mainContent {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.pageTitle {
+    color: #1e3a8a;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+}
+
+.profilGrid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 30px;
+}
+
+.rightColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Style des Cartes */
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #2563eb;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #eff6ff;
+    padding-bottom: 10px;
+}
+
+/* Avatar */
+.avatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.avatarCircle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    overflow: hidden;
+    border: 4px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.avatarCircle img { width: 100%; height: 100%; object-fit: cover; }
+
+.fileLabel {
+    background: #f1f5f9;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: #64748b;
+    transition: 0.2s;
+}
+
+.fileLabel:hover { background: #e2e8f0; }
+.hiddenInput { display: none; }
+
+/* Formulaire */
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.formGroup label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.formInput, .formTextarea {
+    padding: 10px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.formInput:focus, .formTextarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.inputGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Boutons */
+.buttonRow {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.submitButton {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submitButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.footer {
+    margin-top: auto;
+    padding: 20px 40px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(37, 99, 235, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0;
+}
