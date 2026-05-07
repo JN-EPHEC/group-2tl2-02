@@ -77,7 +77,7 @@ function Acceuil() {
                         {isMenuOpen && (
                             <div className={style.dropdownMenu}>
                                 <button onClick={() => { setIsMenuOpen(false); navigate("/profil"); }}>
-                                    👤 Modifier le profil
+                                    👤 Mon profil
                                 </button>
                                 <button onClick={() => navigate("/creation")}>
                                     📂 Nouveau projet
