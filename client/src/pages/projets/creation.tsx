@@ -14,6 +14,7 @@ function Crea() {
     const [previewDescription, setPreviewDescription] = useState("Description du projet")
     const [composants, setComposants] = useState([])
     const [nextComposantId, setNextComposantId] = useState(1)
+    const [isPrivate, setIsPrivate] = useState(false)
     const [etapes, setEtapes] = useState([
         { id: 1, titre: "", image: "", description: "" }
     ])
@@ -178,6 +179,34 @@ function Crea() {
                             />
                         </p>
                     </div>
+                    <div className={styles.visibilitySection}>
+                        <label>Visibilité du projet :</label>
+                        <div className={styles.radioGroup}>
+                            <div className={styles.radioOption}>
+                                <input 
+                                    type="radio" 
+                                    name="visibility" 
+                                    id="public"
+                                    value="public"
+                                    checked={!isPrivate}
+                                    onChange={() => setIsPrivate(false)}
+                                />
+                                <label htmlFor="public">Public</label>
+                            </div>
+                            <div className={styles.radioOption}>
+                                <input 
+                                    type="radio" 
+                                    name="visibility" 
+                                    id="private"
+                                    value="private"
+                                    checked={isPrivate}
+                                    onChange={() => setIsPrivate(true)}
+                                />
+                                <label htmlFor="private">Privé</label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className={styles.buttonGroup}>
                         <button className={styles.resetButton} type="button" onClick={handleEffacer}>Effacer</button>
                         <button className={styles.submitButton} type="submit">Enregistrer</button>
