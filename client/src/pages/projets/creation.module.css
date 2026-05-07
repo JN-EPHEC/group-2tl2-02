@@ -395,6 +395,54 @@
     margin: 0;
 }
 
+/* Styles pour Visibilité */
+.visibilitySection {
+    background: #eff6ff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.visibilitySection > label {
+    display: block;
+    font-weight: 600;
+    color: #2563eb;
+    margin-bottom: 12px;
+}
+
+.radioGroup {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.radioOption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.radioOption input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #2563eb;
+    transition: all 0.2s ease;
+}
+
+.radioOption input[type="radio"]:hover {
+    accent-color: #1d4ed8;
+}
+
+.radioOption label {
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    user-select: none;
+    margin: 0;
+    display: inline;
+}
+
 .submitButton {
     background: #2563eb;
     color: white;
