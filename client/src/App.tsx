@@ -18,7 +18,7 @@ function App() {
         <Route path="/connection" element={<Connec />} />
         <Route path="/inscription" element={<Inscrip />} />
         <Route path="/profil" element={<Profil />} />
-        <Route path="/modifprofil" element={<MProfil />} />
+        <Route path="/mprofil" element={<MProfil />} />
         <Route path="/creation" element={<Crea />} />
         <Route path="/projet" element={<Projet />} />
         <Route path="/contact" element={<ConContact />} />

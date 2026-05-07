@@ -85,7 +85,7 @@ function Acceuil() {
                                 <button onClick={() => navigate("/composants")}>
                                     🧩 Voir composants
                                 </button>
-                                <button onClick={() => { setIsMenuOpen(false); navigate("/modifprofil"); }}>
+                                <button onClick={() => { setIsMenuOpen(false); navigate("/mprofil"); }}>
                                     ⚙️ Paramètres
                                 </button>
                                 <div className={style.menuDivider}></div>
