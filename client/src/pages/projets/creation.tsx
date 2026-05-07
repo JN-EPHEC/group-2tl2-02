@@ -225,7 +225,7 @@ function Crea() {
                                     checked={needs3D}
                                     onChange={(e) => setNeeds3D(e.target.checked)}
                                 />
-                                Imprimante 3D
+                                {" "}Imprimante 3D
                             </label>
                         </div>
                         <div className={styles.difficultyOption}>
@@ -235,7 +235,7 @@ function Crea() {
                                     checked={needsSoldering}
                                     onChange={(e) => setNeedsSoldering(e.target.checked)}
                                 />
-                                Soudure
+                                {" "}Soudure
                             </label>
                         </div>
                     </div>

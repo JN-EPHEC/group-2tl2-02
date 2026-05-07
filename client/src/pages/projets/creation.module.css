@@ -345,7 +345,7 @@
 }
 
 .addButton {
-    background: #10b981;
+    background: #2563eb;
     color: white;
     border: none;
     border-radius: 12px;
@@ -357,7 +357,7 @@
 }
 
 .addButton:hover {
-    background: #059669;
+    background: #11347e;
     transform: translateY(-1px);
 }
 
@@ -366,11 +366,11 @@
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 10px 16px;
-    font-weight: 600;
+    padding: 12px 20px;
+    font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s ease, background 0.2s ease;
-    font-size: 0.9rem;
+    margin-top: 12px;
 }
 
 .deleteButton:hover {
@@ -460,8 +460,7 @@
 /* Styles pour Difficulté */
 .difficultySection {
     border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
+
 }
 
 .difficultySection label {
