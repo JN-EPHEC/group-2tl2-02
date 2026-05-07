@@ -60,16 +60,23 @@ function Acceuil() {
                 </div>
                 <div>
                     <button className={style.btnConnection} onClick={() => navigate("/connection")}>Connexion</button>
-                    <button className={style.btnConnection} onClick={() => navigate("/inscription")}>Inscription</button>
-                    <button className={style.apres} onClick={() => navigate("/profil")}>Profil</button>
+                    <button className={style.btnConnection} onClick={() => navigate("/profil")}>Profil</button>
                 </div>
             </header>
 
             <main className={style.mainBox}>
                 {/* Sidebar Gauche */}
                 <aside className={style.box}>
-                    <h3>Projets récents</h3>
-                    {PROJETS_MOCK.slice(0, 3).map(p => (
+                    <h3>Projets visités récemment</h3>
+                    {PROJETS_MOCK.slice(0, 4).map(p => (
+                        <button key={p.id} className={style.addBlock} onClick={() => navigate(`/projet/${p.id}`)}>
+                            • {p.titre}
+                        </button>
+                    ))}
+                    <br />
+                    <br />
+                    <h3>Projets likés</h3>
+                    {PROJETS_MOCK.slice(0, 4).map(p => (
                         <button key={p.id} className={style.addBlock} onClick={() => navigate(`/projet/${p.id}`)}>
                             • {p.titre}
                         </button>
@@ -116,9 +123,13 @@ function Acceuil() {
 
                 {/* Sidebar Droite */}
                 <aside className={style.box}>
-                    <h3>Statistiques</h3>
+                    <h3>Projets en cours</h3>
                     <button onClick={() => navigate("/creation")}>• Nouveau projet</button>
                     <button onClick={() => navigate("/composants")}>• Voir composants</button>
+                    <br />
+                    <br />
+                    <h3>Panier</h3>
+                    <button onClick={() => navigate("/panier")}>• Voir panier</button>
                 </aside>
             </main>
             <footer className={style.footer}>
