@@ -1,10 +1,54 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import styles from "./profil.module.css"
 
 function Profil() {
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState("projets")
+    const [error, setError] = useState("")
+    
+    const [user, setUser] = useState({
+        pseudo: "Chargement...",
+        firstName: "",
+        lastName: "",
+        bio: "",
+        stats: { projets: 0, favoris: 0, badges: 0 }
+    })
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                // Récupérer l'ID de l'utilisateur depuis localStorage
+                const userId = localStorage.getItem("userId")
+                
+                if (!userId) {
+                    setError("Vous devez être connecté pour accéder à cette page")
+                    setTimeout(() => navigate("/connection"), 2000)
+                    return
+                }
+
+                const response = await fetch(`/api/users/${userId}`)
+                const userData = await response.json()
+
+                if (!response.ok) {
+                    setError(userData.message || "Erreur lors de la récupération des données")
+                    return
+                }
+
+                setUser({
+                    pseudo: userData.pseudo,
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    bio: userData.bio || "Aucune bio pour le moment.",
+                    stats: { projets: 42, favoris: 25, badges: 6 }
+                })
+            } catch (err) {
+                console.error("Erreur de fetch :", err)
+                setError("Impossible de joindre le serveur. Vérifiez que l'API est démarrée.")
+            }
+        }
+        fetchUserData()
+    }, [])
 
     return (
         <div className={styles.profilPage}>
@@ -17,14 +61,22 @@ function Profil() {
                     <button className="btnConnection" onClick={function () { navigate("/") }}>Accueil</button>
                 </div>
             </header>
+            {error && <p style={{ color: "red", textAlign: "center", padding: "10px" }}>{error}</p>}
             <div className={styles.profilColumns}>
                 <div className={styles.profilInfo}>
                     <img className={styles.avatarImage} src="./logo.png" alt="pdp" />
-                    <h1 className={styles.profilPseudo}>Pseudo</h1>
-                    <h3 className={styles.profilStatus}>Le statut</h3>
+                    
+                    {/* --- DYNAMIQUE --- */}
+                    <h1 className={styles.profilPseudo}>{user.pseudo}</h1>
+                    <h3 className={styles.profilStatus}>{user.firstName} {user.lastName}</h3>
+                    
                     <table className={styles.profilTabInfo}>
                         <thead>
-                            <tr><td>42</td><td>25</td><td>6</td></tr>
+                            <tr>
+                                <td>{user.stats.projets}</td>
+                                <td>{user.stats.favoris}</td>
+                                <td>{user.stats.badges}</td>
+                            </tr>
                         </thead>
                         <tbody>
                             <tr><td>Projets</td><td>Favorits</td><td>Badges</td></tr>
@@ -33,10 +85,11 @@ function Profil() {
                     <div className={styles.profilBio}>
                         <h3>Bio</h3>
                         <span className={styles.profilDescription}>
-                            Ma petite bio, elle est pas très longue, mais elle est là pour dire que j'aime les projets électroniques et que je suis un passionné de technologie. J'adore partager mes créations et découvrir celles des autres sur ProjetHub !
+                            {user.bio}
                         </span>
                     </div>
                 </div>
+
                 <div className={styles.profilFenetre}>
                     <div className={styles.tabsRow}>
                         <button
@@ -52,60 +105,32 @@ function Profil() {
                             onClick={function () { setActiveTab("badges") }}
                         >Mes badges</button>
                     </div>
+
+                    {/* Onglet Projets */}
                     <section className={`${styles.tabPanel} ${activeTab === "projets" ? styles.visible : styles.hidden}`}>
                         <div className={styles.projectCard}>
                             <img className={styles.projectImage} src="" alt="img du projet" />
-                            <h2 className={styles.projectTitle}>titre du projet</h2>
-                            <span className={styles.projectMeta}>modification temps</span>
-                            <button className={styles.profilButton}>Modifier</button>
-                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
-                        </div>
-                        <div className={styles.projectCard}>
-                            <img className={styles.projectImage} src="" alt="img du projet" />
-                            <h2 className={styles.projectTitle}>titre du projet</h2>
-                            <span className={styles.projectMeta}>modification temps</span>
-                            <button className={styles.profilButton}>Modifier</button>
-                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
-                        </div>
-                        <div className={styles.projectCard}>
-                            <img className={styles.projectImage} src="" alt="img du projet" />
-                            <h2 className={styles.projectTitle}>titre du projet</h2>
-                            <span className={styles.projectMeta}>modification temps</span>
+                            <h2 className={styles.projectTitle}>Station Météo IoT</h2>
+                            <span className={styles.projectMeta}>Modifié il y a 2h</span>
                             <button className={styles.profilButton}>Modifier</button>
                             <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
                         </div>
                     </section>
+
+                    {/* Onglet Favoris */}
                     <section className={`${styles.tabPanel} ${activeTab === "favorits" ? styles.visible : styles.hidden}`}>
-                        <div className={styles.projectCard}>
+                         <div className={styles.projectCard}>
                             <img className={styles.projectImage} src="" alt="img du projet" />
-                            <h2 className={styles.projectTitle}>titre du projet</h2>
-                            <span className={styles.projectMeta}>modification temps</span>
-                            <button className={styles.profilButton}>Modifier</button>
-                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
-                        </div>
-                        <div className={styles.projectCard}>
-                            <img className={styles.projectImage} src="" alt="img du projet" />
-                            <h2 className={styles.projectTitle}>titre du projet</h2>
-                            <span className={styles.projectMeta}>modification temps</span>
-                            <button className={styles.profilButton}>Modifier</button>
-                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
-                        </div>
-                        <div className={styles.projectCard}>
-                            <img className={styles.projectImage} src="" alt="img du projet" />
-                            <h2 className={styles.projectTitle}>titre du projet</h2>
-                            <span className={styles.projectMeta}>modification temps</span>
-                            <button className={styles.profilButton}>Modifier</button>
-                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
+                            <h2 className={styles.projectTitle}>Robot Suiveur</h2>
+                            <span className={styles.projectMeta}>Favori</span>
                         </div>
                     </section>
+
+                    {/* Onglet Badges */}
                     <section className={`${styles.tabPanel} ${activeTab === "badges" ? styles.visible : styles.hidden}`}>
                         <div className={styles.badgeCard}>
-                            <h2>Badge 1</h2>
-                            <p>Description du badge</p>
-                        </div>
-                        <div className={styles.badgeCard}>
-                            <h2>Badge 2</h2>
-                            <p>Description du badge</p>
+                            <h2>Badge Fondateur</h2>
+                            <p>Utilisateur de la version Alpha</p>
                         </div>
                     </section>
                 </div>
