@@ -18,7 +18,6 @@ function Profil() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // Récupérer l'ID de l'utilisateur depuis localStorage
                 const userId = localStorage.getItem("userId")
                 
                 if (!userId) {
@@ -27,20 +26,25 @@ function Profil() {
                     return
                 }
 
+                // Utilisation de /api/users/ comme dans ton code d'origine
                 const response = await fetch(`/api/users/${userId}`)
-                const userData = await response.json()
+                const data = await response.json()
 
                 if (!response.ok) {
-                    setError(userData.message || "Erreur lors de la récupération des données")
+                    setError(data.message || "Erreur lors de la récupération des données")
                     return
                 }
 
+                // --- LE FIX POUR LE PSEUDO "ERREUR" ---
+                // Si l'API renvoie un tableau [{}], on prend data[0]
+                const userData = Array.isArray(data) ? data[0] : data
+
                 setUser({
-                    pseudo: userData.pseudo,
-                    firstName: userData.firstName,
-                    lastName: userData.lastName,
+                    pseudo: userData.pseudo || "Utilisateur",
+                    firstName: userData.firstName || "",
+                    lastName: userData.lastName || "",
                     bio: userData.bio || "Aucune bio pour le moment.",
-                    stats: { projets: 42, favoris: 25, badges: 6 }
+                    stats: { projets: 42, favoris: 25, badges: 6 } // Valeurs mockées comme avant
                 })
             } catch (err) {
                 console.error("Erreur de fetch :", err)
@@ -48,7 +52,7 @@ function Profil() {
             }
         }
         fetchUserData()
-    }, [])
+    }, [navigate])
 
     return (
         <div className={styles.profilPage}>
@@ -58,15 +62,19 @@ function Profil() {
                     <h2>ProjetHub</h2>
                 </div>
                 <div>
-                    <button className="btnConnection" onClick={function () { navigate("/") }}>Accueil</button>
+                    {/* On utilise window.location pour que le Header de l'accueil se mette à jour */}
+                    <button className="btnConnection" onClick={function () { window.location.href = "/" }}>
+                        Accueil
+                    </button>
                 </div>
             </header>
+
             {error && <p style={{ color: "red", textAlign: "center", padding: "10px" }}>{error}</p>}
+            
             <div className={styles.profilColumns}>
                 <div className={styles.profilInfo}>
                     <img className={styles.avatarImage} src="./logo.png" alt="pdp" />
                     
-                    {/* --- DYNAMIQUE --- */}
                     <h1 className={styles.profilPseudo}>{user.pseudo}</h1>
                     <h3 className={styles.profilStatus}>{user.firstName} {user.lastName}</h3>
                     
@@ -79,7 +87,7 @@ function Profil() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>Projets</td><td>Favorits</td><td>Badges</td></tr>
+                            <tr><td>Projets</td><td>Favoris</td><td>Badges</td></tr>
                         </tbody>
                     </table>
                     <div className={styles.profilBio}>
@@ -99,7 +107,7 @@ function Profil() {
                         <button
                             className={`${styles.profilButton} ${styles.tabButton} ${activeTab === "favorits" ? styles.active : ""}`}
                             onClick={function () { setActiveTab("favorits") }}
-                        >Mes Favorits</button>
+                        >Mes Favoris</button>
                         <button
                             className={`${styles.profilButton} ${styles.tabButton} ${activeTab === "badges" ? styles.active : ""}`}
                             onClick={function () { setActiveTab("badges") }}
@@ -135,6 +143,7 @@ function Profil() {
                     </section>
                 </div>
             </div>
+            
             <footer className={styles.footer}>
                 <p>© 2026 ProjetHub. Tous droits réservés.</p>
             </footer>
