@@ -13,9 +13,9 @@ const TEAM_MEMBERS = [
     { 
         id: 2, 
         nom: "William Stevant", 
-        role: "Développeur Front-end", 
+        role: "Développeur Front-end / Canard en plastique", 
         image: "./william.jpg",
-        bio: "Passionné de developpement web et de ciruit électronique, William a participé à la création de l'idée de ProjetHub et a développé l'interface utilisateur avec son compagnon de code, Eliott." 
+        bio: "Passionné de developpement web, de ciruit électronique et de Lorem ipsum, William a participé à la création de l'idée de ProjetHub et a développé l'interface utilisateur avec son compagnon de code, Eliott." 
     },
     { 
         id: 3, 
