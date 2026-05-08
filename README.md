@@ -50,10 +50,10 @@ npm install
 },
 ```
 
-### Frontend : 
+### Frontend (`cd client`): 
 - redirection pour les differentes pages :
 `npm install react-router-dom`
 
-### Backend :
+### Backend (cd server):
 - postgres (la db)
 > https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
