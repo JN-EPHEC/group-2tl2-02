@@ -1,8 +1,8 @@
 // server/src/routes/user.routes.ts
 import { Router } from 'express';
 import User from '../models/project.user';
-import { loginUser, registerUser, deleteUser } from '../controllers/projects.controller';
-import { createProject, getAllProjects, deleteProject } from '../controllers/projects.controller'
+import { loginUser, registerUser, deleteUser, getUserById } from '../controllers/projects.controller';
+import { createProject, getAllProjects, deleteProject, getProjectById} from '../controllers/projects.controller'
 
 const router = Router();
 
@@ -22,7 +22,12 @@ router.post('/login', loginUser);
 router.post('/NewProject', createProject);
 router.get('/AllProject', getAllProjects);
 
+router.get('/:id', getUserById);
+// Route pour un projet : GET /api/projects/1
+router.get('/:id', getProjectById);
+
 router.delete('/:id', deleteUser);
 router.delete('/project/:id', deleteProject);
+// Route pour le profil : GET /api/users/1
 
 export default router;
