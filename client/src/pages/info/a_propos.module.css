@@ -1,0 +1,289 @@
+.aboutPage {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #dbeafe, #eef2ff);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #1e293b;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logoContainer img {
+    width: 45px;
+    height: auto;
+}
+
+.logoContainer h2 {
+    color: #2563eb;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.btnConnection {
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.btnConnection:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+}
+
+.mainContent {
+    flex: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.heroSection {
+    text-align: center;
+}
+
+.heroSection h1 {
+    font-size: 2.8rem;
+    color: #1e3a8a;
+    margin-bottom: 15px;
+}
+
+.heroSection p {
+    color: #64748b;
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.gridContent {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.card {
+    background: white;
+    padding: 35px;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    border: 1px solid rgba(37, 99, 235, 0.05);
+}
+
+.card h3 {
+    color: #2563eb;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+
+.card p {
+    line-height: 1.7;
+    color: #475569;
+}
+
+.teamSection h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 40px;
+    color: #1e3a8a;
+}
+
+.teamGrid {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+    flex-wrap: wrap;
+}
+
+.member {
+    background: white;
+    padding: 30px 20px;
+    border-radius: 24px;
+    width: 220px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+.member:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(37, 99, 235, 0.1);
+}
+
+.memberPhotoContainer {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #f1f5f9;
+    transition: border-color 0.3s;
+}
+
+.member:hover .memberPhotoContainer {
+    border-color: #2563eb;
+}
+
+.memberPhoto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.member h4 {
+    margin: 10px 0 5px;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.member p {
+    font-size: 0.85rem;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    padding: 20px;
+}
+
+.popupWindow {
+    background: white;
+    padding: 45px;
+    border-radius: 30px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.popupImage {
+    position: absolute;
+    top: -50px;
+    right: -20px;
+    width: 140px;
+    height: 140px;
+    border-radius: 24px;
+    border: 6px solid white;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    object-fit: cover;
+    background-color: #f8fafc;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    background: #f1f5f9;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #64748b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.closeBtn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.popupText h3 {
+    margin: 15px 0 5px;
+    font-size: 1.8rem;
+    color: #0f172a;
+}
+
+.roleBadge {
+    color: #2563eb;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.separator {
+    border: none;
+    border-top: 1px solid #f1f5f9;
+    margin-bottom: 20px;
+}
+
+.bioText {
+    color: #475569;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.footer {
+    margin-top: auto;
+    padding: 20px 40px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(37, 99, 235, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.85) translateY(30px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .heroSection h1 { font-size: 2rem; }
+    .popupImage {
+        width: 100px;
+        height: 100px;
+        top: -40px;
+        right: 10px;
+    }
+}

@@ -1,5 +1,6 @@
-import { useNavigate } from "react-router-dom"
-import style from "./home.module.css"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import style from "./home.module.css";
 
 const PROJETS_MOCK = [
     {
@@ -50,37 +51,105 @@ const PROJETS_MOCK = [
 
 function Acceuil() {
     const navigate = useNavigate();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    
+    // --- LOGIQUE DE CONNEXION ---
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const user = localStorage.getItem("userId");
+        if (user) {
+            setIsLoggedIn(true);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.clear();
+        sessionStorage.clear();
+        setIsLoggedIn(false);
+        setIsMenuOpen(false);
+        window.location.href = "/"; 
+    };
 
     return (
         <div className={style.authPage}>
-            <header>
+            <header className={style.headerMain}>
                 <div className={style.logoContainer}>
                     <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>
-                <div>
-                    <button className={style.btnConnection} onClick={() => navigate("/connection")}>Connexion</button>
-                    <button className={style.btnConnection} onClick={() => navigate("/inscription")}>Inscription</button>
-                    <button className={style.apres} onClick={() => navigate("/profil")}>Profil</button>
+                <div className={style.headerActions}>
+                    
+                    {/* BOUTON CONNEXION : N'apparaît que si non connecté */}
+                    {!isLoggedIn && (
+                        <button className={style.btnConnection} onClick={() => navigate("/connection")}>
+                            Connexion
+                        </button>
+                    )}
+                    
+                    {/* MENU PROFIL : N'apparaît que si connecté */}
+                    {isLoggedIn && (
+                        <div className={style.profileContainer}>
+                            <button 
+                                className={style.btnProfilTrigger} 
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            >
+                                Profil <span className={style.arrow}>{isMenuOpen ? "▲" : "▼"}</span>
+                            </button>
+
+                            {isMenuOpen && (
+                                <div className={style.dropdownMenu}>
+                                    <button onClick={() => { setIsMenuOpen(false); navigate("/profil"); }}>
+                                        👤 Mon profil
+                                    </button>
+                                    <button onClick={() => navigate("/creation")}>
+                                        📂 Nouveau projet
+                                    </button>
+                                    <button onClick={() => navigate("/composants")}>
+                                        🧩 Voir composants
+                                    </button>
+                                    <button onClick={() => { setIsMenuOpen(false); navigate("/mprofil"); }}>
+                                        ⚙️ Paramètres
+                                    </button>
+                                    <div className={style.menuDivider}></div>
+                                    <button className={style.btnLogout} onClick={handleLogout}>
+                                        Déconnexion
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </header>
 
             <main className={style.mainBox}>
-                {/* Sidebar Gauche */}
+                {/* COLONNE GAUCHE */}
                 <aside className={style.box}>
-                    <h3>Projets récents</h3>
-                    {PROJETS_MOCK.slice(0, 3).map(p => (
+                    <h3>Projets visités récemment</h3>
+                    {PROJETS_MOCK.slice(0, 4).map(p => (
+                        <button key={p.id} className={style.addBlock} onClick={() => navigate(`/projet/${p.id}`)}>
+                            • {p.titre}
+                        </button>
+                    ))}
+                    <br /><br />
+                    <h3>Projets likés</h3>
+                    {PROJETS_MOCK.slice(0, 4).map(p => (
                         <button key={p.id} className={style.addBlock} onClick={() => navigate(`/projet/${p.id}`)}>
                             • {p.titre}
                         </button>
                     ))}
                 </aside>
 
-                {/* Section Centrale */}
+                {/* COLONNE CENTRE */}
                 <section className={style.sectionCenter}>
                     <div className={style.searchBar}>
                         <input className={style.searchInput} type="text" placeholder="Rechercher un projet..." />
-                        <button className={style.searchButton}>Rechercher</button>
+                        <button className={style.searchButton}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
                     </div>
 
                     <h3 className={style.sectionTitle}>Projets disponibles</h3>
@@ -114,15 +183,30 @@ function Acceuil() {
                     </div>
                 </section>
 
-                {/* Sidebar Droite */}
+                {/* COLONNE DROITE */}
                 <aside className={style.box}>
-                    <h3>Statistiques</h3>
-                    <button onClick={() => navigate("/creation")}>• Nouveau projet</button>
-                    <button onClick={() => navigate("/composants")}>• Voir composants</button>
+                    <h3>Projets en cours</h3>
+                    {PROJETS_MOCK.slice(0, 4).map(p => (
+                        <button key={p.id} className={style.addBlock} onClick={() => navigate(`/projet/${p.id}`)}>
+                            • {p.titre}
+                        </button>
+                    ))}
+                    <br /><br />
+                    <h3>Panier</h3>
+                    <button onClick={() => navigate("/panier")}>• Voir panier</button>
                 </aside>
             </main>
+
+            <footer className={style.footer}>
+                <p>© 2026 ProjetHub. Tous droits réservés.</p>
+                <div className={style.footerNav}>
+                    <button className={style.footerBtn} onClick={() => navigate("/contact")}>Contact</button>
+                    <button className={style.footerBtn} onClick={() => navigate("/a_propos")}>À propos</button>
+                    <button className={style.footerBtn} onClick={() => navigate("/faq")}>FAQ</button>
+                </div>
+            </footer>
         </div>
     );
 }
 
-export default Acceuil
+export default Acceuil;

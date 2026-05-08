@@ -19,7 +19,6 @@ header {
     margin-bottom: 30px;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
-    border-radius: 20px;
 }
 
 header a,
