@@ -31,4 +31,5 @@ yarn-error.log*
 package.json
 package-lock.json
 
+# Configuration locale de la base de données
 database.ts
