@@ -23,7 +23,7 @@ app.get('/api/data', (req, res) => {
 });
 
 // --- LE BLOC DE SYNCHRO (C'est ici que tout se joue) ---
-sequelize.sync({ alter: true })
+sequelize.sync({ force: true })
     .then(() => {
         console.log("✅ Base de données PostgreSQL synchronisée");
 
