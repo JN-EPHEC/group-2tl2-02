@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { validatePassword, hashPassword, comparePassword } from '../utils/Password'; 
 import { isValidEmail } from '../utils/emailValidator';
-import { Project, Image, User, video, Tâche, Composant } from '../models/lien_inter/index';
+import { Project, Image, User, video, Tâche, Composant, History } from '../models/lien_inter/index';
 import { Model } from 'sequelize';
 
 
@@ -176,7 +176,7 @@ export const getAllProjects = async (req: Request, res: Response) => {
 };
 export const deleteProject = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params; // On récupère l'ID dans l'URL (ex: /projects/5)
+        const { id } = req.params; 
 
         const deleted = await Project.destroy({
             where: { id: id }
@@ -206,5 +206,54 @@ export const deleteUser = async (req: Request, res: Response) => {
         return res.status(404).json({ message: "Utilisateur non trouvé." });
     } catch (error) {
         res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur", error });
+    }
+};
+
+
+export const Visite_Enregistrer = async (req: Request, res: Response) => {
+    try {
+        const { userId, projectId } = req.body;
+
+        
+        await History.upsert({
+            userId,
+            projectId,
+            visitedAt: new Date()
+        });
+
+        res.status(200).json({ message: "Visite enregistrée" });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur history", error });
+    }
+};
+
+export const getVisite = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+
+        
+        const user = await User.findByPk(Number(userId), {
+            include: [{
+                model: Project,
+                as: 'VisitedProjects', 
+                through: { attributes: [] }, 
+                attributes: ['id', 'title', 'description'] 
+            }],
+          
+            order: [[ { model: Project, as: 'VisitedProjects' }, History, 'visitedAt', 'DESC' ]],
+            limit: 4
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        
+        const projects = user.get('VisitedProjects');
+
+        res.status(200).json(projects || []);
+    } catch (error) {
+        console.error("Erreur récup history:", error);
+        res.status(500).json({ message: "Erreur serveur lors de la récupération de l'historique" });
     }
 };
