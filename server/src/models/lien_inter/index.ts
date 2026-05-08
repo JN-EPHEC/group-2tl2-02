@@ -5,7 +5,7 @@ import video from '../project.video';
 import Badge from '../project.badge';
 import Composant from '../project.composant';
 import Tâche from '../project.tâche';
-
+import History from '../project.history';
 
 // Proj_image
 Project.belongsToMany(Image, {
@@ -120,4 +120,21 @@ Tâche.belongsToMany( Project, {
     foreignKey: 'TId',
     otherKey: 'PId'
 })
-export { Project, Image, User, video, Badge, Tâche, Composant };
+
+
+// project.history
+
+User.belongsToMany(Project, {
+    through: History,
+    foreignKey: 'Uid',
+    otherKey: 'projectId',
+    as: 'VisitedProjects'
+});
+
+Project.belongsToMany(User, {
+    through: History,
+    foreignKey: 'PId',
+    otherKey: 'userId'
+});
+
+export { Project, Image, User, video, Badge, Tâche, Composant, History };
