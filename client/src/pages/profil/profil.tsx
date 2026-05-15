@@ -6,7 +6,6 @@ function Profil() {
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState("projets")
     const [error, setError] = useState("")
-    
     const [user, setUser] = useState({
         pseudo: "Chargement...",
         firstName: "",
@@ -15,44 +14,56 @@ function Profil() {
         stats: { projets: 0, favoris: 0, badges: 0 }
     })
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userId = localStorage.getItem("userId")
-                
-                if (!userId) {
-                    setError("Vous devez être connecté pour accéder à cette page")
-                    setTimeout(() => navigate("/connection"), 2000)
-                    return
-                }
-
-                // Utilisation de /api/users/ comme dans ton code d'origine
-                const response = await fetch(`/api/users/${userId}`)
-                const data = await response.json()
-
-                if (!response.ok) {
-                    setError(data.message || "Erreur lors de la récupération des données")
-                    return
-                }
-
-                // --- LE FIX POUR LE PSEUDO "ERREUR" ---
-                // Si l'API renvoie un tableau [{}], on prend data[0]
-                const userData = Array.isArray(data) ? data[0] : data
-
-                setUser({
-                    pseudo: userData.pseudo || "Utilisateur",
-                    firstName: userData.firstName || "",
-                    lastName: userData.lastName || "",
-                    bio: userData.bio || "Aucune bio pour le moment.",
-                    stats: { projets: 42, favoris: 25, badges: 6 } // Valeurs mockées comme avant
-                })
-            } catch (err) {
-                console.error("Erreur de fetch :", err)
-                setError("Impossible de joindre le serveur. Vérifiez que l'API est démarrée.")
+    const fetchUserData = async () => {
+        try {
+            const userId = localStorage.getItem("userId")
+            
+            if (!userId) {
+                setError("Vous devez être connecté pour accéder à cette page")
+                setTimeout(() => navigate("/connection"), 2000)
+                return
             }
+
+            const response = await fetch(`/api/users/${userId}`)
+            const data = await response.json()
+
+            if (!response.ok) {
+                setError(data.message || "Erreur lors de la récupération des données")
+                return
+            }
+
+            const userData = Array.isArray(data) ? data[0] : data
+
+            setUser({
+                pseudo: userData.pseudo || "Utilisateur",
+                firstName: userData.firstName || "",
+                lastName: userData.lastName || "",
+                bio: userData.bio || "Aucune bio pour le moment.",
+                stats: {
+                    projets: userData.stats?.projets ?? 0,
+                    favoris: userData.stats?.favoris ?? 0,
+                    badges: userData.stats?.badges ?? 0
+                }
+            })
+            setError("")
+        } catch (err) {
+            console.error("Erreur de fetch :", err)
+            setError("Impossible de joindre le serveur. Vérifiez que l'API est démarrée.")
         }
+    }
+
+    useEffect(() => {
         fetchUserData()
     }, [navigate])
+
+    useEffect(() => {
+        const handleFocus = () => {
+            fetchUserData()
+        }
+
+        window.addEventListener('focus', handleFocus)
+        return () => window.removeEventListener('focus', handleFocus)
+    }, [])
 
     return (
         <div className={styles.profilPage}>
