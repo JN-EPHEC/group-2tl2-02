@@ -209,6 +209,54 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 };
 
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { firstName, lastName, email, bio, pseudo, age, password } = req.body;
+
+        const user = await User.findByPk(Number(id));
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé." });
+        }
+
+        const updateData: any = {};
+        if (firstName !== undefined) updateData.firstName = firstName;
+        if (lastName !== undefined) updateData.lastName = lastName;
+        if (email !== undefined) {
+            if (!isValidEmail(email)) {
+                return res.status(400).json({ message: "L'email n'est pas valide." });
+            }
+            updateData.email = email;
+        }
+        if (bio !== undefined) updateData.bio = bio;
+        if (pseudo !== undefined) updateData.pseudo = pseudo;
+        if (age !== undefined) updateData.age = age;
+        if (password !== undefined && password !== "") {
+            if (!validatePassword(password, age || (user as any).age)) {
+                return res.status(400).json({ message: "Le mot de passe ne respecte pas les règles de sécurité pour ton groupe d'âge." });
+            }
+            updateData.password = await hashPassword(password);
+        }
+
+        await user.update(updateData);
+
+        res.status(200).json({
+            message: "Profil mis à jour avec succès.",
+            user: {
+                id: user.Uid,
+                pseudo: user.pseudo,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                bio: user.bio,
+                age: user.age
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour du profil", error });
+    }
+};
 
 export const Visite_Enregistrer = async (req: Request, res: Response) => {
     try {
@@ -270,7 +318,24 @@ export const getUserById = async (req: Request, res: Response) => {
 
         if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
         
-        res.status(200).json(user);
+        const projetsCount = typeof (user as any).countAuteurs === 'function'
+            ? await (user as any).countAuteurs()
+            : 0;
+        const favorisCount = typeof (user as any).countFavoris === 'function'
+            ? await (user as any).countFavoris()
+            : 0;
+        const badgesCount = typeof (user as any).countBadge === 'function'
+            ? await (user as any).countBadge()
+            : 0;
+
+        res.status(200).json({
+            ...user.get({ plain: true }),
+            stats: {
+                projets: projetsCount,
+                favoris: favorisCount,
+                badges: badgesCount
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur", error });
     }

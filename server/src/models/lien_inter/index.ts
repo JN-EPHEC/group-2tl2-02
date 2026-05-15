@@ -25,7 +25,8 @@ Image.belongsToMany(Project, {
 User.belongsToMany(Project, {
     through: 'Proj_user',
     foreignKey: 'Uid',
-    otherKey: 'PId'
+    otherKey: 'PId',
+    as: 'Auteurs'
 });
 
 Project.belongsToMany(User, {
@@ -68,7 +69,8 @@ Project.belongsToMany(video, {
 User.belongsToMany(Project, {
     through: 'Proj_user',
     foreignKey: 'Uid',
-    otherKey: 'PId'
+    otherKey: 'PId',
+    as: 'Favoris'
 });
 
 Project.belongsToMany(User, {
