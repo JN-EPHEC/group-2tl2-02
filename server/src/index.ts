@@ -14,10 +14,6 @@ const port = 3000;
 
 app.use(requestLogger);
 
-// Vérifie les routes avec :id
-app.use('/api/users/:id', checkIdParam);
-app.use('/api/projects/:id', checkIdParam);
-
 // ... après app.use(express.json())
 app.use('/api/users', userRoutes); // 2. Utilisation
 

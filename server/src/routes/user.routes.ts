@@ -3,7 +3,6 @@ import { Router } from 'express';
 import User from '../models/project.user';
 import { loginUser, registerUser, deleteUser, getUserById, updateUser } from '../controllers/projects.controller';
 import { createProject, getAllProjects, deleteProject, getProjectById} from '../controllers/projects.controller'
-import { get } from 'http';
 
 const router = Router();
 
@@ -28,8 +27,8 @@ router.get('/:id', getUserById);
 
 router.put('/:id', updateUser);
 
-router.delete('/project/:id', deleteProject);
 router.delete('/:id', deleteUser);
+router.delete('/project/:id', deleteProject);
 // Route pour le profil : GET /api/users/1
 
 export default router;
