@@ -4,6 +4,8 @@ import { User, Project, Image } from './models/lien_inter/index' // Vérifie bie
 import sequelize from './config/database';
 import userRoutes from './routes/user.routes'; // 1. Importation
 import { requestLogger } from './middlewars/logger'
+import { errorHandler } from './middlewars/errorHandler';
+import { checkIdParam } from './middlewars/checkIdParam';
 
 const app = express();
 app.use(express.json());
@@ -12,15 +14,22 @@ const port = 3000;
 
 app.use(requestLogger);
 
+// Vérifie les routes avec :id
+app.use('/api/users/:id', checkIdParam);
+app.use('/api/projects/:id', checkIdParam);
+
 // ... après app.use(express.json())
 app.use('/api/users', userRoutes); // 2. Utilisation
 
 
 
-// Ta route pour la bannière
+//  route pour la bannière
 app.get('/api/data', (req, res) => {
     res.send(User);
 });
+
+app.use(errorHandler);
+
 
 // --- LE BLOC DE SYNCHRO (C'est ici que tout se joue) ---
 sequelize.sync({ force: true })
