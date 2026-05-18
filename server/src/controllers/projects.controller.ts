@@ -313,7 +313,7 @@ export const getUserById = async (req: Request, res: Response) => {
             include: [
                 { model: Image, as: 'Avatar', through: { attributes: [] } }
             ],
-            attributes: { exclude: ['password'] } // On ne renvoie JAMAIS le mot de passe !
+            attributes: { exclude: ['password'] }
         });
 
         if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
@@ -347,43 +347,37 @@ export const getProjectById = async (req: Request, res: Response) => {
 
         const project = await Project.findByPk(Number(id), {
             include: [
-                // 1. L'image du projet (MCD image_975652.png)
                 { 
                     model: Image, 
                     as: 'Image', 
                     attributes: ['I_id', 'I_img'] 
                 },
-                // 2. Les auteurs (Users)
                 { 
                     model: User, 
                     as: 'Auteurs', 
                     through: { attributes: [] },
-                    attributes: ['id', 'pseudo', 'firstName'] 
+                    attributes: ['Uid', 'pseudo', 'firstName']  // 👈 'id' → 'Uid'
                 },
-                // 3. La vidéo associée
                 { 
                     model: video, 
                     as: 'video', 
                     through: { attributes: [] } 
                 },
-                // 4. Les composants (MCD image_9a22b9.png - table Proj_composant)
                 { 
                     model: Composant, 
                     as: 'composant', 
                     through: { attributes: [] } 
                 },
-                // 5. Les tâches (Table Proj_Tâche)
                 { 
                     model: Tâche, 
                     as: 'Tâche', 
                     through: { attributes: [] } 
                 },
-                // 6. Les favoris (Users qui aiment le projet)
                 { 
                     model: User, 
                     as: 'favoris', 
                     through: { attributes: [] },
-                    attributes: ['id', 'pseudo'] 
+                    attributes: ['Uid', 'pseudo']  // 👈 'id' → 'Uid'
                 }
             ]
         });
