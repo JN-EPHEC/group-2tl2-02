@@ -67,14 +67,14 @@ Project.belongsToMany(video, {
 
 // projet_favoris
 User.belongsToMany(Project, {
-    through: 'Proj_user',
+    through: 'Proj_favoris',  
     foreignKey: 'Uid',
     otherKey: 'PId',
     as: 'Favoris'
 });
 
 Project.belongsToMany(User, {
-    through: 'Proj_user',
+    through: 'Proj_favoris',  
     foreignKey: 'PId',
     otherKey: 'Uid',
     as: 'favoris'
