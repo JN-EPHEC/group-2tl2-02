@@ -1,44 +1,42 @@
 import { displayBanner } from './startup';
 import express from 'express';
-import { User, Project, Image } from './models/lien_inter/index' // Vérifie bien que le nom du fichier est correct
+import { User, Project, Image } from './models/lien_inter/index'
 import sequelize from './config/database';
-import userRoutes from './routes/user.routes'; // 1. Importation
+import userRoutes from './routes/user.routes';
 import { requestLogger } from './middlewars/logger'
 import { errorHandler } from './middlewars/errorHandler';
 import { checkIdParam } from './middlewars/checkIdParam';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
 
 const app = express();
 app.use(express.json());
 const port = 3000;
 
-
 app.use(requestLogger);
 
-// Vérifie les routes avec :id
+app.use('/api/users', userRoutes);
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// ... après app.use(express.json())
-app.use('/api/users', userRoutes); // 2. Utilisation
+// 👇 Seulement pour les vrais IDs numériques
+app.use('/api/users/:id', checkIdParam);
+app.use('/api/projects/:id', checkIdParam);
 
-
-
-//  route pour la bannière
 app.get('/api/data', (req, res) => {
     res.send(User);
 });
 
 app.use(errorHandler);
 
-
-// --- LE BLOC DE SYNCHRO (C'est ici que tout se joue) ---
 sequelize.sync({ force: true })
     .then(() => {
         console.log("✅ Base de données PostgreSQL synchronisée");
 
-        // On lance le serveur SEULEMENT quand la DB est prête
         app.listen(port, () => {
-            console.log(displayBanner()); // On affiche la bannière dans la console
+            console.log(displayBanner());
             console.log(`🚀 Serveur lancé sur : http://localhost:${port}/api/users`);
+            console.log(`📄 Swagger dispo sur : http://localhost:${port}/api-docs`);
         });
     })
     .catch((error) => {
