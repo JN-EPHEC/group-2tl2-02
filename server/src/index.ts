@@ -28,7 +28,7 @@ app.use(errorHandler);
 
 
 // --- LE BLOC DE SYNCHRO (C'est ici que tout se joue) ---
-sequelize.sync({ force: true })
+sequelize.sync({ alter: true })
     .then(() => {
         console.log("✅ Base de données PostgreSQL synchronisée");
 
