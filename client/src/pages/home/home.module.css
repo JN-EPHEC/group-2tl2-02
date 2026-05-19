@@ -258,6 +258,9 @@
 
 small { color: #888; font-size: 0.7rem; }
 
+.metaSmall { color: #888; font-size: 0.75rem; font-weight: 500; }
+.extra .metaSmall { color: #888; }
+
 /* --- Footer --- */
 .footer {
     padding: 20px 40px;

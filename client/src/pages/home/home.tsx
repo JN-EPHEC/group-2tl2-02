@@ -2,59 +2,38 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import style from "./home.module.css";
 
-const PROJETS_MOCK = [
-    {
-        id: 1,
-        titre: "Station météo IoT",
-        description: "Mesurez température et humidité en WiFi.",
-        difficulte: "Intermédiaire",
-        duree: "4h",
-        auteur: "Eliott",
-        date: "26/03/2026",
-        tags: ["IoT", "Arduino"],
-        image: "./logo.png"
-    },
-    {
-        id: 2,
-        titre: "Ads Block Physique",
-        description: "Bloquez les publicités sur votre réseau local.",
-        difficulte: "Avancé",
-        duree: "6h",
-        auteur: "Marc",
-        date: "25/03/2026",
-        tags: ["Réseau", "RPi"],
-        image: "./logo.png"
-    },
-    {
-        id: 3,
-        titre: "Système d'alarme maison",
-        description: "Protégez votre maison avec des capteurs de mouvement.",
-        difficulte: "Intermédiaire",
-        duree: "5h",
-        auteur: "Sophie",
-        date: "24/03/2026",
-        tags: ["Sécurité", "Arduino"],
-        image: "./logo.png"
-    },
-    {
-        id: 4,
-        titre: "Robot suiveur de ligne",
-        description: "Construisez un robot qui suit une ligne noire.",
-        difficulte: "Débutant",
-        duree: "3h",
-        auteur: "Léa",
-        date: "23/03/2026",
-        tags: ["Robotique", "Arduino"],
-        image: "./logo.png"
-    },
-];
-
 function Acceuil() {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     
     // --- LOGIQUE DE CONNEXION ---
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [projects, setProjects] = useState<any[]>([])
+    const [loadingProjects, setLoadingProjects] = useState(true)
+    const [visitedProjects, setVisitedProjects] = useState<any[]>([])
+    const [likedProjects, setLikedProjects] = useState<any[]>([])
+    const [inProgressProjects, setInProgressProjects] = useState<any[]>([])
+    const [cartItems, setCartItems] = useState<any[]>([])
+
+    const handleProjectClick = (project: any) => {
+        if (project?.id) {
+            localStorage.setItem("selectedProjectId", String(project.id))
+            localStorage.setItem("selectedProjectData", JSON.stringify(project))
+        }
+        // update visited projects list (most recent first, unique)
+        try {
+            const raw = localStorage.getItem('visitedProjects')
+            const arr = raw ? JSON.parse(raw) : []
+            const filtered = arr.filter((p: any) => p.id !== project.id)
+            const newList = [project, ...filtered].slice(0, 8)
+            localStorage.setItem('visitedProjects', JSON.stringify(newList))
+            setVisitedProjects(newList)
+        } catch (err) {
+            console.error('Erreur updating visitedProjects', err)
+        }
+
+        navigate("/projet")
+    }
 
     useEffect(() => {
         const user = localStorage.getItem("userId");
@@ -70,6 +49,44 @@ function Acceuil() {
         setIsMenuOpen(false);
         window.location.href = "/"; 
     };
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                setLoadingProjects(true)
+                const res = await fetch('/api/users/AllProject')
+                if (!res.ok) throw new Error('Erreur API')
+                const data = await res.json()
+                if (Array.isArray(data)) setProjects(data)
+            } catch (err) {
+                console.error('Impossible de récupérer les projets :', err)
+            } finally {
+                setLoadingProjects(false)
+            }
+        }
+
+        fetchProjects()
+        // load local lists
+        try {
+            const v = JSON.parse(localStorage.getItem('visitedProjects') || '[]')
+            setVisitedProjects(Array.isArray(v) ? v : [])
+            const ip = JSON.parse(localStorage.getItem('inProgress') || '[]')
+            setInProgressProjects(Array.isArray(ip) ? ip : [])
+            const c = JSON.parse(localStorage.getItem('cart') || '[]')
+            setCartItems(Array.isArray(c) ? c : [])
+            // if logged in, fetch user favoris
+            const userId = localStorage.getItem('userId')
+            if (userId) {
+                setIsLoggedIn(true)
+                fetch(`/api/users/${userId}/favoris`)
+                    .then(r => r.ok ? r.json() : [])
+                    .then(data => { if (Array.isArray(data)) setLikedProjects(data) })
+                    .catch(e => console.error('Erreur favoris', e))
+            }
+        } catch (err) {
+            console.error('Erreur lecture localStorage', err)
+        }
+    }, [])
 
     return (
         <div className={style.authPage}>
@@ -125,19 +142,29 @@ function Acceuil() {
             <main className={style.mainBox}>
                 {/* COLONNE GAUCHE */}
                 <aside className={style.box}>
-                    <h3>Projets visités récemment</h3>
-                    {PROJETS_MOCK.slice(0, 4).map(p => (
-                        <button key={p.id} className={style.addBlock} onClick={() => navigate(`/projet/${p.id}`)}>
-                            • {p.titre}
-                        </button>
-                    ))}
+                        <h3>Projets visités récemment</h3>
+                        {visitedProjects.length === 0 ? (
+                            <p>Aucun projet visité récemment.</p>
+                        ) : (
+                            visitedProjects.slice(0,4).map((p: any) => (
+                                <button key={p.id} className={style.addBlock} onClick={() => handleProjectClick(p)}>
+                                    • {p.titre || p.title}
+                                </button>
+                            ))
+                        )}
                     <br /><br />
                     <h3>Projets likés</h3>
-                    {PROJETS_MOCK.slice(0, 4).map(p => (
-                        <button key={p.id} className={style.addBlock} onClick={() => navigate(`/projet/${p.id}`)}>
-                            • {p.titre}
-                        </button>
-                    ))}
+                    {!isLoggedIn ? (
+                        <p>Connectez-vous pour voir vos favoris.</p>
+                    ) : likedProjects.length === 0 ? (
+                        <p>Vous n'avez pas encore de favoris.</p>
+                    ) : (
+                        likedProjects.slice(0,4).map((p: any) => (
+                            <button key={p.id} className={style.addBlock} onClick={() => handleProjectClick(p)}>
+                                • {p.titre || p.title}
+                            </button>
+                        ))
+                    )}
                 </aside>
 
                 {/* COLONNE CENTRE */}
@@ -155,26 +182,29 @@ function Acceuil() {
                     <h3 className={style.sectionTitle}>Projets disponibles</h3>
                     
                     <div className={style.projectList}>
-                        {PROJETS_MOCK.map((projet) => (
+                        {loadingProjects && <p>Chargement des projets...</p>}
+                        {!loadingProjects && projects.length === 0 && <p>Aucun projet disponible.</p>}
+                        {!loadingProjects && projects.length > 0 && projects.map((projet) => (
                             <button 
                                 key={projet.id} 
-                                className={style.projectCard} 
-                                onClick={() => navigate(`/projet/${projet.id}`)}
+                                className={style.projectCard}
+                                onClick={() => handleProjectClick(projet)}
+                                style={{ cursor: 'pointer' }}
                             >
                                 <div className={style.imageProject}>
-                                    <img src={projet.image} alt={projet.titre} />
+                                    <img src={projet.image || projet.Image?.[0]?.I_img || "./logo.png"} alt={projet.titre || projet.title} />
                                 </div>
                                 <div className={style.projectInfo}>
-                                    <h4>{projet.titre}</h4>
+                                    <h4>{projet.titre || projet.title}</h4>
                                     <p>{projet.description}</p>
                                     <div className={style.extra}>
-                                        <span>{projet.difficulte}</span>
-                                        <span>{projet.duree}</span>
+                                        <small className={style.metaSmall}>difficulté : {projet.difficulte || projet.difficulty || 'N/A'}/6</small>
+                                        <small className={style.metaSmall}>durées : {projet.duree || projet.duration || 'N/A'}h</small>
                                     </div>
-                                    <small>Par {projet.auteur} • {projet.date}</small>
+                                    <small>Par {projet.auteur || projet.Auteurs?.[0]?.pseudo || 'Auteur'} • {projet.date || projet.createdAt}</small>
                                 </div>
                                 <div className={style.tags}>
-                                    {projet.tags.map((tag, index) => (
+                                    {(projet.tags || []).map((tag: string, index: number) => (
                                         <span key={index}>{tag}</span>
                                     ))}
                                 </div>  
@@ -186,14 +216,18 @@ function Acceuil() {
                 {/* COLONNE DROITE */}
                 <aside className={style.box}>
                     <h3>Projets en cours</h3>
-                    {PROJETS_MOCK.slice(0, 4).map(p => (
-                        <button key={p.id} className={style.addBlock} onClick={() => navigate(`/projet/${p.id}`)}>
-                            • {p.titre}
-                        </button>
-                    ))}
+                    {inProgressProjects.length === 0 ? (
+                        <p>Aucun projet en cours.</p>
+                    ) : (
+                        inProgressProjects.slice(0,4).map((p: any) => (
+                            <button key={p.id} className={style.addBlock} onClick={() => handleProjectClick(p)}>
+                                • {p.titre || p.title}
+                            </button>
+                        ))
+                    )}
                     <br /><br />
                     <h3>Panier</h3>
-                    <button onClick={() => navigate("/panier")}>• Voir panier</button>
+                    <button onClick={() => navigate("/panier")}>• Voir panier ({cartItems.length})</button>
                 </aside>
             </main>
 
