@@ -47,17 +47,13 @@ function Projet() {
         fetchProject()
     }, [id])
 
-    const [composantsSelectionnes, setComposantsSelectionnes] = useState<any[]>([])
-
-    // Déplacer un composant vers la sélection
-    const ajouterComposantSelection = (composant: any) => {
-        setComposantsSelectionnes([...composantsSelectionnes, composant])
+    const scrollToEtape = (etapeNumber: number) => {
+        const element = document.getElementById(`etape-${etapeNumber}`)
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' })
+        }
     }
 
-    // Remettre un composant dans la liste disponible
-    const retirerComposantSelection = (composant: any) => {
-        setComposantsSelectionnes(composantsSelectionnes.filter((c: any) => c.id !== composant.id || c.CId !== composant.CId))
-    }
     return (
         <div className={styles.projetPage}>
             <header className={styles.pageHeader}>
@@ -93,8 +89,11 @@ function Projet() {
                                 <h3>Table des matières</h3>
                                 <ol>
                                     {project.Tâche.map((tache: any, index: number) => (
-                                        <li key={tache.TId || index}>
-                                            <a href={`#PE${index + 1}`}>{tache.title}</a>
+                                        <li
+                                            key={tache.TId || index}
+                                            onClick={() => scrollToEtape(index + 1)}
+                                        >
+                                            Étape {index + 1} - {tache.title}
                                         </li>
                                     ))}
                                 </ol>
@@ -123,7 +122,7 @@ function Projet() {
                     
                     {project?.Tâche && project.Tâche.length > 0 ? (
                         project.Tâche.map((tache: any, index: number) => (
-                            <section key={tache.TId || index} id={`PE${index + 1}`}>
+                            <section key={tache.TId || index} id={`etape-${index + 1}`}>
                                 <h2>{tache.title}</h2>
                                 <img src="" alt={`img${tache.title}`} />
                                 <div>
@@ -134,7 +133,7 @@ function Projet() {
                         ))
                     ) : (
                         <>
-                            <section id="PE1">
+                            <section id="etape-1">
                                 <h2>Titre de l'étape 1</h2>
                                 <img src="" alt="imgEtape1" />
                                 <div>
@@ -156,7 +155,6 @@ function Projet() {
                                         <div 
                                             key={composant.CId || composant.id} 
                                             className={styles.composantItem}
-                                            onClick={() => ajouterComposantSelection(composant)}
                                         >
                                             <span className={styles.composantIcon}></span>
                                             <span>{composant.nom}</span>
@@ -164,39 +162,6 @@ function Projet() {
                                     ))
                             ) : (
                                 <p className={styles.emptyMessage}>Aucun composant nécessaire</p>
-                            )}
-                        </div>
-                    </section>
-                    <section className={styles.compoPoss}>
-                        <h3>Composants possédés :</h3>
-                        <div className={styles.composantsList}>
-                            {composantsSelectionnes.length === 0 ? (
-                                project?.composant && project.composant.filter((c: any) => c.possédé).length > 0 ? (
-                                    project.composant
-                                        .filter((c: any) => c.possédé)
-                                        .map((composant: any) => (
-                                            <div 
-                                                key={composant.CId || composant.id} 
-                                                className={styles.composantItemSelected}
-                                            >
-                                                <span className={styles.composantIcon}></span>
-                                                <span>{composant.nom}</span>
-                                            </div>
-                                        ))
-                                ) : (
-                                    <p className={styles.emptyMessage}>Aucun composant sélectionné</p>
-                                )
-                            ) : (
-                                composantsSelectionnes.map(composant => (
-                                    <div 
-                                        key={composant.id} 
-                                        className={styles.composantItemSelected}
-                                        onClick={() => retirerComposantSelection(composant)}
-                                    >
-                                        <span className={styles.composantIcon}></span>
-                                        <span>{composant.nom}</span>
-                                    </div>
-                                ))
                             )}
                         </div>
                     </section>
