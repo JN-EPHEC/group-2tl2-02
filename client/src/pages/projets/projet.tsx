@@ -1,10 +1,22 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import styles from "./projet.module.css"
 
 
 function Projet() {
     const navigate = useNavigate()
+    const [project, setProject] = useState<any>(null)
+
+    useEffect(() => {
+        const stored = localStorage.getItem("selectedProjectData")
+        if (stored) {
+            try {
+                setProject(JSON.parse(stored))
+            } catch (err) {
+                console.error("Impossible de parser le projet sélectionné", err)
+            }
+        }
+    }, [])
 
     // Composants disponibles et sélectionnés
     const [composantsDisponibles, setComposantsDisponibles] = useState([
@@ -48,13 +60,17 @@ function Projet() {
 
             <div className={styles.projetColumns}>
                 <div className={styles.projetInfo}>
-                    <p><button class="btnConnection">⭐​</button></p>
-                    <img className={styles.avatarImage} src="" alt="img du projet" />
-                    <h1 className={styles.projetPseudo}>Titre du projet</h1>
+                    <p><button className="btnConnection">⭐​</button></p>
+                    <img
+                        className={styles.avatarImage}
+                        src={project?.Image?.[0]?.I_img || "./logo.png"}
+                        alt={project?.title || "image du projet"}
+                    />
+                    <h1 className={styles.projetPseudo}>{project?.title || "Titre du projet"}</h1>
                     <div className={styles.projetBio}>
                         <h3>Description</h3>
                         <span className={styles.projetDescription}>
-                            description du projet
+                            {project?.description || "description du projet"}
                         </span>
                         <div id="projetTableMatier">
                             <h3>Table des matieres</h3>
