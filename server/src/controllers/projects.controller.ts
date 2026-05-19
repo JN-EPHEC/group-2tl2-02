@@ -81,10 +81,36 @@ export const loginUser = async (req: Request, res: Response) => {
 // get project et nouveau projet :
 export const createProject = async (req: Request, res: Response) => {
     try {
-        const { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId } = req.body;
+        const {
+            title,
+            description,
+            difficulty,
+            duration,
+            date,
+            isPublic,
+            imageUrl,
+            Uid,
+            VId,
+            CId,
+            TId,
+            composants,
+            etapes
+        } = req.body;
 
-
-        
+        console.log('createProject body:', {
+            title,
+            description,
+            difficulty,
+            duration,
+            date,
+            isPublic,
+            Uid,
+            VId,
+            CId,
+            TId,
+            composants,
+            etapes
+        });
 
         const newProject = await Project.create({
             title,
@@ -97,23 +123,66 @@ export const createProject = async (req: Request, res: Response) => {
 
         if (imageUrl) {
             const newImage = await Image.create({ I_img: imageUrl });
-            await (newProject as any).addImage(newImage); 
+            await (newProject as any).addImage(newImage);
         }
-        if (Uid) {
 
-            await (newProject as any).addAuteurs(Uid);
+        let projectUser = null;
+        if (Uid !== undefined && Uid !== null && Uid !== '') {
+            const uidNumber = Number(Uid);
+            if (!Number.isNaN(uidNumber) && uidNumber > 0) {
+                projectUser = await User.findByPk(uidNumber);
+            }
+            if (projectUser) {
+                try {
+                    await (newProject as any).addAuteurs(projectUser);
+                } catch (userError) {
+                    console.warn(`Impossible d'ajouter l'auteur pour Uid=${Uid}:`, userError);
+                }
+                try {
+                    await (newProject as any).addFavoris(projectUser);
+                } catch (userError) {
+                    console.warn(`Impossible d'ajouter favoris pour Uid=${Uid}:`, userError);
+                }
+            } else {
+                console.warn(`Utilisateur introuvable ou Uid invalide (${Uid}) ; associations ignorées.`);
+            }
         }
+
         if (VId) {
             await (newProject as any).addVideo(VId);
-
         }
-        if (Uid) {
 
-            await (newProject as any).addFavoris(Uid);
+        if (Array.isArray(composants) && composants.length > 0) {
+            const createdComposants = await Promise.all(
+                composants
+                    .filter((comp: any) => typeof comp.nom === 'string' && comp.nom.trim() !== '')
+                    .map((comp: any) => Composant.create({ nom: comp.nom.trim(), possédé: false }))
+            );
+            if (createdComposants.length > 0) {
+                await (newProject as any).addComposant(createdComposants);
+            }
+        }
+
+        if (Array.isArray(etapes) && etapes.length > 0) {
+            const createdTaches = await Promise.all(
+                etapes
+                    .filter((etape: any) =>
+                        (typeof etape.titre === 'string' && etape.titre.trim() !== '') ||
+                        (typeof etape.description === 'string' && etape.description.trim() !== '')
+                    )
+                    .map((etape: any) =>
+                        Tâche.create({
+                            title: typeof etape.titre === 'string' ? etape.titre.trim() : '',
+                            instruction: typeof etape.description === 'string' ? etape.description.trim() : ''
+                        })
+                    )
+            );
+            if (createdTaches.length > 0) {
+                await (newProject as any).addTâche(createdTaches);
+            }
         }
 
         if (CId) {
-
             await (newProject as any).addComposant(CId);
         }
         if (TId) {

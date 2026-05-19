@@ -126,6 +126,16 @@ function Crea() {
             videoFile,
             videoLink,
             Uid: localStorage.getItem("userId") ? Number(localStorage.getItem("userId")) : undefined,
+            composants: composants
+                .filter(comp => comp.nom.trim() !== '')
+                .map(comp => ({ nom: comp.nom.trim(), possede: false, nombre: comp.nombre })),
+            etapes: etapes
+                .filter(etape => etape.titre.trim() !== '' || etape.description.trim() !== '')
+                .map(etape => ({
+                    titre: etape.titre.trim(),
+                    description: etape.description.trim(),
+                    image: etape.image
+                }))
         }
 
         try {
