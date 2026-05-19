@@ -16,6 +16,14 @@ function Profil() {
     const [projects, setProjects] = useState<any[]>([])
     const [favorites, setFavorites] = useState<any[]>([])
 
+    const handleProjectClick = (project: any) => {
+        if (project?.id) {
+            localStorage.setItem("selectedProjectId", String(project.id))
+            localStorage.setItem("selectedProjectData", JSON.stringify(project))
+        }
+        navigate("/projet")
+    }
+
     const fetchUserData = async () => {
         try {
             const userId = localStorage.getItem("userId")
@@ -135,7 +143,12 @@ function Profil() {
                             <p>Vous n'avez aucun projet enregistré pour le moment.</p>
                         ) : (
                             projects.map((project) => (
-                                <div key={project.id} className={styles.projectCard}>
+                                <div
+                                    key={project.id}
+                                    className={styles.projectCard}
+                                    onClick={() => handleProjectClick(project)}
+                                    style={{ cursor: "pointer" }}
+                                >
                                     <img
                                         className={styles.projectImage}
                                         src={project.Image?.[0]?.I_img || "./logo.png"}
@@ -157,7 +170,12 @@ function Profil() {
                             <p>Vous n'avez aucun favori enregistré pour le moment.</p>
                         ) : (
                             favorites.map((project) => (
-                                <div key={project.id} className={styles.projectCard}>
+                                <div
+                                    key={project.id}
+                                    className={styles.projectCard}
+                                    onClick={() => handleProjectClick(project)}
+                                    style={{ cursor: "pointer" }}
+                                >
                                     <img
                                         className={styles.projectImage}
                                         src={project.Image?.[0]?.I_img || "./logo.png"}
