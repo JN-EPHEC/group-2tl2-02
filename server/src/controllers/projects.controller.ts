@@ -523,7 +523,7 @@ export const getProjectById = async (req: Request, res: Response) => {
                     model: User, 
                     as: 'Auteurs', 
                     through: { attributes: [] },
-                    attributes: ['id', 'pseudo', 'firstName'] 
+                    attributes: ['Uid', 'pseudo', 'firstName'] 
                 },
                 // 3. La vidéo associée
                 { 
@@ -548,7 +548,7 @@ export const getProjectById = async (req: Request, res: Response) => {
                     model: User, 
                     as: 'favoris', 
                     through: { attributes: [] },
-                    attributes: ['id', 'pseudo'] 
+                    attributes: ['Uid', 'pseudo'] 
                 }
             ]
         });

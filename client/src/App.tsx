@@ -21,7 +21,7 @@ function App() {
         <Route path="/profil" element={<Profil />} />
         <Route path="/mprofil" element={<MProfil />} />
         <Route path="/creation" element={<Crea />} />
-        <Route path="/projet" element={<Projet />} />
+        <Route path="/projet/:id" element={<Projet />} />
         <Route path="/contact" element={<ConContact />} />
         <Route path="/a_propos" element={<APropos />} />
         <Route path="/faq" element={<Faq />} />
