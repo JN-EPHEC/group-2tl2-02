@@ -170,13 +170,65 @@
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
 }
 
+.projectCardTop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
 .projectImage {
-    width: 100%;
-    height: 160px;
+    width: 180px;
+    max-width: 100%;
+    height: 140px;
     object-fit: cover;
     border-radius: 18px;
-    margin-bottom: 14px;
     background: #e0e7ff;
+    flex-shrink: 0;
+}
+
+.projectCardInfo {
+    flex: 1;
+    min-width: 220px;
+}
+
+.projectCardHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.projectTitle {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #0f172a;
+}
+
+.editProjectButton {
+    border: none;
+    border-radius: 999px;
+    padding: 10px 16px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.editProjectButton:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.projectMeta {
+    display: block;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 8px;
 }
 
 .projectForm {
@@ -268,17 +320,6 @@ legend {
     padding: 0 10px;
     font-weight: 700;
     color: #1d4ed8;
-}
-
-.projectTitle {
-    margin: 0 0 10px;
-    color: #111827;
-}
-
-.projectMeta {
-    display: block;
-    margin-bottom: 16px;
-    color: #475569;
 }
 
 .badgeCard h2 {

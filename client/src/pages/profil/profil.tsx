@@ -16,12 +16,27 @@ function Profil() {
     const [projects, setProjects] = useState<any[]>([])
     const [favorites, setFavorites] = useState<any[]>([])
 
+    const getProjectRouteId = (project: any) => {
+        return project?.id ?? project?.PId ?? project?._id ?? project?.I_id ?? undefined
+    }
+
     const handleProjectClick = (project: any) => {
-        if (project?.id) {
-            localStorage.setItem("selectedProjectId", String(project.id))
-            localStorage.setItem("selectedProjectData", JSON.stringify(project))
-        }
-        navigate("/projet")
+        const routeId = getProjectRouteId(project)
+        if (!routeId) return
+
+        localStorage.setItem("selectedProjectId", String(routeId))
+        localStorage.setItem("selectedProjectData", JSON.stringify(project))
+        navigate(`/projet/${routeId}`)
+    }
+
+    const handleProjectEdit = (project: any, event: any) => {
+        event.stopPropagation()
+        const routeId = getProjectRouteId(project)
+        if (!routeId) return
+
+        localStorage.setItem("selectedProjectId", String(routeId))
+        localStorage.setItem("selectedProjectData", JSON.stringify(project))
+        navigate(`/creation?edit=true&id=${routeId}`)
     }
 
     const fetchUserData = async () => {
@@ -149,16 +164,29 @@ function Profil() {
                                     onClick={() => handleProjectClick(project)}
                                     style={{ cursor: "pointer" }}
                                 >
-                                    <img
-                                        className={styles.projectImage}
-                                        src={project.Image?.[0]?.I_img || "./logo.png"}
-                                        alt={project.title || "Projet"}
-                                    />
-                                    <h2 className={styles.projectTitle}>{project.title || "Projet sans titre"}</h2>
-                                    <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
-                                    <span className={styles.projectMeta}>
-                                        {project.difficulty ? `Difficulté : ${project.difficulty}` : "Difficulté non renseignée"}
-                                    </span>
+                                    <div className={styles.projectCardTop}>
+                                        <img
+                                            className={styles.projectImage}
+                                            src={project.Image?.[0]?.I_img || "./logo.png"}
+                                            alt={project.title || "Projet"}
+                                        />
+                                        <div className={styles.projectCardInfo}>
+                                            <div className={styles.projectCardHeader}>
+                                                <h2 className={styles.projectTitle}>{project.title || "Projet sans titre"}</h2>
+                                                <button
+                                                    type="button"
+                                                    className={styles.editProjectButton}
+                                                    onClick={(event) => handleProjectEdit(project, event)}
+                                                >
+                                                    Modifier
+                                                </button>
+                                            </div>
+                                            <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
+                                            <span className={styles.projectMeta}>
+                                                {project.difficulty ? `Difficulté : ${project.difficulty}` : "Difficulté non renseignée"}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             ))
                         )}
@@ -176,14 +204,27 @@ function Profil() {
                                     onClick={() => handleProjectClick(project)}
                                     style={{ cursor: "pointer" }}
                                 >
-                                    <img
-                                        className={styles.projectImage}
-                                        src={project.Image?.[0]?.I_img || "./logo.png"}
-                                        alt={project.title || "Favori"}
-                                    />
-                                    <h2 className={styles.projectTitle}>{project.title || "Projet favori"}</h2>
-                                    <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
-                                    <span className={styles.projectMeta}>Favori</span>
+                                    <div className={styles.projectCardTop}>
+                                        <img
+                                            className={styles.projectImage}
+                                            src={project.Image?.[0]?.I_img || "./logo.png"}
+                                            alt={project.title || "Favori"}
+                                        />
+                                        <div className={styles.projectCardInfo}>
+                                            <div className={styles.projectCardHeader}>
+                                                <h2 className={styles.projectTitle}>{project.title || "Projet favori"}</h2>
+                                                <button
+                                                    type="button"
+                                                    className={styles.editProjectButton}
+                                                    onClick={(event) => handleProjectEdit(project, event)}
+                                                >
+                                                    Modifier
+                                                </button>
+                                            </div>
+                                            <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
+                                            <span className={styles.projectMeta}>Favori</span>
+                                        </div>
+                                    </div>
                                 </div>
                             ))
                         )}
