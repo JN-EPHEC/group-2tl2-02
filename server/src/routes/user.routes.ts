@@ -1,7 +1,7 @@
 // server/src/routes/user.routes.ts
 import { Router } from 'express';
 import User from '../models/project.user';
-import { loginUser, registerUser, deleteUser, getUserById, updateUser } from '../controllers/projects.controller';
+import { loginUser, registerUser, deleteUser, getUserById, updateUser, getUserProjects, getUserFavoris } from '../controllers/projects.controller';
 import { createProject, getAllProjects, deleteProject, getProjectById} from '../controllers/projects.controller'
 
 const router = Router();
@@ -23,6 +23,8 @@ router.post('/NewProject', createProject);
 router.get('/AllProject', getAllProjects);
 
 router.get('/project/:id', getProjectById);
+router.get('/:id/projects', getUserProjects);
+router.get('/:id/favoris', getUserFavoris);
 router.get('/:id', getUserById);
 
 router.put('/:id', updateUser);

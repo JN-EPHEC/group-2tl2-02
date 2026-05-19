@@ -13,6 +13,8 @@ function Profil() {
         bio: "",
         stats: { projets: 0, favoris: 0, badges: 0 }
     })
+    const [projects, setProjects] = useState<any[]>([])
+    const [favorites, setFavorites] = useState<any[]>([])
 
     const fetchUserData = async () => {
         try {
@@ -45,6 +47,8 @@ function Profil() {
                     badges: userData.stats?.badges ?? 0
                 }
             })
+            setProjects(Array.isArray(userData.Auteurs) ? userData.Auteurs : [])
+            setFavorites(Array.isArray(userData.Favoris) ? userData.Favoris : [])
             setError("")
         } catch (err) {
             console.error("Erreur de fetch :", err)
@@ -116,8 +120,8 @@ function Profil() {
                             onClick={function () { setActiveTab("projets") }}
                         >Mes projets</button>
                         <button
-                            className={`${styles.profilButton} ${styles.tabButton} ${activeTab === "favorits" ? styles.active : ""}`}
-                            onClick={function () { setActiveTab("favorits") }}
+                            className={`${styles.profilButton} ${styles.tabButton} ${activeTab === "favoris" ? styles.active : ""}`}
+                            onClick={function () { setActiveTab("favoris") }}
                         >Mes Favoris</button>
                         <button
                             className={`${styles.profilButton} ${styles.tabButton} ${activeTab === "badges" ? styles.active : ""}`}
@@ -127,22 +131,44 @@ function Profil() {
 
                     {/* Onglet Projets */}
                     <section className={`${styles.tabPanel} ${activeTab === "projets" ? styles.visible : styles.hidden}`}>
-                        <div className={styles.projectCard}>
-                            <img className={styles.projectImage} src="" alt="img du projet" />
-                            <h2 className={styles.projectTitle}>Station Météo IoT</h2>
-                            <span className={styles.projectMeta}>Modifié il y a 2h</span>
-                            <button className={styles.profilButton}>Modifier</button>
-                            <button className={`${styles.profilButton} ${styles.secondary}`}>supprimer</button>
-                        </div>
+                        {projects.length === 0 ? (
+                            <p>Vous n'avez aucun projet enregistré pour le moment.</p>
+                        ) : (
+                            projects.map((project) => (
+                                <div key={project.id} className={styles.projectCard}>
+                                    <img
+                                        className={styles.projectImage}
+                                        src={project.Image?.[0]?.I_img || "./logo.png"}
+                                        alt={project.title || "Projet"}
+                                    />
+                                    <h2 className={styles.projectTitle}>{project.title || "Projet sans titre"}</h2>
+                                    <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
+                                    <span className={styles.projectMeta}>
+                                        {project.difficulty ? `Difficulté : ${project.difficulty}` : "Difficulté non renseignée"}
+                                    </span>
+                                </div>
+                            ))
+                        )}
                     </section>
 
                     {/* Onglet Favoris */}
-                    <section className={`${styles.tabPanel} ${activeTab === "favorits" ? styles.visible : styles.hidden}`}>
-                         <div className={styles.projectCard}>
-                            <img className={styles.projectImage} src="" alt="img du projet" />
-                            <h2 className={styles.projectTitle}>Robot Suiveur</h2>
-                            <span className={styles.projectMeta}>Favori</span>
-                        </div>
+                    <section className={`${styles.tabPanel} ${activeTab === "favoris" ? styles.visible : styles.hidden}`}>
+                        {favorites.length === 0 ? (
+                            <p>Vous n'avez aucun favori enregistré pour le moment.</p>
+                        ) : (
+                            favorites.map((project) => (
+                                <div key={project.id} className={styles.projectCard}>
+                                    <img
+                                        className={styles.projectImage}
+                                        src={project.Image?.[0]?.I_img || "./logo.png"}
+                                        alt={project.title || "Favori"}
+                                    />
+                                    <h2 className={styles.projectTitle}>{project.title || "Projet favori"}</h2>
+                                    <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
+                                    <span className={styles.projectMeta}>Favori</span>
+                                </div>
+                            ))
+                        )}
                     </section>
 
                     {/* Onglet Badges */}

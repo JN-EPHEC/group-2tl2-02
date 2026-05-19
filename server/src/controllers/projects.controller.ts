@@ -317,19 +317,57 @@ export const getUserById = async (req: Request, res: Response) => {
         });
 
         if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
-        
-        const projetsCount = typeof (user as any).countAuteurs === 'function'
-            ? await (user as any).countAuteurs()
-            : 0;
-        const favorisCount = typeof (user as any).countFavoris === 'function'
-            ? await (user as any).countFavoris()
-            : 0;
+
+        const userPlain = user.get({ plain: true }) as any;
+
+        const projets = await Project.findAll({
+            include: [
+                {
+                    model: User,
+                    as: 'Auteurs',
+                    where: { Uid: Number(id) },
+                    through: { attributes: [] },
+                    attributes: []
+                },
+                {
+                    model: Image,
+                    as: 'Image',
+                    through: { attributes: [] },
+                    attributes: ['I_img']
+                }
+            ],
+            attributes: ['id', 'title', 'description', 'difficulty', 'duration', 'date']
+        });
+
+        const favoris = await Project.findAll({
+            include: [
+                {
+                    model: User,
+                    as: 'favoris',
+                    where: { Uid: Number(id) },
+                    through: { attributes: [] },
+                    attributes: []
+                },
+                {
+                    model: Image,
+                    as: 'Image',
+                    through: { attributes: [] },
+                    attributes: ['I_img']
+                }
+            ],
+            attributes: ['id', 'title', 'description', 'difficulty', 'duration', 'date']
+        });
+
+        const projetsCount = projets.length;
+        const favorisCount = favoris.length;
         const badgesCount = typeof (user as any).countBadge === 'function'
             ? await (user as any).countBadge()
             : 0;
 
         res.status(200).json({
-            ...user.get({ plain: true }),
+            ...userPlain,
+            Auteurs: projets,
+            Favoris: favoris,
             stats: {
                 projets: projetsCount,
                 favoris: favorisCount,
@@ -340,6 +378,64 @@ export const getUserById = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Erreur serveur", error });
     }
 };
+
+export const getUserProjects = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const projets = await Project.findAll({
+            include: [
+                {
+                    model: User,
+                    as: 'Auteurs',
+                    where: { Uid: Number(id) },
+                    through: { attributes: [] },
+                    attributes: []
+                },
+                {
+                    model: Image,
+                    as: 'Image',
+                    through: { attributes: [] },
+                    attributes: ['I_img']
+                }
+            ],
+            attributes: ['id', 'title', 'description', 'difficulty', 'duration', 'date']
+        });
+
+        res.status(200).json(projets);
+    } catch (error) {
+        console.error('Erreur getUserProjects:', error);
+        res.status(500).json({ message: 'Erreur serveur lors de la récupération des projets', error });
+    }
+}
+
+export const getUserFavoris = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const favoris = await Project.findAll({
+            include: [
+                {
+                    model: User,
+                    as: 'favoris',
+                    where: { Uid: Number(id) },
+                    through: { attributes: [] },
+                    attributes: []
+                },
+                {
+                    model: Image,
+                    as: 'Image',
+                    through: { attributes: [] },
+                    attributes: ['I_img']
+                }
+            ],
+            attributes: ['id', 'title', 'description', 'difficulty', 'duration', 'date']
+        });
+
+        res.status(200).json(favoris);
+    } catch (error) {
+        console.error('Erreur getUserFavoris:', error);
+        res.status(500).json({ message: 'Erreur serveur lors de la récupération des favoris', error });
+    }
+}
 
 export const getProjectById = async (req: Request, res: Response) => {
     try {
