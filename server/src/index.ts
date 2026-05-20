@@ -1,5 +1,6 @@
 import { displayBanner } from './startup';
 import express from 'express';
+import path from 'path';
 import { User, Project, Image } from './models/lien_inter/index'
 import sequelize from './config/database';
 import userRoutes from './routes/user.routes';
@@ -11,6 +12,10 @@ import { swaggerSpec } from './config/swagger';
 
 const app = express();
 app.use(express.json());
+
+// 👇 Servir les fichiers statiques du dossier uploads
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 const port = 3000;
 
 app.use(requestLogger);
