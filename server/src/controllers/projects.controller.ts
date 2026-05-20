@@ -3,6 +3,8 @@ import { validatePassword, hashPassword, comparePassword } from '../utils/Passwo
 import { isValidEmail } from '../utils/emailValidator';
 import { Project, Image, User, video, Tâche, Composant, History } from '../models/lien_inter/index';
 import { Model } from 'sequelize';
+import fs from 'fs';
+import path from 'path';
 
 
 
@@ -82,10 +84,8 @@ export const loginUser = async (req: Request, res: Response) => {
 export const createProject = async (req: Request, res: Response) => {
     try {
         const { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId } = req.body;
-
-
-        
-
+     
+     
         const newProject = await Project.create({
             title,
             description,
@@ -95,32 +95,45 @@ export const createProject = async (req: Request, res: Response) => {
             isPublic
         });
 
-        if (imageUrl) {
-            const newImage = await Image.create({ I_img: imageUrl });
-            await (newProject as any).addImage(newImage); 
+        // Cas 1 : Image uploadée via multipart/form-data (fichier)
+        if ((req as any).file) {
+            const localPath = `/uploads/images/${(req as any).file.filename}`;
+            const newImage = await Image.create({
+                I_img: localPath,
+                I_fileName: (req as any).file.originalname,
+                I_url: `http://localhost:3000${localPath}`
+            });
+            await (newProject as any).addImage(newImage);
+        } 
+        // Cas 2 : Image via URL (JSON)
+        else if (imageUrl) {
+            const newImage = await Image.create({
+                I_img: imageUrl,
+                I_url: imageUrl
+            });
+            await (newProject as any).addImage(newImage);
         }
-        if (Uid) {
 
+        if (Uid) {
             await (newProject as any).addAuteurs(Uid);
         }
         if (VId) {
             await (newProject as any).addVideo(VId);
-
         }
         if (Uid) {
-
             await (newProject as any).addFavoris(Uid);
         }
-
         if (CId) {
-
             await (newProject as any).addComposant(CId);
         }
         if (TId) {
             await (newProject as any).addTâche(TId);
         }
 
-        res.status(201).json(newProject);
+        res.status(201).json({
+            message: "Projet créé avec succès",
+            project: newProject
+        });
     } catch (error) {
         console.error("Détail de l'erreur :", error);
         res.status(500).json({ message: "Erreur creation", error });
@@ -390,5 +403,83 @@ export const getProjectById = async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Erreur getProjectById:", error);
         res.status(500).json({ message: "Erreur lors de la récupération du projet", error });
+    }
+};
+
+// Uploader un avatar pour un utilisateur
+export const uploadUserAvatar = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        // Vérifier que l'utilisateur existe
+        const user = await User.findByPk(Number(id));
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        // Vérifier qu'une image a été uploadée
+        if (!(req as any).file) {
+            return res.status(400).json({ message: "Aucune image fournie" });
+        }
+
+        // Créer la nouvelle image
+        const localPath = `/uploads/images/${(req as any).file.filename}`;
+        const newImage = await Image.create({
+            I_img: localPath,
+            I_fileName: (req as any).file.originalname,
+            I_url: `http://localhost:3000${localPath}`
+        });
+
+        // Ajouter l'image comme avatar de l'utilisateur
+        await (user as any).addAvatar(newImage);
+
+        res.status(201).json({
+            message: "Avatar téléchargé avec succès",
+            avatar: {
+                I_id: newImage.I_id,
+                I_img: newImage.I_img,
+                I_url: newImage.I_url
+            }
+        });
+    } catch (error) {
+        console.error("Erreur upload avatar:", error);
+        res.status(500).json({ message: "Erreur lors du téléchargement de l'avatar", error });
+    }
+};
+
+// Test : Vérifier que le dossier uploads existe et est accessible
+export const testUploadFolder = async (req: Request, res: Response) => {
+    try {
+        const uploadDir = path.join(__dirname, '../../uploads/images');
+
+        // Créer le dossier s'il n'existe pas
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
+        // Vérifier que le dossier existe maintenant
+        const exists = fs.existsSync(uploadDir);
+
+        // Lire les fichiers du dossier
+        let files: string[] = [];
+        if (exists) {
+            files = fs.readdirSync(uploadDir).filter(f => !f.startsWith('.'));
+        }
+
+        res.status(200).json({
+            message: "Test du dossier uploads réussi",
+            uploadPath: uploadDir,
+            folderExists: exists,
+            isWritable: exists && fs.accessSync(uploadDir, fs.constants.W_OK) ? true : false,
+            filesCount: files.length,
+            files: files,
+            timestamp: new Date()
+        });
+    } catch (error) {
+        console.error("Erreur test upload folder:", error);
+        res.status(500).json({
+            message: "Erreur lors du test du dossier uploads",
+            error: (error as any).message
+        });
     }
 };
