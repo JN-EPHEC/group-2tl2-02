@@ -6,6 +6,7 @@ jspm_packages/
 dist/
 out/
 build/
+coverage/
 
 # Fichiers de log (erreurs de npm)
 npm-debug.log*
@@ -28,5 +29,11 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Fichiers locaux
 package.json
 package-lock.json
+
+# Dossier d'uploads (fichiers générés dynamiquement)
+/server/uploads/
+uploads/
