@@ -1,8 +1,9 @@
 // server/src/routes/user.routes.ts
 import { Router } from 'express';
 import User from '../models/project.user';
-import { loginUser, registerUser, deleteUser, getUserById, updateUser } from '../controllers/projects.controller';
+import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder } from '../controllers/projects.controller';
 import { createProject, getAllProjects, deleteProject, getProjectById, Visite_Enregistrer, getVisite } from '../controllers/projects.controller'
+import { uploadImage } from '../middlewars/uploadImage';
 
 const router = Router();
 
@@ -168,12 +169,12 @@ router.post('/login', loginUser);
  * @swagger
  * /api/users/NewProject:
  *   post:
- *     summary: Créer un nouveau projet
+ *     summary: Créer un nouveau projet (avec ou sans upload d'image locale)
  *     tags: [Projects]
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required: [title, date]
@@ -200,6 +201,11 @@ router.post('/login', loginUser);
  *               imageUrl:
  *                 type: string
  *                 example: https://example.com/image.png
+ *                 description: URL d'image (optionnel)
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Fichier image local à uploader (optionnel, JPEG/PNG/GIF/WEBP max 5MB)
  *               Uid:
  *                 type: integer
  *                 example: 1
@@ -210,10 +216,12 @@ router.post('/login', loginUser);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Project'
+ *       400:
+ *         description: Erreur validation
  *       500:
  *         description: Erreur création
  */
-router.post('/NewProject', createProject);
+router.post('/NewProject', uploadImage.single('image'), createProject);
 
 /**
  * @swagger
@@ -456,5 +464,88 @@ router.delete('/:id', deleteUser);
  */
 router.delete('/project/:id', deleteProject);
 
+/**
+ * @swagger
+ * /api/users/{id}/avatar:
+ *   post:
+ *     summary: Uploader un avatar pour un utilisateur
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de l'utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Fichier image (JPEG, PNG, GIF, WEBP - max 5MB)
+ *     responses:
+ *       201:
+ *         description: Avatar téléchargé avec succès
+ *       400:
+ *         description: Erreur validation (image non supportée, fichier trop gros)
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.post('/:id/avatar', uploadImage.single('image'), uploadUserAvatar);
+
+/**
+ * @swagger
+ * /api/users/test/upload-folder:
+ *   get:
+ *     summary: Tester la configuration du dossier d'upload
+ *     tags: [Test]
+ *     description: |
+ *       Vérifie que le dossier `/uploads/images` existe et est accessible.
+ *       Si le dossier n'existe pas, il sera créé automatiquement.
+ *       Retourne :
+ *       - L'état du dossier (existe/créé)
+ *       - Si le dossier est accessible en écriture
+ *       - La liste des fichiers uploadés
+ *     responses:
+ *       200:
+ *         description: Test réussi - Dossier OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 uploadPath:
+ *                   type: string
+ *                   example: "C:\\Users\\...\\server\\uploads\\images"
+ *                 folderExists:
+ *                   type: boolean
+ *                   example: true
+ *                 isWritable:
+ *                   type: boolean
+ *                   example: true
+ *                 filesCount:
+ *                   type: integer
+ *                   example: 5
+ *                 files:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["image1.jpg", "image2.png"]
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       500:
+ *         description: Erreur lors du test
+ */
+router.get('/test/upload-folder', testUploadFolder);
 
 export default router;
