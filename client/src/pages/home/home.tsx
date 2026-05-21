@@ -125,8 +125,11 @@ function Acceuil() {
                                     <button onClick={() => navigate("/creation")}>
                                         📂 Nouveau projet
                                     </button>
-                                    <button onClick={() => navigate("/composants")}>
-                                        🧩 Voir composants
+                                    <button onClick={() => navigate("/developpement")}>
+                                        📢 Notifications
+                                    </button>
+                                    <button onClick={() => navigate("/developpement")}>
+                                        💎 Abonnements
                                     </button>
                                     <button onClick={() => { setIsMenuOpen(false); navigate("/mprofil"); }}>
                                         ⚙️ Paramètres
@@ -230,7 +233,7 @@ function Acceuil() {
                     )}
                     <br /><br />
                     <h3>Panier</h3>
-                    <button onClick={() => navigate("/panier")}>• Voir panier ({cartItems.length})</button>
+                    <button onClick={() => navigate("/developpement")}>• Voir panier ({cartItems.length})</button>
                 </aside>
             </main>
 
