@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.94% </span>
+                <span class="strong">96.08% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>161/179</span>
+                <span class='fraction'>172/179</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.69% </span>
+                <span class="strong">81.81% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>69/99</span>
+                <span class='fraction'>81/99</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>12/16</span>
+                <span class='fraction'>16/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">91.3% </span>
+                <span class="strong">98.13% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>147/161</span>
+                <span class='fraction'>158/161</span>
             </div>
         
             
@@ -659,13 +659,13 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -674,32 +674,32 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1131,14 +1131,14 @@ export const createProject = async (req: Request, res: Response) =&gt; {
             <span class="missing-if-branch" title="else path not taken" >E</span>if (!Number.isNaN(uidNumber) &amp;&amp; uidNumber &gt; 0) {
                 projectUser = await User.findByPk(uidNumber);
             }
-            <span class="missing-if-branch" title="if path not taken" >I</span>if (projectUser) {
-<span class="cstat-no" title="statement not covered" >                try {</span>
-<span class="cstat-no" title="statement not covered" >                    await (newProject as any).addAuteurs(projectUser);</span>
+            if (projectUser) {
+                try {
+                    await (newProject as any).addAuteurs(projectUser);
                 } catch (userError) {
 <span class="cstat-no" title="statement not covered" >                    console.warn(`Impossible d'ajouter l'auteur pour Uid=${Uid}:`, userError);</span>
                 }
-            } else {
-                console.warn(`Utilisateur introuvable ou Uid invalide (${Uid}) ; associations ignorées.`);
+            } else <span class="missing-if-branch" title="else path not taken" >E</span>{
+<span class="cstat-no" title="statement not covered" >                console.warn(`Utilisateur introuvable ou Uid invalide (${Uid}) ; associations ignorées.`);</span>
             }
         }
 &nbsp;
@@ -1146,33 +1146,33 @@ export const createProject = async (req: Request, res: Response) =&gt; {
             await (newProject as any).addVideo(VId);
         }
 &nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (Array.isArray(composants) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >composants.length &gt; 0)</span> {
-            const createdComposants = <span class="cstat-no" title="statement not covered" >await Promise.all(</span>
+        if (Array.isArray(composants) &amp;&amp; composants.length &gt; 0) {
+            const createdComposants = await Promise.all(
                 composants
-                    .filter(<span class="fstat-no" title="function not covered" >(c</span>omp: any) =&gt; <span class="cstat-no" title="statement not covered" >typeof comp.nom === 'string' &amp;&amp; comp.nom.trim() !== '')</span>
-                    .map(<span class="fstat-no" title="function not covered" >(c</span>omp: any) =&gt; <span class="cstat-no" title="statement not covered" >Composant.create({ nom: comp.nom.trim(), possédé: false }))</span>
+                    .filter((comp: any) =&gt; typeof comp.nom === 'string' &amp;&amp; comp.nom.trim() !== '')
+                    .map((comp: any) =&gt; Composant.create({ nom: comp.nom.trim(), possédé: false }))
             );
-<span class="cstat-no" title="statement not covered" >            if (createdComposants.length &gt; 0) {</span>
-<span class="cstat-no" title="statement not covered" >                await (newProject as any).addComposant(createdComposants);</span>
+            <span class="missing-if-branch" title="else path not taken" >E</span>if (createdComposants.length &gt; 0) {
+                await (newProject as any).addComposant(createdComposants);
             }
         }
 &nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (Array.isArray(etapes) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >etapes.length &gt; 0)</span> {
-            const createdTaches = <span class="cstat-no" title="statement not covered" >await Promise.all(</span>
+        if (Array.isArray(etapes) &amp;&amp; etapes.length &gt; 0) {
+            const createdTaches = await Promise.all(
                 etapes
-                    .filter(<span class="fstat-no" title="function not covered" >(e</span>tape: any) =&gt;
-<span class="cstat-no" title="statement not covered" >                        (typeof etape.titre === 'string' &amp;&amp; etape.titre.trim() !== '') ||</span>
-                        (typeof etape.description === 'string' &amp;&amp; etape.description.trim() !== '')
+                    .filter((etape: any) =&gt;
+                        (typeof etape.titre === 'string' &amp;&amp; etape.titre.trim() !== '') ||
+                        (<span class="branch-2 cbranch-no" title="branch not covered" >typeof etape.description === 'string' </span>&amp;&amp; <span class="branch-3 cbranch-no" title="branch not covered" >etape.description.trim() !== '')</span>
                     )
-                    .map(<span class="fstat-no" title="function not covered" >(e</span>tape: any) =&gt;
-<span class="cstat-no" title="statement not covered" >                        Tâche.create({</span>
-                            title: typeof etape.titre === 'string' ? etape.titre.trim() : '',
-                            instruction: typeof etape.description === 'string' ? etape.description.trim() : ''
+                    .map((etape: any) =&gt;
+                        Tâche.create({
+                            title: typeof etape.titre === 'string' ? etape.titre.trim() : <span class="branch-1 cbranch-no" title="branch not covered" >'',</span>
+                            instruction: typeof etape.description === 'string' ? etape.description.trim() : <span class="branch-1 cbranch-no" title="branch not covered" >''</span>
                         })
                     )
             );
-<span class="cstat-no" title="statement not covered" >            if (createdTaches.length &gt; 0) {</span>
-<span class="cstat-no" title="statement not covered" >                await (newProject as any).addTâche(createdTaches);</span>
+            <span class="missing-if-branch" title="else path not taken" >E</span>if (createdTaches.length &gt; 0) {
+                await (newProject as any).addTâche(createdTaches);
             }
         }
 &nbsp;
@@ -1489,7 +1489,7 @@ export const testUploadFolder = async (req: Request, res: Response) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-23T12:08:35.074Z
+                at 2026-05-23T12:18:19.615Z
             </div>
         <script src="../prettify.js"></script>
         <script>

@@ -10,6 +10,8 @@ const mockProjectFindAll = jest.fn();
 const mockProjectFindByPk = jest.fn();
 const mockProjectDestroy = jest.fn();
 const mockImageCreate = jest.fn();
+const mockComposantCreate = jest.fn();
+const mockTacheCreate = jest.fn();
 const mockHistoryUpsert = jest.fn();
 
 jest.mock('../../models/lien_inter/index', () => ({
@@ -29,8 +31,12 @@ jest.mock('../../models/lien_inter/index', () => ({
     create: (...args: any[]) => mockImageCreate(...args),
   },
   video: {},
-  Tâche: {},
-  Composant: {},
+  Tâche: {
+    create: (...args: any[]) => mockTacheCreate(...args),
+  },
+  Composant: {
+    create: (...args: any[]) => mockComposantCreate(...args),
+  },
   History: {
     upsert: (...args: any[]) => mockHistoryUpsert(...args),
   },
@@ -55,8 +61,6 @@ import {
   createProject,
   getUserById,
   getProjectById,
-  Visite_Enregistrer,
-  getVisite,
   updateUser,
   uploadUserAvatar,
   testUploadFolder,
@@ -270,10 +274,11 @@ describe('createProject', () => {
   });
 
   it('crée un projet avec upload fichier', async () => {
-    const fakeProject = { id: 1, title: 'Robot', addImage: jest.fn(), addAuteurs: jest.fn(), addFavoris: jest.fn(), addVideo: jest.fn(), addComposant: jest.fn(), addTâche: jest.fn() };
+    const fakeProject = { id: 1, title: 'Robot', addImage: jest.fn(), addAuteurs: jest.fn(), addVideo: jest.fn(), addComposant: jest.fn(), addTâche: jest.fn() };
     mockProjectCreate.mockResolvedValue(fakeProject);
+    mockUserFindByPk.mockResolvedValue({ addAuteurs: fakeProject.addAuteurs });
     mockImageCreate.mockResolvedValue({ I_id: 1 });
-    const req = mockReq({ title: 'Robot', date: '2024-01-15', Uid: 1, VId: 2, CId: 3, TId: 4 });
+    const req = mockReq({ title: 'Robot', date: '2024-01-15', Uid: 1, VId: 2, composants: [{ nom: 'Pièce 1' }], etapes: [{ titre: 'Étape 1', description: 'Faire ceci' }] });
     (req as any).file = { filename: 'robot.jpg', originalname: 'robot.jpg' };
     const res = mockRes();
     await createProject(req, res);
@@ -286,15 +291,16 @@ describe('createProject', () => {
   });
 
   it('crée un projet avec URL image', async () => {
-    const fakeProject = { id: 1, title: 'Robot', addImage: jest.fn(), addAuteurs: jest.fn(), addFavoris: jest.fn() };
+    const fakeProject = { id: 1, title: 'Robot', addImage: jest.fn(), addAuteurs: jest.fn() };
     mockProjectCreate.mockResolvedValue(fakeProject);
+    mockUserFindByPk.mockResolvedValue({ addAuteurs: fakeProject.addAuteurs });
     mockImageCreate.mockResolvedValue({ I_id: 1 });
     const req = mockReq({ title: 'Robot', date: '2024-01-15', imageUrl: 'http://example.com/image.jpg', Uid: 5 });
     const res = mockRes();
     await createProject(req, res);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(fakeProject.addImage).toHaveBeenCalled();
-    expect(fakeProject.addFavoris).toHaveBeenCalled();
+    expect(fakeProject.addAuteurs).toHaveBeenCalled();
   });
 
   it('retourne 500 si erreur DB', async () => {
@@ -373,62 +379,6 @@ describe('getProjectById', () => {
   });
 });
 
-// =====================
-// Visite_Enregistrer
-// =====================
-describe('Visite_Enregistrer', () => {
-  beforeEach(() => jest.clearAllMocks());
-
-  it('enregistre une visite et retourne 200', async () => {
-    mockHistoryUpsert.mockResolvedValue([{}, true]);
-    const req = mockReq({ userId: 1, projectId: 2 });
-    const res = mockRes();
-    await Visite_Enregistrer(req, res);
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Visite enregistrée' });
-  });
-
-  it('retourne 500 si erreur DB', async () => {
-    mockHistoryUpsert.mockRejectedValue(new Error('DB error'));
-    const req = mockReq({ userId: 1, projectId: 2 });
-    const res = mockRes();
-    await Visite_Enregistrer(req, res);
-    expect(res.status).toHaveBeenCalledWith(500);
-  });
-});
-
-// =====================
-// getVisite
-// =====================
-describe('getVisite', () => {
-  beforeEach(() => jest.clearAllMocks());
-
-  it('retourne 200 avec les projets visités', async () => {
-    mockUserFindByPk.mockResolvedValue({
-      get: jest.fn().mockReturnValue([{ id: 1, title: 'Robot' }]),
-    });
-    const req = mockReq({}, { userId: '1' });
-    const res = mockRes();
-    await getVisite(req, res);
-    expect(res.status).toHaveBeenCalledWith(200);
-  });
-
-  it('retourne 404 si utilisateur non trouvé', async () => {
-    mockUserFindByPk.mockResolvedValue(null);
-    const req = mockReq({}, { userId: '999' });
-    const res = mockRes();
-    await getVisite(req, res);
-    expect(res.status).toHaveBeenCalledWith(404);
-  });
-
-  it('retourne 500 si erreur DB', async () => {
-    mockUserFindByPk.mockRejectedValue(new Error('DB error'));
-    const req = mockReq({}, { userId: '1' });
-    const res = mockRes();
-    await getVisite(req, res);
-    expect(res.status).toHaveBeenCalledWith(500);
-  });
-});
 
 // =====================
 // updateUser
