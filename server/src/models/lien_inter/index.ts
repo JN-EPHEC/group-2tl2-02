@@ -5,7 +5,7 @@ import video from '../project.video';
 import Badge from '../project.badge';
 import Composant from '../project.composant';
 import Tâche from '../project.tâche';
-import History from '../project.history';
+
 
 // Proj_image
 Project.belongsToMany(Image, {
