@@ -197,7 +197,7 @@ function Crea() {
 
     return (
         <div className={styles.creationPage}>
-            <header className={styles.pageHeader}>
+            <header>
                 <div className={styles.logoContainer}>
                     <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>

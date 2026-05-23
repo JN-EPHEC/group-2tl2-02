@@ -16,9 +16,34 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 15px 40px;
-    margin-bottom: 30px;
-    background: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
     backdrop-filter: blur(10px);
+    border-radius: 0;
+}
+
+header h2 {
+    margin: 0;
+    color: #2563eb;
+    font-size: 1.5rem;
+}
+
+header button {
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+header button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 header a,

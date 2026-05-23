@@ -1,9 +1,13 @@
 .projetPage {
   min-height: 100vh;
-  padding: 24px 22px 36px;
+  padding: 0 0 36px;
   background: linear-gradient(135deg, #e5efff, #f8fafc);
   font-family: 'Segoe UI', Arial, sans-serif;
   color: #1f2937;
+}
+
+.projetColumns {
+  padding: 24px 22px 0;
 }
 
 .pageHeader {

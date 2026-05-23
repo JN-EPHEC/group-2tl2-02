@@ -6,6 +6,7 @@
     flex-direction: column;
     background: linear-gradient(135deg, #dbeafe, #eef2ff);
     font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 0;
 }
 
 .pageHeader {
