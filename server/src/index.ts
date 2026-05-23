@@ -34,7 +34,7 @@ app.get('/api/data', (req, res) => {
 
 app.use(errorHandler);
 
-sequelize.sync({ force: true })
+sequelize.sync({ alter: true })
     .then(() => {
         console.log("✅ Base de données PostgreSQL synchronisée");
 
