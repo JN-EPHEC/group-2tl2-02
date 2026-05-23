@@ -48,8 +48,17 @@ function Inscrip() {
                 return
             }
 
+            const userId = data?.user?.id ?? data?.user?.Uid ?? data?.user?.uid
+            if (!userId) {
+                setError("Impossible de récupérer l'identifiant utilisateur depuis le serveur.")
+                return
+            }
+
+            localStorage.setItem("userId", String(userId))
+            localStorage.setItem("userEmail", data?.user?.email || "")
+
             setMessage(data.message || "Inscription réussie !")
-            setTimeout(() => navigate("/connection"), 1200)
+            setTimeout(() => navigate("/"), 1200)
         } catch (fetchError) {
             console.error(fetchError)
             setError("Impossible de joindre le serveur. Vérifiez que l'API est démarrée.")

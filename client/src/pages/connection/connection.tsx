@@ -35,9 +35,14 @@ function Connec() {
                 return
             }
 
-            // Stocker l'ID de l'utilisateur en localStorage
-            localStorage.setItem("userId", data.user.id)
-            localStorage.setItem("userEmail", data.user.email)
+            const userId = data?.user?.id ?? data?.user?.Uid ?? data?.user?.uid
+            if (!userId) {
+                setError("Impossible de récupérer l'identifiant utilisateur depuis le serveur.")
+                return
+            }
+
+            localStorage.setItem("userId", String(userId))
+            localStorage.setItem("userEmail", data?.user?.email || "")
             
             setMessage(data.message || "Connexion réussie !")
             setTimeout(() => navigate("/profil"), 1200)
