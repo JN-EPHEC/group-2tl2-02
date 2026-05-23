@@ -209,7 +209,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         const { id } = req.params;
 
         const deleted = await User.destroy({
-            where: { id: id }
+            where: { Uid: id }
         });
 
         if (deleted) {
@@ -268,54 +268,6 @@ export const updateUser = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Erreur lors de la mise à jour du profil", error });
-    }
-};
-
-export const Visite_Enregistrer = async (req: Request, res: Response) => {
-    try {
-        const { userId, projectId } = req.body;
-
-        
-        await History.upsert({
-            userId,
-            projectId,
-            visitedAt: new Date()
-        });
-
-        res.status(200).json({ message: "Visite enregistrée" });
-    } catch (error) {
-        res.status(500).json({ message: "Erreur history", error });
-    }
-};
-
-export const getVisite = async (req: Request, res: Response) => {
-    try {
-        const { userId } = req.params;
-
-        
-        const user = await User.findByPk(Number(userId), {
-            include: [{
-                model: Project,
-                as: 'VisitedProjects', 
-                through: { attributes: [] }, 
-                attributes: ['id', 'title', 'description'] 
-            }],
-          
-            order: [[ { model: Project, as: 'VisitedProjects' }, History, 'visitedAt', 'DESC' ]],
-            limit: 4
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
-
-        
-        const projects = user.get('VisitedProjects');
-
-        res.status(200).json(projects || []);
-    } catch (error) {
-        console.error("Erreur récup history:", error);
-        res.status(500).json({ message: "Erreur serveur lors de la récupération de l'historique" });
     }
 };
 
