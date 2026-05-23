@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import User from '../models/project.user';
 import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder } from '../controllers/projects.controller';
-import { createProject, getAllProjects, deleteProject, getProjectById, Visite_Enregistrer, getVisite } from '../controllers/projects.controller'
+import { createProject, getAllProjects, deleteProject, getProjectById } from '../controllers/projects.controller'
 import { uploadImage } from '../middlewars/uploadImage';
 
 const router = Router();
