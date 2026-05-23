@@ -124,19 +124,4 @@ Tâche.belongsToMany( Project, {
 })
 
 
-// project.history
-
-User.belongsToMany(Project, {
-    through: History,
-    foreignKey: 'Uid',
-    otherKey: 'projectId',
-    as: 'VisitedProjects'
-});
-
-Project.belongsToMany(User, {
-    through: History,
-    foreignKey: 'PId',
-    otherKey: 'userId'
-});
-
-export { Project, Image, User, video, Badge, Tâche, Composant, History };
+export { Project, Image, User, video, Badge, Tâche, Composant };
