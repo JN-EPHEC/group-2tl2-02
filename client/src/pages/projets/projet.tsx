@@ -58,7 +58,7 @@ function Projet() {
         <div className={styles.projetPage}>
             <header className={styles.pageHeader}>
                 <div className={styles.logoContainer}>
-                    <img src="./logo.png" alt="logo" />
+                    <img src="/logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>
                 <div>
