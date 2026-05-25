@@ -114,28 +114,69 @@ function Crea() {
         ))
     }
 
-    const saveProject = () => {
+    const saveProject = async () => {
         const projectData = {
             title: projectTitle,
             description: projectDescription,
-            image: projectImage,
+            imageUrl: projectImage,
             duration: estimatedDuration,
             difficulty: currentDifficulty,
-            difficultyLabel: getDifficultyLabel(currentDifficulty),
-            needs3D,
-            needsSoldering,
-            visibility: isPrivate ? "private" : "public",
-            video: {
-                file: videoFile,
-                link: videoLink,
-            },
-            steps: etapes,
-            composants,
-            savedAt: new Date().toISOString(),
+            date: new Date().toISOString(),
+            isPublic: !isPrivate,
+            videoFile,
+            videoLink,
+            Uid: localStorage.getItem("userId") ? Number(localStorage.getItem("userId")) : undefined,
+            composants: composants
+                .filter(comp => comp.nom.trim() !== '')
+                .map(comp => ({ nom: comp.nom.trim(), possede: false, nombre: comp.nombre })),
+            etapes: etapes
+                .filter(etape => etape.titre.trim() !== '' || etape.description.trim() !== '')
+                .map(etape => ({
+                    titre: etape.titre.trim(),
+                    description: etape.description.trim(),
+                    image: etape.image
+                }))
         }
 
-        localStorage.setItem("savedProject", JSON.stringify(projectData))
-        alert("Projet enregistré localement.")
+        try {
+            const response = await fetch("/api/users/NewProject", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(projectData),
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null)
+                console.error("Erreur création projet", errorData)
+                alert("Impossible d'enregistrer le projet. Vérifiez la console pour plus d'informations.")
+                return
+            }
+
+            const createdProject = await response.json()
+            const projectId = createdProject.id || (createdProject as any).P_id || (createdProject as any).projectId
+
+            if (!projectId) {
+                console.error("ID de projet non disponible après création", createdProject)
+                alert("Le projet a été créé, mais impossible de récupérer l'ID du projet.")
+                return
+            }
+
+            const getResponse = await fetch(`/api/users/project/${projectId}`)
+            if (!getResponse.ok) {
+                const errorData = await getResponse.json().catch(() => null)
+                console.error("Erreur récupération projet", errorData)
+                return
+            }
+
+            const projectFromServer = await getResponse.json()
+            localStorage.setItem("savedProject", JSON.stringify(projectFromServer))
+            alert("Projet enregistré et chargé depuis l'API.")
+        } catch (error) {
+            console.error("Erreur lors de l'enregistrement du projet :", error)
+            alert("Erreur lors de l'enregistrement du projet. Vérifiez la console pour plus de détails.")
+        }
     }
 
     const clearForm = () => {
@@ -156,7 +197,7 @@ function Crea() {
 
     return (
         <div className={styles.creationPage}>
-            <header className={styles.pageHeader}>
+            <header>
                 <div className={styles.logoContainer}>
                     <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
