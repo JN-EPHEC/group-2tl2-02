@@ -1,7 +1,7 @@
 // server/src/routes/user.routes.ts
 import { Router } from 'express';
 import User from '../models/project.user';
-import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder } from '../controllers/projects.controller';
+import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder, getUserProjects, getUserFavoris } from '../controllers/projects.controller';
 import { createProject, getAllProjects, deleteProject, getProjectById } from '../controllers/projects.controller'
 import { uploadImage } from '../middlewars/uploadImage';
 
@@ -270,6 +270,11 @@ router.get('/AllProject', getAllProjects);
  *         description: Erreur serveur
  */
 router.get('/project/:id', getProjectById);
+
+// Récupérer projets d'un utilisateur
+router.get('/:id/projects', getUserProjects);
+// Récupérer favoris d'un utilisateur
+router.get('/:id/favoris', getUserFavoris);
 
 /**
  * @swagger

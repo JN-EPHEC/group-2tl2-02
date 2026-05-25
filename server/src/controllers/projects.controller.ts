@@ -167,7 +167,8 @@ export const createProject = async (req: Request, res: Response) => {
 
         res.status(201).json({
             message: "Projet créé avec succès",
-            project: newProject
+            project: newProject,
+            id: (newProject as any).id || (newProject as any).PId || (newProject as any).P_id || (newProject as any).P_id
         });
     } catch (error) {
         console.error("Détail de l'erreur :", error);
@@ -271,10 +272,100 @@ export const getUserById = async (req: Request, res: Response) => {
         });
 
         if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
-        
-        res.status(200).json(user);
+        // Récupérer les projets dont l'utilisateur est auteur
+        const projets = await Project.findAll({
+            include: [
+                { model: Image, as: 'Image', attributes: ['I_id', 'I_img'], through: { attributes: [] } },
+                { model: User, as: 'Auteurs', where: { Uid: Number(id) }, attributes: ['Uid', 'pseudo'], through: { attributes: [] } },
+                { model: video, as: 'video', through: { attributes: [] } },
+                { model: Composant, as: 'composant', through: { attributes: [] } },
+                { model: Tâche, as: 'Tâche', through: { attributes: [] } }
+            ]
+        });
+
+        // Récupérer les projets favorisés par l'utilisateur
+        const favoris = await Project.findAll({
+            include: [
+                { model: User, as: 'favoris', where: { Uid: Number(id) }, attributes: ['Uid'], through: { attributes: [] } },
+                { model: Image, as: 'Image', attributes: ['I_id', 'I_img'], through: { attributes: [] } },
+                { model: User, as: 'Auteurs', through: { attributes: [] }, attributes: ['Uid', 'pseudo'] }
+            ]
+        });
+
+        // Préparer les stats
+        const projetsCount = Array.isArray(projets) ? projets.length : 0;
+        const favorisCount = Array.isArray(favoris) ? favoris.length : 0;
+
+        // Répondre avec l'utilisateur et ses projets/favoris
+        res.status(200).json({
+            ...user.toJSON(),
+            Auteurs: projets,
+            Favoris: favoris,
+            stats: {
+                projets: projetsCount,
+                favoris: favorisCount,
+                badges: (user as any).Badge ? (Array.isArray((user as any).Badge) ? (user as any).Badge.length : 0) : 0
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur", error });
+    }
+};
+export const getUserProjects = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const projets = await Project.findAll({
+            include: [
+                {
+                    model: User,
+                    as: 'Auteurs',
+                    where: { Uid: Number(id) },
+                    through: { attributes: [] },
+                    attributes: []
+                },
+                {
+                    model: Image,
+                    as: 'Image',
+                    through: { attributes: [] },
+                    attributes: ['I_img']
+                }
+            ],
+            attributes: ['id', 'title', 'description', 'difficulty', 'duration', 'date']
+        });
+
+        res.status(200).json(projets);
+    } catch (error) {
+        console.error('Erreur getUserProjects:', error);
+        res.status(500).json({ message: 'Erreur serveur lors de la récupération des projets', error });
+    }
+};
+
+export const getUserFavoris = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const favoris = await Project.findAll({
+            include: [
+                {
+                    model: User,
+                    as: 'favoris',
+                    where: { Uid: Number(id) },
+                    through: { attributes: [] },
+                    attributes: []
+                },
+                {
+                    model: Image,
+                    as: 'Image',
+                    through: { attributes: [] },
+                    attributes: ['I_img']
+                }
+            ],
+            attributes: ['id', 'title', 'description', 'difficulty', 'duration', 'date']
+        });
+
+        res.status(200).json(favoris);
+    } catch (error) {
+        console.error('Erreur getUserFavoris:', error);
+        res.status(500).json({ message: 'Erreur serveur lors de la récupération des favoris', error });
     }
 };
 export const updateUser = async (req: Request, res: Response) => {
