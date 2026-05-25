@@ -4,6 +4,8 @@ import sequelize from '../config/database';
 class Image extends Model {
     declare I_id: number; 
     declare I_img: string;
+    declare I_fileName?: string;
+    declare I_url?: string;
 }
 
 Image.init({
@@ -14,8 +16,15 @@ Image.init({
     },
     I_img: {
         type: DataTypes.STRING,
-        allowNull: false,
-
+        allowNull: false
+    },
+    I_fileName: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    I_url: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     sequelize,

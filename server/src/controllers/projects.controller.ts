@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { validatePassword, hashPassword, comparePassword } from '../utils/Password'; 
 import { isValidEmail } from '../utils/emailValidator';
-import { Project, Image, User, video, Tâche, Composant, History } from '../models/lien_inter/index';
+import { Project, Image, User, video, Tâche, Composant } from '../models/lien_inter/index';
 import { Model } from 'sequelize';
+import fs from 'fs';
+import path from 'path';
 
 
 
@@ -81,11 +83,9 @@ export const loginUser = async (req: Request, res: Response) => {
 // get project et nouveau projet :
 export const createProject = async (req: Request, res: Response) => {
     try {
-        const { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId } = req.body;
-
-
-        
-
+        const { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId, composants, etapes } = req.body;
+     
+     
         const newProject = await Project.create({
             title,
             description,
@@ -95,32 +95,80 @@ export const createProject = async (req: Request, res: Response) => {
             isPublic
         });
 
-        if (imageUrl) {
-            const newImage = await Image.create({ I_img: imageUrl });
-            await (newProject as any).addImage(newImage); 
+        // Cas 1 : Image uploadée via multipart/form-data (fichier)
+        if ((req as any).file) {
+            const localPath = `/uploads/images/${(req as any).file.filename}`;
+            const newImage = await Image.create({
+                I_img: localPath,
+                I_fileName: (req as any).file.originalname,
+                I_url: `http://localhost:3000${localPath}`
+            });
+            await (newProject as any).addImage(newImage);
+        } 
+        // Cas 2 : Image via URL (JSON)
+        else if (imageUrl) {
+            const newImage = await Image.create({
+                I_img: imageUrl,
+                I_url: imageUrl
+            });
+            await (newProject as any).addImage(newImage);
         }
-        if (Uid) {
 
-            await (newProject as any).addAuteurs(Uid);
+        let projectUser = null;
+        if (Uid !== undefined && Uid !== null && Uid !== '') {
+            const uidNumber = Number(Uid);
+            if (!Number.isNaN(uidNumber) && uidNumber > 0) {
+                projectUser = await User.findByPk(uidNumber);
+            }
+            if (projectUser) {
+                try {
+                    await (newProject as any).addAuteurs(projectUser);
+                } catch (userError) {
+                    console.warn(`Impossible d'ajouter l'auteur pour Uid=${Uid}:`, userError);
+                }
+            } else {
+                console.warn(`Utilisateur introuvable ou Uid invalide (${Uid}) ; associations ignorées.`);
+            }
         }
+
         if (VId) {
             await (newProject as any).addVideo(VId);
-
-        }
-        if (Uid) {
-
-            await (newProject as any).addFavoris(Uid);
         }
 
-        if (CId) {
-
-            await (newProject as any).addComposant(CId);
+        if (Array.isArray(composants) && composants.length > 0) {
+            const createdComposants = await Promise.all(
+                composants
+                    .filter((comp: any) => typeof comp.nom === 'string' && comp.nom.trim() !== '')
+                    .map((comp: any) => Composant.create({ nom: comp.nom.trim(), possédé: false }))
+            );
+            if (createdComposants.length > 0) {
+                await (newProject as any).addComposant(createdComposants);
+            }
         }
-        if (TId) {
-            await (newProject as any).addTâche(TId);
+
+        if (Array.isArray(etapes) && etapes.length > 0) {
+            const createdTaches = await Promise.all(
+                etapes
+                    .filter((etape: any) =>
+                        (typeof etape.titre === 'string' && etape.titre.trim() !== '') ||
+                        (typeof etape.description === 'string' && etape.description.trim() !== '')
+                    )
+                    .map((etape: any) =>
+                        Tâche.create({
+                            title: typeof etape.titre === 'string' ? etape.titre.trim() : '',
+                            instruction: typeof etape.description === 'string' ? etape.description.trim() : ''
+                        })
+                    )
+            );
+            if (createdTaches.length > 0) {
+                await (newProject as any).addTâche(createdTaches);
+            }
         }
 
-        res.status(201).json(newProject);
+        res.status(201).json({
+            message: "Projet créé avec succès",
+            project: newProject
+        });
     } catch (error) {
         console.error("Détail de l'erreur :", error);
         res.status(500).json({ message: "Erreur creation", error });
@@ -140,7 +188,7 @@ export const getAllProjects = async (req: Request, res: Response) => {
                 {
                     model: User,
                     as: 'Auteurs',
-                    attributes: ['pseudo'],
+                    attributes: ['Uid', 'pseudo', 'firstName'],
                     through: { attributes: [] }
                 },
                 {
@@ -151,7 +199,9 @@ export const getAllProjects = async (req: Request, res: Response) => {
                 },
                 {
                     model: User,
-                    as: 'favoris'
+                    as: 'favoris',
+                    through: { attributes: [] },
+                    attributes: ['Uid', 'pseudo'] 
                 },
                 {
                     model: Composant,
@@ -196,7 +246,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         const { id } = req.params;
 
         const deleted = await User.destroy({
-            where: { id: id }
+            where: { Uid: id }
         });
 
         if (deleted) {
@@ -210,54 +260,6 @@ export const deleteUser = async (req: Request, res: Response) => {
 };
 
 
-export const Visite_Enregistrer = async (req: Request, res: Response) => {
-    try {
-        const { userId, projectId } = req.body;
-
-        
-        await History.upsert({
-            userId,
-            projectId,
-            visitedAt: new Date()
-        });
-
-        res.status(200).json({ message: "Visite enregistrée" });
-    } catch (error) {
-        res.status(500).json({ message: "Erreur history", error });
-    }
-};
-
-export const getVisite = async (req: Request, res: Response) => {
-    try {
-        const { userId } = req.params;
-
-        
-        const user = await User.findByPk(Number(userId), {
-            include: [{
-                model: Project,
-                as: 'VisitedProjects', 
-                through: { attributes: [] }, 
-                attributes: ['id', 'title', 'description'] 
-            }],
-          
-            order: [[ { model: Project, as: 'VisitedProjects' }, History, 'visitedAt', 'DESC' ]],
-            limit: 4
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
-
-        
-        const projects = user.get('VisitedProjects');
-
-        res.status(200).json(projects || []);
-    } catch (error) {
-        console.error("Erreur récup history:", error);
-        res.status(500).json({ message: "Erreur serveur lors de la récupération de l'historique" });
-    }
-};
-
 export const getUserById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -265,7 +267,7 @@ export const getUserById = async (req: Request, res: Response) => {
             include: [
                 { model: Image, as: 'Avatar', through: { attributes: [] } }
             ],
-            attributes: { exclude: ['password'] } // On ne renvoie JAMAIS le mot de passe !
+            attributes: { exclude: ['password'] }
         });
 
         if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
@@ -282,43 +284,37 @@ export const getProjectById = async (req: Request, res: Response) => {
 
         const project = await Project.findByPk(Number(id), {
             include: [
-                // 1. L'image du projet (MCD image_975652.png)
                 { 
                     model: Image, 
                     as: 'Image', 
                     attributes: ['I_id', 'I_img'] 
                 },
-                // 2. Les auteurs (Users)
                 { 
                     model: User, 
                     as: 'Auteurs', 
                     through: { attributes: [] },
-                    attributes: ['id', 'pseudo', 'firstName'] 
+                    attributes: ['Uid', 'pseudo', 'firstName']  // 👈 'id' → 'Uid'
                 },
-                // 3. La vidéo associée
                 { 
                     model: video, 
                     as: 'video', 
                     through: { attributes: [] } 
                 },
-                // 4. Les composants (MCD image_9a22b9.png - table Proj_composant)
                 { 
                     model: Composant, 
                     as: 'composant', 
                     through: { attributes: [] } 
                 },
-                // 5. Les tâches (Table Proj_Tâche)
                 { 
                     model: Tâche, 
                     as: 'Tâche', 
                     through: { attributes: [] } 
                 },
-                // 6. Les favoris (Users qui aiment le projet)
                 { 
                     model: User, 
                     as: 'favoris', 
                     through: { attributes: [] },
-                    attributes: ['id', 'pseudo'] 
+                    attributes: ['Uid', 'pseudo']  // 👈 'id' → 'Uid'
                 }
             ]
         });
@@ -331,5 +327,83 @@ export const getProjectById = async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Erreur getProjectById:", error);
         res.status(500).json({ message: "Erreur lors de la récupération du projet", error });
+    }
+};
+
+// Uploader un avatar pour un utilisateur
+export const uploadUserAvatar = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        // Vérifier que l'utilisateur existe
+        const user = await User.findByPk(Number(id));
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        // Vérifier qu'une image a été uploadée
+        if (!(req as any).file) {
+            return res.status(400).json({ message: "Aucune image fournie" });
+        }
+
+        // Créer la nouvelle image
+        const localPath = `/uploads/images/${(req as any).file.filename}`;
+        const newImage = await Image.create({
+            I_img: localPath,
+            I_fileName: (req as any).file.originalname,
+            I_url: `http://localhost:3000${localPath}`
+        });
+
+        // Ajouter l'image comme avatar de l'utilisateur
+        await (user as any).addAvatar(newImage);
+
+        res.status(201).json({
+            message: "Avatar téléchargé avec succès",
+            avatar: {
+                I_id: newImage.I_id,
+                I_img: newImage.I_img,
+                I_url: newImage.I_url
+            }
+        });
+    } catch (error) {
+        console.error("Erreur upload avatar:", error);
+        res.status(500).json({ message: "Erreur lors du téléchargement de l'avatar", error });
+    }
+};
+
+// Test : Vérifier que le dossier uploads existe et est accessible
+export const testUploadFolder = async (req: Request, res: Response) => {
+    try {
+        const uploadDir = path.join(__dirname, '../../uploads/images');
+
+        // Créer le dossier s'il n'existe pas
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
+        // Vérifier que le dossier existe maintenant
+        const exists = fs.existsSync(uploadDir);
+
+        // Lire les fichiers du dossier
+        let files: string[] = [];
+        if (exists) {
+            files = fs.readdirSync(uploadDir).filter(f => !f.startsWith('.'));
+        }
+
+        res.status(200).json({
+            message: "Test du dossier uploads réussi",
+            uploadPath: uploadDir,
+            folderExists: exists,
+            isWritable: exists && fs.accessSync(uploadDir, fs.constants.W_OK) ? true : false,
+            filesCount: files.length,
+            files: files,
+            timestamp: new Date()
+        });
+    } catch (error) {
+        console.error("Erreur test upload folder:", error);
+        res.status(500).json({
+            message: "Erreur lors du test du dossier uploads",
+            error: (error as any).message
+        });
     }
 };

@@ -5,6 +5,10 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "lib": ["esnext"],
+    "types": [
+      "jest",
+      "node"
+    ],
 
     /* Options pour ta bannière (Import du package.json) */
     "resolveJsonModule": true,
