@@ -84,7 +84,7 @@ export const loginUser = async (req: Request, res: Response) => {
 // get project et nouveau projet :
 export const createProject = async (req: Request, res: Response) => {
     try {
-        const { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId, composants, etapes } = req.body;
+        const { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId, composants, etapes, videoLink, videoTitle } = req.body;
      
      
         const newProject = await Project.create({
@@ -134,16 +134,14 @@ export const createProject = async (req: Request, res: Response) => {
 
         // Gestion des vidéos
         // Cas 1 : Vidéo via lien externe (URL)
-        if (req.body.videoLink) {
-            if (!isValidVideoUrl(req.body.videoLink)) {
+        if (videoLink) {
+            if (!isValidVideoUrl(videoLink)) {
                 return res.status(400).json({ message: "L'URL de la vidéo n'est pas valide." });
             }
-            const videoTitle = req.body.videoTitle || req.body.videoLink;
-
             const newVideo = await video.create({
                 type: 'link',
-                lien: req.body.videoLink,
-                titre: videoTitle,
+                lien: videoLink.trim(),
+                titre: (videoTitle || videoLink).trim(),
                 mp4: null
             });
             await (newProject as any).addVideo(newVideo);
@@ -183,10 +181,21 @@ export const createProject = async (req: Request, res: Response) => {
             }
         }
 
+        const fullProject = await Project.findByPk((newProject as any).id || (newProject as any).PId, {
+            include: [
+                { model: Image, as: 'Image' },
+                { model: User, as: 'Auteurs', through: { attributes: [] }, attributes: ['Uid', 'pseudo', 'firstName'] },
+                { model: video, as: 'video', through: { attributes: [] } },
+                { model: Composant, as: 'composant', through: { attributes: [] } },
+                { model: Tâche, as: 'Tâche', through: { attributes: [] } },
+                { model: User, as: 'favoris', through: { attributes: [] } }
+            ]
+        });
+
         res.status(201).json({
             message: "Projet créé avec succès",
-            project: newProject,
-            id: (newProject as any).id || (newProject as any).PId || (newProject as any).P_id || (newProject as any).P_id
+            project: fullProject,
+            id: (fullProject as any)?.id || (fullProject as any)?.PId
         });
     } catch (error) {
         console.error("Détail de l'erreur :", error);

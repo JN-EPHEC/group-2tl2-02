@@ -106,17 +106,13 @@ function Projet() {
                 <div className={styles.projetFenetre}>
                     <h1>Titre du projet</h1>
                     <h3>Description</h3>
-                    {project?.video && project.video.length > 0 && (
+                    {project?.video && project.video.length > 0 ? (
                         <>
                             {project.video[0]?.mp4 && <video src={project.video[0].mp4} controls></video>}
                             {project.video[0]?.lien && <p><a href={project.video[0].lien} target="_blank" rel="noopener noreferrer">lien de la vidéo</a></p>}
                         </>
-                    )}
-                    {!project?.video || project.video.length === 0 && (
-                        <>
-                            <video src="" controls></video>
-                            <p><a href="">lien de la vidéo</a></p>
-                        </>
+                    ) : (
+                        <div style={{ margin: '8px 0', color: '#666' }}>Aucune vidéo disponible</div>
                     )}
                     <hr />
                     
@@ -124,7 +120,9 @@ function Projet() {
                         project.Tâche.map((tache: any, index: number) => (
                             <section key={tache.TId || index} id={`etape-${index + 1}`}>
                                 <h2>{tache.title}</h2>
-                                <img src="" alt={`img${tache.title}`} />
+                                {tache.I_img && tache.I_img.trim() !== '' && (
+                                    <img src={tache.I_img} alt={`img${tache.title}`} />
+                                )}
                                 <div>
                                     <p>{tache.instruction}</p>
                                 </div>
@@ -132,15 +130,12 @@ function Projet() {
                             </section>
                         ))
                     ) : (
-                        <>
-                            <section id="etape-1">
-                                <h2>Titre de l'étape 1</h2>
-                                <img src="" alt="imgEtape1" />
-                                <div>
-                                    <p>Aucune étape disponible</p>
-                                </div>
-                            </section>
-                        </>
+                        <section id="etape-1">
+                            <h2>Titre de l'étape 1</h2>
+                            <div>
+                                <p>Aucune étape disponible</p>
+                            </div>
+                        </section>
                     )}
                 </div>
 
