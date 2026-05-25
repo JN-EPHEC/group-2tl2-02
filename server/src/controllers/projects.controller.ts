@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { validatePassword, hashPassword, comparePassword } from '../utils/Password'; 
 import { isValidEmail } from '../utils/emailValidator';
+import { isValidVideoUrl } from '../utils/urlValidator';
 import { Project, Image, User, video, Tâche, Composant } from '../models/lien_inter/index';
 import { Model } from 'sequelize';
 import fs from 'fs';
@@ -131,7 +132,24 @@ export const createProject = async (req: Request, res: Response) => {
             }
         }
 
-        if (VId) {
+        // Gestion des vidéos
+        // Cas 1 : Vidéo via lien externe (URL)
+        if (req.body.videoLink) {
+            if (!isValidVideoUrl(req.body.videoLink)) {
+                return res.status(400).json({ message: "L'URL de la vidéo n'est pas valide." });
+            }
+            const videoTitle = req.body.videoTitle || req.body.videoLink;
+
+            const newVideo = await video.create({
+                type: 'link',
+                lien: req.body.videoLink,
+                titre: videoTitle,
+                mp4: null
+            });
+            await (newProject as any).addVideo(newVideo);
+        }
+        // Cas 2 : ID vidéo existante
+        else if (VId) {
             await (newProject as any).addVideo(VId);
         }
 
@@ -195,7 +213,7 @@ export const getAllProjects = async (req: Request, res: Response) => {
                 {
                     model: video,
                     as: 'video',
-                    attributes: ['mp4', 'lien'],
+                    attributes: ['VId', 'type', 'mp4', 'lien', 'titre'],
                     through: { attributes: [] }
                 },
                 {
@@ -277,7 +295,7 @@ export const getUserById = async (req: Request, res: Response) => {
             include: [
                 { model: Image, as: 'Image', attributes: ['I_id', 'I_img'], through: { attributes: [] } },
                 { model: User, as: 'Auteurs', where: { Uid: Number(id) }, attributes: ['Uid', 'pseudo'], through: { attributes: [] } },
-                { model: video, as: 'video', through: { attributes: [] } },
+                { model: video, as: 'video', attributes: ['VId', 'type', 'mp4', 'lien', 'titre'], through: { attributes: [] } },
                 { model: Composant, as: 'composant', through: { attributes: [] } },
                 { model: Tâche, as: 'Tâche', through: { attributes: [] } }
             ]
@@ -437,6 +455,7 @@ export const getProjectById = async (req: Request, res: Response) => {
                 { 
                     model: video, 
                     as: 'video', 
+                    attributes: ['VId', 'type', 'mp4', 'lien', 'titre'],
                     through: { attributes: [] } 
                 },
                 { 
@@ -544,5 +563,131 @@ export const testUploadFolder = async (req: Request, res: Response) => {
             message: "Erreur lors du test du dossier uploads",
             error: (error as any).message
         });
+    }
+};
+
+// Ajouter une vidéo à un projet existant
+export const addVideoToProject = async (req: Request, res: Response) => {
+    try {
+        const { projectId } = req.params;
+        const { videoLink, videoTitle, VId } = req.body;
+
+        // Vérifier que le projet existe
+        const project = await Project.findByPk(Number(projectId));
+        if (!project) {
+            return res.status(404).json({ message: "Projet non trouvé" });
+        }
+
+        // Cas 1 : Ajouter un lien vidéo externe
+        if (videoLink) {
+            if (!isValidVideoUrl(videoLink)) {
+                return res.status(400).json({ message: "L'URL de la vidéo n'est pas valide." });
+            }
+            
+            const title = videoTitle || videoLink;
+            const newVideo = await video.create({
+                type: 'link',
+                lien: videoLink,
+                titre: title,
+                mp4: null
+            });
+            
+            await (project as any).addVideo(newVideo);
+            
+            return res.status(201).json({
+                message: "Vidéo ajoutée avec succès",
+                video: {
+                    VId: newVideo.VId,
+                    type: newVideo.type,
+                    lien: newVideo.lien,
+                    titre: newVideo.titre
+                }
+            });
+        }
+        
+        // Cas 2 : Ajouter une vidéo existante par son ID
+        if (VId) {
+            const existingVideo = await video.findByPk(Number(VId));
+            if (!existingVideo) {
+                return res.status(404).json({ message: "Vidéo non trouvée" });
+            }
+            
+            await (project as any).addVideo(existingVideo);
+            
+            return res.status(201).json({
+                message: "Vidéo existante ajoutée au projet",
+                video: {
+                    VId: existingVideo.VId,
+                    type: existingVideo.type,
+                    lien: existingVideo.lien,
+                    titre: existingVideo.titre
+                }
+            });
+        }
+
+        return res.status(400).json({ message: "Fournir videoLink ou VId" });
+    } catch (error) {
+        console.error("Erreur add video to project:", error);
+        res.status(500).json({ message: "Erreur lors de l'ajout de la vidéo", error });
+    }
+};
+
+// Supprimer une vidéo d'un projet
+export const deleteVideoFromProject = async (req: Request, res: Response) => {
+    try {
+        const { projectId, videoId } = req.params;
+
+        const project = await Project.findByPk(Number(projectId));
+        if (!project) {
+            return res.status(404).json({ message: "Projet non trouvé" });
+        }
+
+        const videoToDelete = await video.findByPk(Number(videoId));
+        if (!videoToDelete) {
+            return res.status(404).json({ message: "Vidéo non trouvée" });
+        }
+
+        // Retirer la vidéo du projet (déassociation)
+        await (project as any).removeVideo(videoToDelete);
+
+        res.status(200).json({ message: "Vidéo supprimée du projet avec succès" });
+    } catch (error) {
+        console.error("Erreur delete video from project:", error);
+        res.status(500).json({ message: "Erreur lors de la suppression de la vidéo", error });
+    }
+};
+
+// Supprimer une image
+export const deleteImage = async (req: Request, res: Response) => {
+    try {
+        const { imageId } = req.params;
+
+        const image = await Image.findByPk(Number(imageId));
+        if (!image) {
+            return res.status(404).json({ message: "Image non trouvée" });
+        }
+
+        // Supprimer le fichier du disque si c'est un chemin local
+        const imagePath = (image as any).I_img;
+        if (imagePath && imagePath.startsWith('/uploads/')) {
+            const fullPath = path.join(__dirname, '../../..', imagePath);
+            if (fs.existsSync(fullPath)) {
+                try {
+                    fs.unlinkSync(fullPath);
+                } catch (fileError) {
+                    console.warn("Impossible de supprimer le fichier image:", fileError);
+                }
+            }
+        }
+
+        // Supprimer l'image de la base de données
+        await Image.destroy({
+            where: { I_id: Number(imageId) }
+        });
+
+        res.status(200).json({ message: "Image supprimée avec succès" });
+    } catch (error) {
+        console.error("Erreur delete image:", error);
+        res.status(500).json({ message: "Erreur lors de la suppression de l'image", error });
     }
 };
