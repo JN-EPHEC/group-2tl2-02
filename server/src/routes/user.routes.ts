@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import User from '../models/project.user';
 import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder, getUserProjects, getUserFavoris } from '../controllers/projects.controller';
-import { createProject, getAllProjects, deleteProject, getProjectById } from '../controllers/projects.controller'
+import { createProject, getAllProjects, deleteProject, getProjectById, addVideoToProject, deleteVideoFromProject, deleteImage } from '../controllers/projects.controller'
 import { uploadImage } from '../middlewars/uploadImage';
 
 
@@ -487,5 +487,101 @@ router.post('/:id/avatar', uploadImage.single('image'), uploadUserAvatar);
  *         description: Erreur lors du test
  */
 router.get('/test/upload-folder', testUploadFolder);
+
+/**
+ * @swagger
+ * /api/users/project/{projectId}/video:
+ *   post:
+ *     summary: Ajouter une vidéo à un projet existant
+ *     tags: [Videos]
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID du projet
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               videoLink:
+ *                 type: string
+ *                 example: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+ *                 description: URL externe de la vidéo (YouTube, Vimeo, etc.)
+ *               videoTitle:
+ *                 type: string
+ *                 example: "Titre de la vidéo"
+ *                 description: Titre de la vidéo
+ *               VId:
+ *                 type: integer
+ *                 example: 5
+ *                 description: ID d'une vidéo existante (alternative à videoLink)
+ *     responses:
+ *       201:
+ *         description: Vidéo ajoutée avec succès
+ *       400:
+ *         description: URL invalide ou paramètres manquants
+ *       404:
+ *         description: Projet ou vidéo non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.post('/project/:projectId/video', addVideoToProject);
+
+/**
+ * @swagger
+ * /api/users/project/{projectId}/video/{videoId}:
+ *   delete:
+ *     summary: Supprimer une vidéo d'un projet
+ *     tags: [Videos]
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID du projet
+ *       - in: path
+ *         name: videoId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de la vidéo à supprimer
+ *     responses:
+ *       200:
+ *         description: Vidéo supprimée du projet
+ *       404:
+ *         description: Projet ou vidéo non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.delete('/project/:projectId/video/:videoId', deleteVideoFromProject);
+
+/**
+ * @swagger
+ * /api/users/image/{imageId}:
+ *   delete:
+ *     summary: Supprimer une image
+ *     tags: [Images]
+ *     parameters:
+ *       - in: path
+ *         name: imageId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de l'image à supprimer
+ *     responses:
+ *       200:
+ *         description: Image supprimée avec succès
+ *       404:
+ *         description: Image non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+router.delete('/image/:imageId', deleteImage);
 
 export default router;
