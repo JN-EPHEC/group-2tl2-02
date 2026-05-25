@@ -271,11 +271,6 @@ router.get('/AllProject', getAllProjects);
  */
 router.get('/project/:id', getProjectById);
 
-// Récupérer projets d'un utilisateur
-router.get('/:id/projects', getUserProjects);
-// Récupérer favoris d'un utilisateur
-router.get('/:id/favoris', getUserFavoris);
-
 /**
  * @swagger
  * /api/users/{id}:
