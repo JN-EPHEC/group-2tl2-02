@@ -277,6 +277,54 @@ export const getUserById = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Erreur serveur", error });
     }
 };
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { firstName, lastName, email, bio, pseudo, age, password } = req.body;
+
+        const user = await User.findByPk(Number(id));
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé." });
+        }
+
+        const updateData: any = {};
+        if (firstName !== undefined) updateData.firstName = firstName;
+        if (lastName !== undefined) updateData.lastName = lastName;
+        if (email !== undefined) {
+            if (!isValidEmail(email)) {
+                return res.status(400).json({ message: "L'email n'est pas valide." });
+            }
+            updateData.email = email;
+        }
+        if (bio !== undefined) updateData.bio = bio;
+        if (pseudo !== undefined) updateData.pseudo = pseudo;
+        if (age !== undefined) updateData.age = age;
+        if (password !== undefined && password !== "") {
+            if (!validatePassword(password, age || (user as any).age)) {
+                return res.status(400).json({ message: "Le mot de passe ne respecte pas les règles de sécurité pour ton groupe d'âge." });
+            }
+            updateData.password = await hashPassword(password);
+        }
+
+        await user.update(updateData);
+
+        res.status(200).json({
+            message: "Profil mis à jour avec succès.",
+            user: {
+                id: user.Uid,
+                pseudo: user.pseudo,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                bio: user.bio,
+                age: user.age
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour du profil", error });
+    }
+};
 
 export const getProjectById = async (req: Request, res: Response) => {
     try {
