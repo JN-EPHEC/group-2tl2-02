@@ -11,6 +11,7 @@ function Profil() {
         firstName: "",
         lastName: "",
         bio: "",
+        avatarUrl: "",
         stats: { projets: 0, favoris: 0, badges: 0 }
     })
     const [projects, setProjects] = useState<any[]>([])
@@ -64,6 +65,7 @@ function Profil() {
                 firstName: userData.firstName || "",
                 lastName: userData.lastName || "",
                 bio: userData.bio || "Aucune bio pour le moment.",
+                avatarUrl: userData.Avatar?.[0]?.I_url || userData.Avatar?.[0]?.I_img || "",
                 stats: {
                     projets: userData.stats?.projets ?? 0,
                     favoris: userData.stats?.favoris ?? 0,
@@ -111,7 +113,7 @@ function Profil() {
             
             <div className={styles.profilColumns}>
                 <div className={styles.profilInfo}>
-                    <img className={styles.avatarImage} src="./logo.png" alt="pdp" />
+                    <img className={styles.avatarImage} src={user.avatarUrl || "./logo.png"} alt="pdp" />
                     
                     <h1 className={styles.profilPseudo}>{user.pseudo}</h1>
                     <h3 className={styles.profilStatus}>{user.firstName} {user.lastName}</h3>

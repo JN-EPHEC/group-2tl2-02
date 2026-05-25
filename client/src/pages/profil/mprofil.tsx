@@ -34,6 +34,8 @@ function MProfil() {
     const [message, setMessage] = useState("")
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
+    const [avatarUrl, setAvatarUrl] = useState("")
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
 
     useEffect(() => {
         const loadUser = async () => {
@@ -62,6 +64,11 @@ function MProfil() {
                     age: userData.age || "",
                     email: userData.email || ""
                 })
+                setAvatarUrl(
+                    userData.Avatar?.[0]?.I_url ||
+                    userData.Avatar?.[0]?.I_img ||
+                    ""
+                )
             } catch (err) {
                 console.error(err)
                 setError("Erreur serveur lors du chargement du profil.")
@@ -79,6 +86,14 @@ function MProfil() {
     const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target
         setPasswordData(prev => ({ ...prev, [name]: value }))
+    }
+
+    const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0] || null
+        setAvatarFile(file)
+        if (file) {
+            setAvatarUrl(URL.createObjectURL(file))
+        }
     }
 
     const submitProfile = async (event: FormEvent) => {
@@ -111,6 +126,26 @@ function MProfil() {
             if (!response.ok) {
                 setError(data.message || "Impossible de mettre à jour le profil.")
                 return
+            }
+
+            if (avatarFile) {
+                const avatarFormData = new FormData()
+                avatarFormData.append("image", avatarFile)
+
+                const avatarResponse = await fetch(`/api/users/${userId}/avatar`, {
+                    method: "POST",
+                    body: avatarFormData
+                })
+
+                const avatarData = await avatarResponse.json().catch(() => null)
+                if (!avatarResponse.ok) {
+                    console.error("Erreur upload avatar", avatarData)
+                    setError(avatarData?.message || "Impossible de télécharger l'avatar.")
+                    return
+                }
+
+                setAvatarUrl(avatarData?.avatar?.I_url || avatarData?.avatar?.I_img || avatarUrl)
+                setAvatarFile(null)
             }
 
             setMessage("Profil enregistré avec succès.")
@@ -198,11 +233,11 @@ function MProfil() {
                     <div className={styles.card}>
                         <div className={styles.avatarSection}>
                             <div className={styles.avatarCircle}>
-                                <img src="./logo.png" alt="Aperçu" />
+                                <img src={avatarUrl || "./logo.png"} alt="Aperçu" />
                             </div>
                             <label className={styles.fileLabel}>
                                 Choisir une photo
-                                <input type="file" className={styles.hiddenInput} />
+                                <input type="file" className={styles.hiddenInput} onChange={handleAvatarChange} accept="image/*" />
                             </label>
                         </div>
 
