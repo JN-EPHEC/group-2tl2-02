@@ -172,7 +172,7 @@ function Crea() {
 
             const projectFromServer = await getResponse.json()
             localStorage.setItem("savedProject", JSON.stringify(projectFromServer))
-            alert("Projet enregistré et chargé depuis l'API.")
+            navigate("/profil")
         } catch (error) {
             console.error("Erreur lors de l'enregistrement du projet :", error)
             alert("Erreur lors de l'enregistrement du projet. Vérifiez la console pour plus de détails.")
