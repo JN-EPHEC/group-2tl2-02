@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../config/database.ts'; 
+import sequelize from '../config/database'; 
 
 class video extends Model {
   declare VId: number;
