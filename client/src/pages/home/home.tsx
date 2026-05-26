@@ -54,10 +54,14 @@ function Acceuil() {
     };
 
     useEffect(() => {
-        const fetchProjects = async () => {
+            const fetchProjects = async () => {
             try {
                 setLoadingProjects(true)
-                const res = await fetch('/api/users/AllProject')
+                const userId = localStorage.getItem('userId')
+                const url = userId 
+                    ? `/api/users/AllProject?viewerUid=${userId}` 
+                    : '/api/users/AllProject'
+                const res = await fetch(url)
                 if (!res.ok) throw new Error('Erreur API')
                 const data = await res.json()
                 if (Array.isArray(data)) setProjects(data)

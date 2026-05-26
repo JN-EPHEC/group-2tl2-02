@@ -17,6 +17,9 @@ function Projet() {
                 setError(null)
 
                 let projectId: string | undefined = id
+
+
+
                 if (!projectId) {
                     const stored = localStorage.getItem("selectedProjectId")
                     projectId = stored || undefined
@@ -27,12 +30,21 @@ function Projet() {
                     setLoading(false)
                     return
                 }
+                const userId = localStorage.getItem('userId')
+                const url = userId
+                    ? `/api/users/project/${projectId}?viewerUid=${userId}`
+                    : `/api/users/project/${projectId}`
 
-                const response = await fetch(`/api/users/project/${projectId}`)
+                const response = await fetch(url)
                 if (!response.ok) {
-                    throw new Error(`Erreur ${response.status}: Impossible de récupérer le projet`)
+                    if (response.status === 403) {
+                        setError("Ce projet est privé. Vous n'avez pas accès.")
+                    } else {
+                        throw new Error(`Erreur ${response.status}: Impossible de récupérer le projet`)
+                    }
+                    setLoading(false)
+                    return
                 }
-
                 const data = await response.json()
                 setProject(data)
                 localStorage.setItem("selectedProjectData", JSON.stringify(data))
