@@ -67,8 +67,8 @@ import {
 } from '../projects.controller';
 
 // --- Helpers ---
-const mockReq = (body = {}, params = {}): Request =>
-  ({ body, params } as unknown as Request);
+const mockReq = (body = {}, params = {}, query = {}): Request =>
+  ({ body, params, query } as unknown as Request);
 
 const mockRes = () => {
   const res: any = {};
@@ -241,9 +241,17 @@ describe('deleteProject', () => {
 describe('getAllProjects', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('retourne 200 avec la liste des projets', async () => {
+  it('retourne 200 avec la liste des projets publics', async () => {
     mockProjectFindAll.mockResolvedValue([{ id: 1, title: 'Robot Arduino' }]);
-    const req = mockReq();
+    const req = mockReq({}, {}, {});
+    const res = mockRes();
+    await getAllProjects(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it('retourne 200 avec les projets publics et les privés de l auteur', async () => {
+    mockProjectFindAll.mockResolvedValue([{ id: 2, title: 'Projet privé' }]);
+    const req = mockReq({}, {}, { viewerUid: '1' });
     const res = mockRes();
     await getAllProjects(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -251,7 +259,7 @@ describe('getAllProjects', () => {
 
   it('retourne 500 si erreur DB', async () => {
     mockProjectFindAll.mockRejectedValue(new Error('DB error'));
-    const req = mockReq();
+    const req = mockReq({}, {}, {});
     const res = mockRes();
     await getAllProjects(req, res);
     expect(res.status).toHaveBeenCalledWith(500);
@@ -354,9 +362,26 @@ describe('getUserById', () => {
 describe('getProjectById', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('retourne 200 avec le projet', async () => {
-    mockProjectFindByPk.mockResolvedValue({ id: 1, title: 'Robot Arduino' });
+  it('retourne 200 avec le projet public', async () => {
+    mockProjectFindByPk.mockResolvedValue({ id: 1, title: 'Robot Arduino', isPublic: true, Auteurs: [] });
     const req = mockReq({}, { id: '1' });
+    const res = mockRes();
+    await getProjectById(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it('retourne 403 si le projet est privé et que l utilisateur n est pas auteur', async () => {
+    mockProjectFindByPk.mockResolvedValue({ id: 2, title: 'Projet privé', isPublic: false, Auteurs: [{ Uid: 3, pseudo: 'Rayan' }] });
+    const req = mockReq({}, { id: '2' }, { viewerUid: '1' });
+    const res = mockRes();
+    await getProjectById(req, res);
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ message: 'Ce projet est privé. Accès refusé.' }));
+  });
+
+  it('retourne 200 si le projet est privé mais que l auteur le consulte', async () => {
+    mockProjectFindByPk.mockResolvedValue({ id: 2, title: 'Projet privé', isPublic: false, Auteurs: [{ Uid: 1, pseudo: 'Rayan' }] });
+    const req = mockReq({}, { id: '2' }, { viewerUid: '1' });
     const res = mockRes();
     await getProjectById(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
