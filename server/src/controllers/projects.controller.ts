@@ -315,7 +315,7 @@ export const getAllProjects = async (req: Request, res: Response) => {
 export const updateProject = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        let { title, description, difficulty, duration, date, isPublic, imageUrl, composants, etapes, videoLink, videoTitle } = req.body;
+        let { title, description, difficulty, duration, date, isPublic, imageUrl, composants, etapes, videoLink, videoTitle, VId } = req.body;
 
 
         if (typeof composants === 'string') {
@@ -839,5 +839,65 @@ export const deleteImage = async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Erreur delete image:", error);
         res.status(500).json({ message: "Erreur lors de la suppression de l'image", error });
+    }
+};
+
+// Ajouter/retirer un projet des favoris
+export const toggleProjectFavorite = async (req: Request, res: Response) => {
+    try {
+        const { projectId } = req.params;
+        const { userId } = req.body;
+
+        if (!userId || !projectId) {
+            return res.status(400).json({ message: "userId et projectId sont requis" });
+        }
+
+        const project = await Project.findByPk(Number(projectId));
+        if (!project) {
+            return res.status(404).json({ message: "Projet non trouvé" });
+        }
+
+        const user = await User.findByPk(Number(userId));
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        const isFavorite = await (project as any).hasFavoris(user);
+
+        if (isFavorite) {
+            await (project as any).removeFavoris(user);
+            res.status(200).json({ message: "Projet retiré des favoris", isFavorite: false });
+        } else {
+            await (project as any).addFavoris(user);
+            res.status(200).json({ message: "Projet ajouté aux favoris", isFavorite: true });
+        }
+    } catch (error) {
+        console.error("Erreur toggle favorite:", error);
+        res.status(500).json({ message: "Erreur lors de la modification des favoris", error });
+    }
+};
+
+// Récupérer les favoris d'un utilisateur
+export const getUserFavorites = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+
+        const user = await User.findByPk(Number(userId));
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        const favoris = await Project.findAll({
+            include: [
+                { model: User, as: 'favoris', where: { Uid: Number(userId) }, attributes: ['Uid'], through: { attributes: [] } },
+                { model: Image, as: 'Image', attributes: ['I_id', 'I_img'], through: { attributes: [] } },
+                { model: User, as: 'Auteurs', through: { attributes: [] }, attributes: ['Uid', 'pseudo'] }
+            ]
+        });
+
+        res.status(200).json(favoris);
+    } catch (error) {
+        console.error("Erreur getUserFavorites:", error);
+        res.status(500).json({ message: "Erreur lors de la récupération des favoris", error });
     }
 };

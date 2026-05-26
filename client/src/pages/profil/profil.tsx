@@ -45,7 +45,7 @@ function Profil() {
         const routeId = getProjectRouteId(project)
         if (!routeId) return
 
-        if (window.confirm(`Êtes-vous sûr de vouloir supprimer le projet "${project.title || 'sans titre'}" ? Cette action est irréversible.`)) {
+        if (window.confirm(`Êtes-vous sûr de vouloir supprimer le projet "${project.title || 'sans titre'}" ?`)) {
             try {
                 const response = await fetch(`/api/users/project/${routeId}`, {
                     method: "DELETE"

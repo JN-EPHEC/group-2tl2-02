@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import User from '../models/project.user';
 import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder } from '../controllers/projects.controller';
-import { createProject, getAllProjects, deleteProject, getProjectById, addVideoToProject, deleteVideoFromProject, deleteImage, updateProject } from '../controllers/projects.controller'
+import { createProject, getAllProjects, deleteProject, getProjectById, addVideoToProject, deleteVideoFromProject, deleteImage, updateProject, toggleProjectFavorite, getUserFavorites } from '../controllers/projects.controller'
 import { uploadImage } from '../middlewars/uploadImage';
 import { uploadProjectMedia } from '../middlewars/uploadProjectMedia';
 
@@ -288,6 +288,29 @@ router.get('/AllProject', getAllProjects);
  *         description: Erreur serveur
  */
 router.get('/project/:id', getProjectById);
+
+/**
+ * @swagger
+ * /api/users/{userId}/favoris:
+ *   get:
+ *     summary: Récupère les projets favorisés par un utilisateur
+ *     tags: [Favorites]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Liste des projets favorisés
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.get('/:userId/favoris', getUserFavorites);
 
 /**
  * @swagger
@@ -612,6 +635,42 @@ router.get('/test/upload-folder', testUploadFolder);
  *         description: Erreur serveur
  */
 router.post('/project/:projectId/video', addVideoToProject);
+
+/**
+ * @swagger
+ * /api/users/project/{projectId}/favorite:
+ *   post:
+ *     summary: Ajouter ou retirer un projet des favoris
+ *     tags: [Favorites]
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [userId]
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Statut des favoris mis à jour
+ *       400:
+ *         description: Données manquantes
+ *       404:
+ *         description: Projet ou utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
+router.post('/project/:projectId/favorite', toggleProjectFavorite);
 
 /**
  * @swagger

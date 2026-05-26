@@ -9,6 +9,7 @@ function Projet() {
     const [project, setProject] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [isFavorite, setIsFavorite] = useState(false)
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -48,6 +49,11 @@ function Projet() {
                 const data = await response.json()
                 setProject(data)
                 localStorage.setItem("selectedProjectData", JSON.stringify(data))
+
+                if (userId && data.favoris) {
+                    const userIsFav = data.favoris.some((fav: any) => fav.Uid === Number(userId))
+                    setIsFavorite(userIsFav)
+                }
             } catch (err) {
                 console.error("Erreur lors de la récupération du projet:", err)
                 setError(err instanceof Error ? err.message : "Une erreur est survenue")
@@ -58,6 +64,35 @@ function Projet() {
 
         fetchProject()
     }, [id])
+
+    const handleToggleFavorite = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        const userId = localStorage.getItem('userId')
+        const projectId = project?.id || project?.PId
+
+        if (!userId || !projectId) {
+            alert("Vous devez être connecté pour ajouter aux favoris")
+            return
+        }
+
+        try {
+            const response = await fetch(`/api/users/project/${projectId}/favorite`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: Number(userId) })
+            })
+
+            if (!response.ok) {
+                throw new Error("Erreur lors de la modification des favoris")
+            }
+
+            const data = await response.json()
+            setIsFavorite(data.isFavorite)
+        } catch (err) {
+            console.error("Erreur toggle favorite:", err)
+            alert("Erreur lors de la modification des favoris")
+        }
+    }
 
     const scrollToEtape = (etapeNumber: number) => {
         const element = document.getElementById(`etape-${etapeNumber}`)
@@ -84,7 +119,12 @@ function Projet() {
             {!loading && !error && project && (
             <div className={styles.projetColumns}>
                 <div className={styles.projetInfo}>
-                    <p><button className="btnConnection">⭐​</button></p>
+                    <p><button
+                        className="btnConnection"
+                        onClick={handleToggleFavorite}
+                        style={{ fontSize: '1.5em', cursor: 'pointer' }}
+                        title={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                    >{isFavorite ? '⭐' : '☆'}</button></p>
                     <img
                         className={styles.avatarImage}
                         src={project?.Image?.[0]?.I_img || "./logo.png"}
