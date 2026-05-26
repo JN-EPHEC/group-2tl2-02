@@ -37,8 +37,7 @@ function Profil() {
 
         localStorage.setItem("selectedProjectId", String(routeId))
         localStorage.setItem("selectedProjectData", JSON.stringify(project))
-        //navigate(`/creation?edit=true&id=${routeId}`)
-        navigate(`/developpement`)
+        navigate(`/creation?edit=true&id=${routeId}`)
     }
 
     const handleProjectDelete = async (project: any, event: any) => {
@@ -146,6 +145,9 @@ function Profil() {
                     {/* On utilise window.location pour que le Header de l'accueil se mette à jour */}
                     <button className="btnConnection" onClick={function () { window.location.href = "/" }}>
                         Accueil
+                    </button>
+                    <button className="btnConnection" onClick={() => navigate("/creation")}>
+                        Nouveau projet
                     </button>
                 </div>
             </header>
