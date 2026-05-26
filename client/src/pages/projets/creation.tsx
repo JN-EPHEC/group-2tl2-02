@@ -256,7 +256,7 @@ function Crea() {
     return (
         <div className={styles.creationPage}>
             <header>
-                <div className={styles.logoContainer}>
+                <div className={styles.logoContainer} onClick={() => navigate("/")}>
                     <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>

@@ -37,7 +37,8 @@ function Profil() {
 
         localStorage.setItem("selectedProjectId", String(routeId))
         localStorage.setItem("selectedProjectData", JSON.stringify(project))
-        navigate(`/creation?edit=true&id=${routeId}`)
+        //navigate(`/creation?edit=true&id=${routeId}`)
+        navigate(`/developpement`)
     }
 
     const handleProjectDelete = async (project: any, event: any) => {
@@ -137,7 +138,7 @@ function Profil() {
     return (
         <div className={styles.profilPage}>
             <header>
-                <div className="logoContainer">
+                <div className="logoContainer" onClick={() => navigate("/")}>
                     <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>

@@ -37,7 +37,7 @@ function Faq() {
     return (
         <div className={style.faqPage}>
             <header className={style.header}>
-                <div className={style.logoContainer}>
+                <div className={style.logoContainer} onClick={() => navigate("/")}>
                     <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>

@@ -70,7 +70,7 @@ function Inscrip() {
     return (
         <div className={style.authPage}>
             <header>
-                <div className={style.logoContainer}>
+                <div className={style.logoContainer} onClick={() => navigate("/")}>
                     <img src="./logo.png" alt="logo" />
                     <h2>ProjetHub</h2>
                 </div>
