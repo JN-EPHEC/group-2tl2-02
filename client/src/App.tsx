@@ -9,6 +9,7 @@ import Projet from "./pages/projets/projet"
 import ConContact from "./pages/info/contact"
 import APropos from "./pages/info/a_propos"
 import Faq from "./pages/info/faq"
+import Truc from "./pages/info/truc"
 import Panier from "./pages/panier/panier"
 import Developpement from "./pages/developpement/developpement"
 
@@ -26,6 +27,7 @@ function App() {
         <Route path="/contact" element={<ConContact />} />
         <Route path="/a_propos" element={<APropos />} />
         <Route path="/faq" element={<Faq />} />
+        <Route path="/truc" element={<Truc />} />
         <Route path="/panier" element={<Panier />} />
         <Route path="/developpement" element={<Developpement />} />
       </Routes>
