@@ -1,7 +1,7 @@
 // server/src/routes/user.routes.ts
 import { Router } from 'express';
 import User from '../models/project.user';
-import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder, getUserProjects, getUserFavoris } from '../controllers/projects.controller';
+import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder } from '../controllers/projects.controller';
 import { createProject, getAllProjects, deleteProject, getProjectById, addVideoToProject, deleteVideoFromProject, deleteImage } from '../controllers/projects.controller'
 import { uploadImage } from '../middlewars/uploadImage';
 import { uploadProjectMedia } from '../middlewars/uploadProjectMedia';
