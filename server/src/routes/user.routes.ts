@@ -4,6 +4,7 @@ import User from '../models/project.user';
 import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder, getUserProjects, getUserFavoris } from '../controllers/projects.controller';
 import { createProject, getAllProjects, deleteProject, getProjectById, addVideoToProject, deleteVideoFromProject, deleteImage } from '../controllers/projects.controller'
 import { uploadImage } from '../middlewars/uploadImage';
+import { uploadProjectMedia } from '../middlewars/uploadProjectMedia';
 
 
 const router = Router();
@@ -170,7 +171,7 @@ router.post('/login', loginUser);
  * @swagger
  * /api/users/NewProject:
  *   post:
- *     summary: Créer un nouveau projet (avec ou sans upload d'image locale)
+ *     summary: Créer un nouveau projet (avec ou sans upload d'image/vidéo locale)
  *     tags: [Projects]
  *     requestBody:
  *       required: true
@@ -207,9 +208,26 @@ router.post('/login', loginUser);
  *                 type: string
  *                 format: binary
  *                 description: Fichier image local à uploader (optionnel, JPEG/PNG/GIF/WEBP max 5MB)
+ *               video:
+ *                 type: string
+ *                 format: binary
+ *                 description: Fichier vidéo local à uploader (optionnel, MP4/MOV/AVI max 100MB)
+ *               videoLink:
+ *                 type: string
+ *                 example: https://youtu.be/example
+ *                 description: Lien vers une vidéo externe (optionnel, si pas de fichier vidéo)
+ *               videoTitle:
+ *                 type: string
+ *                 description: Titre de la vidéo (optionnel)
  *               Uid:
  *                 type: integer
  *                 example: 1
+ *               composants:
+ *                 type: string
+ *                 description: JSON stringifié des composants
+ *               etapes:
+ *                 type: string
+ *                 description: JSON stringifié des étapes/tâches
  *     responses:
  *       201:
  *         description: Projet créé avec succès
@@ -222,7 +240,7 @@ router.post('/login', loginUser);
  *       500:
  *         description: Erreur création
  */
-router.post('/NewProject', uploadImage.single('image'), createProject);
+router.post('/NewProject', uploadProjectMedia, createProject);
 
 
 /**
