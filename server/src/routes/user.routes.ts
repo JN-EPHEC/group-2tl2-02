@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import User from '../models/project.user';
 import { loginUser, registerUser, deleteUser, getUserById, updateUser, uploadUserAvatar, testUploadFolder } from '../controllers/projects.controller';
-import { createProject, getAllProjects, deleteProject, getProjectById, addVideoToProject, deleteVideoFromProject, deleteImage } from '../controllers/projects.controller'
+import { createProject, getAllProjects, deleteProject, getProjectById, addVideoToProject, deleteVideoFromProject, deleteImage, updateProject } from '../controllers/projects.controller'
 import { uploadImage } from '../middlewars/uploadImage';
 import { uploadProjectMedia } from '../middlewars/uploadProjectMedia';
 
@@ -375,6 +375,69 @@ router.get('/:id', getUserById);
  *         description: Erreur lors de la mise à jour
  */
 router.put('/:id', updateUser);
+
+
+
+
+/**
+ * @swagger
+ * /api/users/project/{id}:
+ *   put:
+ *     summary: Mettre à jour un projet
+ *     tags: [Projects]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID du projet
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               difficulty:
+ *                 type: string
+ *               duration:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               isPublic:
+ *                 type: boolean
+ *               imageUrl:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *               videoLink:
+ *                 type: string
+ *               videoTitle:
+ *                 type: string
+ *               composants:
+ *                 type: string
+ *                 description: JSON stringifié des composants
+ *               etapes:
+ *                 type: string
+ *                 description: JSON stringifié des étapes/tâches
+ *     responses:
+ *       200:
+ *         description: Projet mis à jour avec succès
+ *       400:
+ *         description: URL vidéo invalide
+ *       404:
+ *         description: Projet non trouvé
+ *       500:
+ *         description: Erreur lors de la mise à jour
+ */
+router.put('/project/:id', uploadProjectMedia, updateProject);
 
 /**
  * @swagger
