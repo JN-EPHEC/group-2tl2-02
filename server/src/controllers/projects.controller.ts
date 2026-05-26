@@ -205,46 +205,74 @@ export const createProject = async (req: Request, res: Response) => {
 
 export const getAllProjects = async (req: Request, res: Response) => {
     try {
-        const projects = await Project.findAll({
-            include: [
-                {
-                    model: Image,
-                    as: 'Image', // Doit être identique à l'alias dans index.ts
-                    attributes: ['I_id', 'I_img'] // Optionnel : pour être sûr d'avoir les bons champs
-                },
+        const viewerId = Number(req.query?.viewerUid || req.query?.viewerId || req.query?.userId);
+        const hasViewerId = Number.isInteger(viewerId) && viewerId > 0;
 
-                {
-                    model: User,
-                    as: 'Auteurs',
-                    attributes: ['Uid', 'pseudo', 'firstName'],
-                    through: { attributes: [] }
-                },
-                {
-                    model: video,
-                    as: 'video',
-                    attributes: ['VId', 'type', 'mp4', 'lien', 'titre'],
-                    through: { attributes: [] }
-                },
-                {
-                    model: User,
-                    as: 'favoris',
-                    through: { attributes: [] },
-                    attributes: ['Uid', 'pseudo'] 
-                },
-                {
-                    model: Composant,
-                    as: 'composant',
-                    attributes: ['nom', 'possédé'],
-                    through: { attributes: [] }
-                },
-                {
-                    model: Tâche,
-                    as: 'Tâche',
-                    attributes: ['title', 'instruction'],
-                    through: { attributes: [] }
-                }
-            ]
-        });
+        const commonInclude = [
+            {
+                model: Image,
+                as: 'Image', // Doit être identique à l'alias dans index.ts
+                attributes: ['I_id', 'I_img'] // Optionnel : pour être sûr d'avoir les bons champs
+            },
+            {
+                model: User,
+                as: 'Auteurs',
+                attributes: ['Uid', 'pseudo', 'firstName'],
+                through: { attributes: [] }
+            },
+            {
+                model: video,
+                as: 'video',
+                attributes: ['VId', 'type', 'mp4', 'lien', 'titre'],
+                through: { attributes: [] }
+            },
+            {
+                model: User,
+                as: 'favoris',
+                through: { attributes: [] },
+                attributes: ['Uid', 'pseudo'] 
+            },
+            {
+                model: Composant,
+                as: 'composant',
+                attributes: ['nom', 'possédé'],
+                through: { attributes: [] }
+            },
+            {
+                model: Tâche,
+                as: 'Tâche',
+                attributes: ['title', 'instruction'],
+                through: { attributes: [] }
+            }
+        ];
+
+        let projects;
+        if (!hasViewerId) {
+            projects = await Project.findAll({
+                where: { isPublic: true },
+                include: commonInclude
+            });
+        } else {
+            const publicProjects = await Project.findAll({
+                where: { isPublic: true },
+                include: commonInclude
+            });
+            const ownPrivateProjects = await Project.findAll({
+                where: { isPublic: false },
+                include: commonInclude
+            });
+            const privateVisible = ownPrivateProjects.filter((project: any) =>
+                Array.isArray(project.Auteurs) && project.Auteurs.some((author: any) => author.Uid === viewerId)
+            );
+            const allIds = new Set<number>();
+            projects = [...publicProjects, ...privateVisible].filter((project: any) => {
+                const id = project.id ?? project.PId ?? project.getDataValue?.('id');
+                if (id == null) return true;
+                if (allIds.has(id)) return false;
+                allIds.add(id);
+                return true;
+            });
+        }
 
         res.status(200).json(projects);
     } catch (error) {
@@ -447,6 +475,8 @@ export const updateUser = async (req: Request, res: Response) => {
 export const getProjectById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        const viewerId = Number(req.query?.viewerUid || req.query?.viewerId || req.query?.userId);
+        const hasViewerId = Number.isInteger(viewerId) && viewerId > 0;
 
         const project = await Project.findByPk(Number(id), {
             include: [
@@ -459,7 +489,7 @@ export const getProjectById = async (req: Request, res: Response) => {
                     model: User, 
                     as: 'Auteurs', 
                     through: { attributes: [] },
-                    attributes: ['Uid', 'pseudo', 'firstName']  // 👈 'id' → 'Uid'
+                    attributes: ['Uid', 'pseudo', 'firstName']
                 },
                 { 
                     model: video, 
@@ -481,13 +511,21 @@ export const getProjectById = async (req: Request, res: Response) => {
                     model: User, 
                     as: 'favoris', 
                     through: { attributes: [] },
-                    attributes: ['Uid', 'pseudo']  // 👈 'id' → 'Uid'
+                    attributes: ['Uid', 'pseudo'] 
                 }
             ]
         });
 
         if (!project) {
             return res.status(404).json({ message: "Projet non trouvé" });
+        }
+
+        if (project.isPublic !== true) {
+            const authors: any[] = (project as any).Auteurs || [];
+            const isAuthor = hasViewerId && authors.some((author) => author.Uid === viewerId);
+            if (!isAuthor) {
+                return res.status(403).json({ message: "Ce projet est privé. Accès refusé." });
+            }
         }
 
         res.status(200).json(project);
