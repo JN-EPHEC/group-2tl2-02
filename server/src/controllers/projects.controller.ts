@@ -85,15 +85,22 @@ export const loginUser = async (req: Request, res: Response) => {
 export const createProject = async (req: Request, res: Response) => {
     try {
         let { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId, composants, etapes, videoLink, videoTitle } = req.body;
-        
-        // Parser les données JSON si elles sont des strings (provenant de FormData)
+
         if (typeof composants === 'string') {
-            composants = JSON.parse(composants);
+            try {
+                composants = JSON.parse(composants);
+            } catch {
+                composants = []; // Si c'est pas du JSON valide, on ignore
+            }
         }
         if (typeof etapes === 'string') {
-            etapes = JSON.parse(etapes);
+            try {
+                etapes = JSON.parse(etapes);
+            } catch {
+                etapes = []; // Si c'est pas du JSON valide, on ignore
+            }
         }
-     
+
      
         const newProject = await Project.create({
             title,
@@ -302,6 +309,117 @@ export const getAllProjects = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Erreur lors de la récupération", error });
     }
 };
+
+export const updateProject = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        let { title, description, difficulty, duration, date, isPublic, imageUrl, composants, etapes, videoLink, videoTitle } = req.body;
+
+
+        if (typeof composants === 'string') {
+            try { composants = JSON.parse(composants); } catch { composants = []; }
+        }
+        if (typeof etapes === 'string') {
+            try { etapes = JSON.parse(etapes); } catch { etapes = []; }
+        }
+
+        const project = await Project.findByPk(Number(id));
+        if (!project) {
+            return res.status(404).json({ message: "Projet non trouvé." });
+        }
+
+        const updateData: any = {};
+        if (title !== undefined) updateData.title = title;
+        if (description !== undefined) updateData.description = description;
+        if (difficulty !== undefined) updateData.difficulty = difficulty;
+        if (duration !== undefined) updateData.duration = duration;
+        if (date !== undefined) updateData.date = date;
+        if (isPublic !== undefined) updateData.isPublic = isPublic;
+
+        await project.update(updateData);
+
+        // Mise à jour image via fichier uploadé
+        const files = (req as any).files;
+        if (files && files.image && files.image.length > 0) {
+            const imageFile = files.image[0];
+            const localPath = `/uploads/images/${imageFile.filename}`;
+            const newImage = await Image.create({
+                I_img: localPath,
+                I_fileName: imageFile.originalname,
+                I_url: `http://localhost:3000${localPath}`
+            });
+            await (project as any).addImage(newImage);
+        } else if (imageUrl) {
+            const newImage = await Image.create({ I_img: imageUrl, I_url: imageUrl });
+            await (project as any).addImage(newImage);
+        }
+
+        // Mise à jour vidéo
+        if (videoLink) {
+            if (!isValidVideoUrl(videoLink)) {
+                return res.status(400).json({ message: "L'URL de la vidéo n'est pas valide." });
+            }
+            const newVideo = await video.create({
+                type: 'link',
+                lien: videoLink.trim(),
+                titre: (videoTitle || videoLink).trim(),
+                mp4: null
+            });
+            await (project as any).addVideo(newVideo);
+        }
+
+        // Mise à jour composants
+        if (Array.isArray(composants) && composants.length > 0) {
+            const createdComposants = await Promise.all(
+                composants
+                    .filter((comp: any) => typeof comp.nom === 'string' && comp.nom.trim() !== '')
+                    .map((comp: any) => Composant.create({ nom: comp.nom.trim(), possédé: comp.possédé ?? false }))
+            );
+            if (createdComposants.length > 0) {
+                await (project as any).setComposant(createdComposants); // setX remplace les anciens
+            }
+        }
+
+        // Mise à jour étapes/tâches
+        if (Array.isArray(etapes) && etapes.length > 0) {
+            const createdTaches = await Promise.all(
+                etapes
+                    .filter((etape: any) =>
+                        (typeof etape.titre === 'string' && etape.titre.trim() !== '') ||
+                        (typeof etape.description === 'string' && etape.description.trim() !== '')
+                    )
+                    .map((etape: any) => Tâche.create({
+                        title: typeof etape.titre === 'string' ? etape.titre.trim() : '',
+                        instruction: typeof etape.description === 'string' ? etape.description.trim() : ''
+                    }))
+            );
+            if (createdTaches.length > 0) {
+                await (project as any).setTâche(createdTaches); // setX remplace les anciens
+            }
+        }
+
+        // Retourner le projet complet mis à jour
+        const updatedProject = await Project.findByPk(Number(id), {
+            include: [
+                { model: Image, as: 'Image', attributes: ['I_id', 'I_img'] },
+                { model: User, as: 'Auteurs', through: { attributes: [] }, attributes: ['Uid', 'pseudo', 'firstName'] },
+                { model: video, as: 'video', attributes: ['VId', 'type', 'mp4', 'lien', 'titre'], through: { attributes: [] } },
+                { model: Composant, as: 'composant', through: { attributes: [] } },
+                { model: Tâche, as: 'Tâche', through: { attributes: [] } },
+                { model: User, as: 'favoris', through: { attributes: [] }, attributes: ['Uid', 'pseudo'] }
+            ]
+        });
+
+        res.status(200).json({
+            message: "Projet mis à jour avec succès.",
+            project: updatedProject
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour du projet", error });
+    }
+};
+
 export const deleteProject = async (req: Request, res: Response) => {
     try {
         const { id } = req.params; 
