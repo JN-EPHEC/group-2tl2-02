@@ -84,6 +84,8 @@ export const loginUser = async (req: Request, res: Response) => {
 // get project et nouveau projet :
 export const createProject = async (req: Request, res: Response) => {
     try {
+        console.log('DEBUG createProject - req.body:', req.body);
+        console.log('DEBUG createProject - req.files:', (req as any).files);
         let { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId, composants, etapes, videoLink, videoTitle } = req.body;
 
         if (typeof composants === 'string') {

@@ -221,11 +221,32 @@
     cursor: pointer;
     font-weight: 700;
     transition: transform 0.2s ease, background 0.2s ease;
+    margin-right: 8px;
 }
 
 .editProjectButton:hover {
     background: #1d4ed8;
     transform: translateY(-1px);
+}
+
+.deleteProjectButton {
+    border: none;
+    border-radius: 999px;
+    padding: 10px 16px;
+    background: #dc2626;
+    color: white;
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.deleteProjectButton:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
+
+.deleteProjectButton:active {
+    transform: translateY(0);
 }
 
 .projectMeta {

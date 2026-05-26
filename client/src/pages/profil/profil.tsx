@@ -40,6 +40,46 @@ function Profil() {
         navigate(`/creation?edit=true&id=${routeId}`)
     }
 
+    const handleProjectDelete = async (project: any, event: any) => {
+        event.stopPropagation()
+        const routeId = getProjectRouteId(project)
+        if (!routeId) return
+
+        if (window.confirm(`Êtes-vous sûr de vouloir supprimer le projet "${project.title || 'sans titre'}" ? Cette action est irréversible.`)) {
+            try {
+                const response = await fetch(`/api/users/project/${routeId}`, {
+                    method: "DELETE"
+                })
+
+                if (!response.ok) {
+                    const errorData = await response.json()
+                    throw new Error(errorData.message || "Erreur lors de la suppression du projet")
+                }
+
+                // Remove the project from the local state
+                setProjects(projects.filter(p => getProjectRouteId(p) !== routeId))
+                setFavorites(favorites.filter(p => getProjectRouteId(p) !== routeId))
+
+                // Update user stats
+                setUser(prev => ({
+                    ...prev,
+                    stats: {
+                        ...prev.stats,
+                        projets: Math.max(0, prev.stats.projets - 1)
+                    }
+                }))
+
+                // Show success message temporarily
+                const originalError = error
+                setError("Projet supprimé avec succès !")
+                setTimeout(() => setError(originalError), 3000)
+            } catch (err) {
+                console.error("Erreur lors de la suppression du projet:", err)
+                setError(err.message || "Erreur lors de la suppression du projet")
+            }
+        }
+    }
+
     const fetchUserData = async () => {
         try {
             const userId = localStorage.getItem("userId")
@@ -175,13 +215,22 @@ function Profil() {
                                         <div className={styles.projectCardInfo}>
                                             <div className={styles.projectCardHeader}>
                                                 <h2 className={styles.projectTitle}>{project.title || "Projet sans titre"}</h2>
-                                                <button
-                                                    type="button"
-                                                    className={styles.editProjectButton}
-                                                    onClick={(event) => handleProjectEdit(project, event)}
-                                                >
-                                                    Modifier
-                                                </button>
+                                                <div className={styles.projectButtons}>
+                                                    <button
+                                                        type="button"
+                                                        className={styles.editProjectButton}
+                                                        onClick={(event) => handleProjectEdit(project, event)}
+                                                    >
+                                                        Modifier
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className={styles.deleteProjectButton}
+                                                        onClick={(event) => handleProjectDelete(project, event)}
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </div>
                                             </div>
                                             <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
                                             <span className={styles.projectMeta}>
@@ -215,13 +264,22 @@ function Profil() {
                                         <div className={styles.projectCardInfo}>
                                             <div className={styles.projectCardHeader}>
                                                 <h2 className={styles.projectTitle}>{project.title || "Projet favori"}</h2>
-                                                <button
-                                                    type="button"
-                                                    className={styles.editProjectButton}
-                                                    onClick={(event) => handleProjectEdit(project, event)}
-                                                >
-                                                    Modifier
-                                                </button>
+                                                <div className={styles.projectButtons}>
+                                                    <button
+                                                        type="button"
+                                                        className={styles.editProjectButton}
+                                                        onClick={(event) => handleProjectEdit(project, event)}
+                                                    >
+                                                        Modifier
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className={styles.deleteProjectButton}
+                                                        onClick={(event) => handleProjectDelete(project, event)}
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </div>
                                             </div>
                                             <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
                                             <span className={styles.projectMeta}>Favori</span>

@@ -119,7 +119,7 @@ function Crea() {
 
     const saveProject = async () => {
         const formData = new FormData()
-        
+
         // Ajouter les données texte
         formData.append('title', projectTitle)
         formData.append('description', projectDescription)
@@ -128,19 +128,55 @@ function Crea() {
         formData.append('date', new Date().toISOString())
         formData.append('isPublic', (!isPrivate).toString())
         formData.append('Uid', localStorage.getItem("userId") ? localStorage.getItem("userId")! : '')
-        
+
         // Ajouter l'image si elle existe
         if (imageFile) {
             formData.append('image', imageFile)
         } else if (projectImage.startsWith('data:')) {
             // C'est une image en base64, on la saute (elle sera traitée différemment)
         }
-        
+
         // Ajouter la vidéo si elle existe
         if (videoFile) {
             formData.append('video', videoFile)
+            formData.append('videoTitle', videoFileName || '')
         } else if (videoLink) {
-            formData.append('videoLink', videoLink)
+            const trimmedLink = videoLink.trim()
+
+            // Log pour voir ce qui est envoyé
+            console.log('Tentative d\'envoi de videoLink:', `"${trimmedLink}"`)
+
+            // Validation robuste pour éviter d'envoyer des valeurs incorrectes
+            // Liste des valeurs à exclure absolument
+            const excludedLinks = [
+                'http://localhost:3000/api/users/AllProject',
+                'http://localhost:3000/',
+                'https://localhost:3000/',
+                '',
+                'http://',
+                'https://'
+            ]
+
+            // Vérifier que le lien n'est pas exclu et qu'il est une URL valide
+            const isValid = trimmedLink.length > 0 &&
+                !excludedLinks.some(excluded => trimmedLink === excluded) &&
+                (trimmedLink.startsWith('http://') || trimmedLink.startsWith('https://')) &&
+                // Vérifier basique que ce ressemble à une URL (contient un point et pas d'espaces)
+                trimmedLink.includes('.') &&
+                !trimmedLink.includes(' ') &&
+                trimmedLink.length > 5  // Au moins quelque chose comme http://a.b
+
+            if (isValid) {
+                formData.append('videoLink', trimmedLink)
+                formData.append('videoTitle', trimmedLink)
+                console.log('videoLink ajouté au FormData:', trimmedLink)
+            } else {
+                console.log('videoLink rejeté:', `"${trimmedLink}"`, 'Raison:', !trimmedLink.length ? 'vide' :
+                    excludedLinks.some(excluded => trimmedLink === excluded) ? 'exclu' :
+                    !(trimmedLink.startsWith('http://') || trimmedLink.startsWith('https://')) ? 'mauvais protocole' :
+                    !trimmedLink.includes('.') ? 'pas de point' :
+                    trimmedLink.includes(' ') ? 'contient des espaces' : 'trop court')
+            }
         }
         
         // Ajouter les composants (comme JSON string)
@@ -384,12 +420,18 @@ function Crea() {
                                         placeholder="Coller le lien ici"
                                         value={videoLink}
                                         onChange={(e) => {
-                                            setVideoLink(e.target.value)
-                                            if (e.target.value.trim()) {
+                                            const value = e.target.value
+                                            setVideoLink(value)
+                                            if (value.trim()) {
                                                 setVideoFile(null)
                                             }
                                         }}
                                     />
+                                    {videoLink && videoLink.trim() && videoLink.trim() !== 'http://localhost:3000/api/users/AllProject' && (
+                                        <p style={{fontSize: '0.8rem', color: '#666', marginTop: '4px'}}>
+                                            Lien saisi : {videoLink.trim()}
+                                        </p>
+                                    )}
                                 </div>
                                 <div>
                                     <h3>Étapes :</h3>
