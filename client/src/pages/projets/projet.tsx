@@ -104,15 +104,41 @@ function Projet() {
                     </div>
                 </div>
                 <div className={styles.projetFenetre}>
-                    <h1>Titre du projet</h1>
+                    <h1>{project?.title || "Titre du projet"}</h1>
                     <h3>Description</h3>
+                    <p>{project?.description || "description du projet"}</p>
+                    
                     {project?.video && project.video.length > 0 ? (
-                        <>
-                            {project.video[0]?.mp4 && <video src={project.video[0].mp4} controls></video>}
-                            {project.video[0]?.lien && <p><a href={project.video[0].lien} target="_blank" rel="noopener noreferrer">lien de la vidéo</a></p>}
-                        </>
+                        <div className={styles.videoSection}>
+                            <h3>📹 Vidéo du projet</h3>
+                            {project.video[0]?.mp4 && (
+                                <video 
+                                    className={styles.videoPlayer}
+                                    src={project.video[0].mp4} 
+                                    controls 
+                                    width="100%"
+                                >
+                                    Votre navigateur ne supporte pas la balise vidéo.
+                                </video>
+                            )}
+                            {project.video[0]?.lien && !project.video[0]?.mp4 && (
+                                <div className={styles.videoLink}>
+                                    <p>Lien vidéo externe :</p>
+                                    <a 
+                                        href={project.video[0].lien} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className={styles.externalVideoLink}
+                                    >
+                                        🔗 Ouvrir la vidéo
+                                    </a>
+                                </div>
+                            )}
+                        </div>
                     ) : (
-                        <div style={{ margin: '8px 0', color: '#666' }}>Aucune vidéo disponible</div>
+                        <div className={styles.noVideo}>
+                            <p>Aucune vidéo disponible pour ce projet</p>
+                        </div>
                     )}
                     <hr />
                     

@@ -23,7 +23,8 @@ function Crea() {
     const [estimatedDuration, setEstimatedDuration] = useState("")
     const [needs3D, setNeeds3D] = useState(false)
     const [needsSoldering, setNeedsSoldering] = useState(false)
-    const [videoFile, setVideoFile] = useState("")
+    const [videoFile, setVideoFile] = useState<File | null>(null)
+    const [videoFileName, setVideoFileName] = useState("")
     const [videoLink, setVideoLink] = useState("")
     const [previewTitle, setPreviewTitle] = useState("Titre du projet")
     const [previewDescription, setPreviewDescription] = useState("Description du projet")
@@ -115,36 +116,49 @@ function Crea() {
     }
 
     const saveProject = async () => {
-        const projectData = {
-            title: projectTitle,
-            description: projectDescription,
-            imageUrl: projectImage,
-            duration: estimatedDuration,
-            difficulty: currentDifficulty,
-            date: new Date().toISOString(),
-            isPublic: !isPrivate,
-            videoFile,
-            videoLink,
-            Uid: localStorage.getItem("userId") ? Number(localStorage.getItem("userId")) : undefined,
-            composants: composants
-                .filter(comp => comp.nom.trim() !== '')
-                .map(comp => ({ nom: comp.nom.trim(), possede: false, nombre: comp.nombre })),
-            etapes: etapes
-                .filter(etape => etape.titre.trim() !== '' || etape.description.trim() !== '')
-                .map(etape => ({
-                    titre: etape.titre.trim(),
-                    description: etape.description.trim(),
-                    image: etape.image
-                }))
+        const formData = new FormData()
+        
+        // Ajouter les données texte
+        formData.append('title', projectTitle)
+        formData.append('description', projectDescription)
+        formData.append('duration', estimatedDuration)
+        formData.append('difficulty', currentDifficulty.toString())
+        formData.append('date', new Date().toISOString())
+        formData.append('isPublic', (!isPrivate).toString())
+        formData.append('Uid', localStorage.getItem("userId") ? localStorage.getItem("userId")! : '')
+        
+        // Ajouter l'image si elle existe
+        if (projectImage.startsWith('data:')) {
+            // C'est une image en base64, on la saute (elle sera traitée différemment)
         }
+        
+        // Ajouter la vidéo si elle existe
+        if (videoFile) {
+            formData.append('video', videoFile)
+        } else if (videoLink) {
+            formData.append('videoLink', videoLink)
+        }
+        
+        // Ajouter les composants (comme JSON string)
+        const composantsData = composants
+            .filter(comp => comp.nom.trim() !== '')
+            .map(comp => ({ nom: comp.nom.trim(), possédé: false, nombre: comp.nombre }))
+        formData.append('composants', JSON.stringify(composantsData))
+        
+        // Ajouter les étapes (comme JSON string)
+        const etapesData = etapes
+            .filter(etape => etape.titre.trim() !== '' || etape.description.trim() !== '')
+            .map(etape => ({
+                titre: etape.titre.trim(),
+                description: etape.description.trim(),
+                image: etape.image
+            }))
+        formData.append('etapes', JSON.stringify(etapesData))
 
         try {
             const response = await fetch("/api/users/NewProject", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(projectData),
+                body: formData,
             })
 
             if (!response.ok) {
@@ -186,7 +200,8 @@ function Crea() {
         setEstimatedDuration("")
         setNeeds3D(false)
         setNeedsSoldering(false)
-        setVideoFile("")
+        setVideoFile(null)
+        setVideoFileName("")
         setVideoLink("")
         setIsPrivate(false)
         setComposants([])
@@ -342,13 +357,17 @@ function Crea() {
                                     <input
                                         type="file"
                                         name="video"
+                                        accept="video/mp4,video/quicktime,video/x-msvideo"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0]
                                             if (file) {
-                                                setVideoFile(file.name)
+                                                setVideoFile(file)
+                                                setVideoFileName(file.name)
+                                                setVideoLink("")
                                             }
                                         }}
                                     /><br />
+                                    {videoFile && <p style={{ color: 'green' }}>✓ Fichier sélectionné: {videoFileName}</p>}
                                     ou <br />
                                     <label htmlFor="lien">Ajouter un lien : </label>
                                     <input
@@ -356,7 +375,12 @@ function Crea() {
                                         name="lien"
                                         placeholder="Coller le lien ici"
                                         value={videoLink}
-                                        onChange={(e) => setVideoLink(e.target.value)}
+                                        onChange={(e) => {
+                                            setVideoLink(e.target.value)
+                                            if (e.target.value.trim()) {
+                                                setVideoFile(null)
+                                            }
+                                        }}
                                     />
                                 </div>
                                 <div>

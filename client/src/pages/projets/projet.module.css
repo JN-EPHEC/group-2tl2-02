@@ -338,7 +338,7 @@
 
 .projetFenetre video {
   width: auto;
-  max-width: 100%;
+  max-width: 30%;
   height: auto;
   display: block;
   border-radius: 20px;

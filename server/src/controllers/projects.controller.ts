@@ -84,7 +84,15 @@ export const loginUser = async (req: Request, res: Response) => {
 // get project et nouveau projet :
 export const createProject = async (req: Request, res: Response) => {
     try {
-        const { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId, composants, etapes, videoLink, videoTitle } = req.body;
+        let { title, description, difficulty, duration, date, isPublic, imageUrl, Uid, VId, CId, TId, composants, etapes, videoLink, videoTitle } = req.body;
+        
+        // Parser les données JSON si elles sont des strings (provenant de FormData)
+        if (typeof composants === 'string') {
+            composants = JSON.parse(composants);
+        }
+        if (typeof etapes === 'string') {
+            etapes = JSON.parse(etapes);
+        }
      
      
         const newProject = await Project.create({
@@ -97,11 +105,13 @@ export const createProject = async (req: Request, res: Response) => {
         });
 
         // Cas 1 : Image uploadée via multipart/form-data (fichier)
-        if ((req as any).file) {
-            const localPath = `/uploads/images/${(req as any).file.filename}`;
+        const files = (req as any).files;
+        if (files && files.image && files.image.length > 0) {
+            const imageFile = files.image[0];
+            const localPath = `/uploads/images/${imageFile.filename}`;
             const newImage = await Image.create({
                 I_img: localPath,
-                I_fileName: (req as any).file.originalname,
+                I_fileName: imageFile.originalname,
                 I_url: `http://localhost:3000${localPath}`
             });
             await (newProject as any).addImage(newImage);
@@ -133,8 +143,20 @@ export const createProject = async (req: Request, res: Response) => {
         }
 
         // Gestion des vidéos
-        // Cas 1 : Vidéo via lien externe (URL)
-        if (videoLink) {
+        // Cas 1 : Vidéo uploadée via multipart/form-data (fichier)
+        if (files && files.video && files.video.length > 0) {
+            const videoFile = files.video[0];
+            const videoUrl = `http://localhost:3000/uploads/videos/${videoFile.filename}`;
+            const newVideo = await video.create({
+                type: 'local',
+                mp4: videoUrl,
+                lien: null,
+                titre: videoTitle || videoFile.originalname,
+            });
+            await (newProject as any).addVideo(newVideo);
+        }
+        // Cas 3 : Vidéo via lien externe (URL)
+        else if (videoLink) {
             if (!isValidVideoUrl(videoLink)) {
                 return res.status(400).json({ message: "L'URL de la vidéo n'est pas valide." });
             }
@@ -146,7 +168,7 @@ export const createProject = async (req: Request, res: Response) => {
             });
             await (newProject as any).addVideo(newVideo);
         }
-        // Cas 2 : ID vidéo existante
+        // Cas 4 : ID vidéo existante
         else if (VId) {
             await (newProject as any).addVideo(VId);
         }
