@@ -164,8 +164,8 @@ export const createProject = async (req: Request, res: Response) => {
             });
             await (newProject as any).addVideo(newVideo);
         }
-        // Cas 3 : Vidéo via lien externe (URL)
-        else if (videoLink) {
+        // Cas 2 : Vidéo via lien externe (URL)
+        if (videoLink) {
             if (!isValidVideoUrl(videoLink)) {
                 return res.status(400).json({ message: "L'URL de la vidéo n'est pas valide." });
             }
@@ -177,8 +177,8 @@ export const createProject = async (req: Request, res: Response) => {
             });
             await (newProject as any).addVideo(newVideo);
         }
-        // Cas 4 : ID vidéo existante
-        else if (VId) {
+        // Cas 3 : ID vidéo existante
+        if (VId) {
             await (newProject as any).addVideo(VId);
         }
 
@@ -357,6 +357,19 @@ export const updateProject = async (req: Request, res: Response) => {
         }
 
         // Mise à jour vidéo
+        // Cas 1 : Vidéo uploadée via multipart/form-data (fichier)
+        if (files && files.video && files.video.length > 0) {
+            const videoFile = files.video[0];
+            const videoUrl = `http://localhost:3000/uploads/videos/${videoFile.filename}`;
+            const newVideo = await video.create({
+                type: 'local',
+                mp4: videoUrl,
+                lien: null,
+                titre: videoTitle || videoFile.originalname,
+            });
+            await (project as any).addVideo(newVideo);
+        }
+        // Cas 2 : Vidéo via lien externe (URL)
         if (videoLink) {
             if (!isValidVideoUrl(videoLink)) {
                 return res.status(400).json({ message: "L'URL de la vidéo n'est pas valide." });
@@ -368,6 +381,10 @@ export const updateProject = async (req: Request, res: Response) => {
                 mp4: null
             });
             await (project as any).addVideo(newVideo);
+        }
+        // Cas 3 : ID vidéo existante
+        if (VId) {
+            await (project as any).addVideo(VId);
         }
 
         // Mise à jour composants

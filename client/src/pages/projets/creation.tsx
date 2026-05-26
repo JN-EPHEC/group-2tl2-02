@@ -217,7 +217,8 @@ function Crea() {
                 return
             }
 
-            const getResponse = await fetch(`/api/users/project/${projectId}`)
+            const userId = localStorage.getItem("userId");
+            const getResponse = await fetch(`/api/users/project/${projectId}?viewerUid=${userId}`)
             if (!getResponse.ok) {
                 const errorData = await getResponse.json().catch(() => null)
                 console.error("Erreur récupération projet", errorData)
@@ -407,7 +408,6 @@ function Crea() {
                                             if (file) {
                                                 setVideoFile(file)
                                                 setVideoFileName(file.name)
-                                                setVideoLink("")
                                             }
                                         }}
                                     /><br />
@@ -422,9 +422,6 @@ function Crea() {
                                         onChange={(e) => {
                                             const value = e.target.value
                                             setVideoLink(value)
-                                            if (value.trim()) {
-                                                setVideoFile(null)
-                                            }
                                         }}
                                     />
                                     {videoLink && videoLink.trim() && videoLink.trim() !== 'http://localhost:3000/api/users/AllProject' && (
