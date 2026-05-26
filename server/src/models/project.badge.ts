@@ -8,6 +8,11 @@ class Badge extends Model {
 }
 
 Badge.init({
+  BId: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
   img: { type: DataTypes.STRING, allowNull: false },
   title: { type: DataTypes.STRING, allowNull: false },
 }, {

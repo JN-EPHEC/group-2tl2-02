@@ -10,6 +10,11 @@ class video extends Model {
 }
 
 video.init({
+  VId: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
   type: {
     type: DataTypes.ENUM('link', 'local'),
     allowNull: false,

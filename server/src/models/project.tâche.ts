@@ -8,6 +8,11 @@ class Tâche extends Model {
 }
 
 Tâche.init({
+    TId: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
     title: { type: DataTypes.STRING, allowNull: false },
     instruction: { type: DataTypes.STRING, allowNull: false }
 }, {

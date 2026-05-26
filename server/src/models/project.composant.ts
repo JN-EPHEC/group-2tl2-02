@@ -8,6 +8,11 @@ class Composant extends Model {
 }
 
 Composant.init({
+    CId: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
     nom: { type: DataTypes.STRING, allowNull: false },
     possédé: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 }, {
