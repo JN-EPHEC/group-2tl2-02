@@ -20,6 +20,8 @@ function Crea() {
     const [projectTitle, setProjectTitle] = useState("")
     const [projectDescription, setProjectDescription] = useState("")
     const [projectImage, setProjectImage] = useState("")
+    const [imageFile, setImageFile] = useState<File | null>(null)
+    const [imageFileName, setImageFileName] = useState("")
     const [estimatedDuration, setEstimatedDuration] = useState("")
     const [needs3D, setNeeds3D] = useState(false)
     const [needsSoldering, setNeedsSoldering] = useState(false)
@@ -128,7 +130,9 @@ function Crea() {
         formData.append('Uid', localStorage.getItem("userId") ? localStorage.getItem("userId")! : '')
         
         // Ajouter l'image si elle existe
-        if (projectImage.startsWith('data:')) {
+        if (imageFile) {
+            formData.append('image', imageFile)
+        } else if (projectImage.startsWith('data:')) {
             // C'est une image en base64, on la saute (elle sera traitée différemment)
         }
         
@@ -197,6 +201,8 @@ function Crea() {
         setProjectTitle("")
         setProjectDescription("")
         setProjectImage("")
+        setImageFile(null)
+        setImageFileName("")
         setEstimatedDuration("")
         setNeeds3D(false)
         setNeedsSoldering(false)
@@ -229,10 +235,10 @@ function Crea() {
                     </div>
                     <div className={styles.formGroup}>
                         <label className={styles.formLabel} htmlFor="img">Importer une image pour le projet :</label>
-                        <input 
-                            className={styles.formInput} 
-                            type="file" 
-                            name="img" 
+                        <input
+                            className={styles.formInput}
+                            type="file"
+                            name="img"
                             onChange={(e) => {
                                 const file = e.target.files?.[0]
                                 if (file) {
@@ -240,6 +246,8 @@ function Crea() {
                                     reader.onload = (event) => {
                                         if (event.target?.result) {
                                             setProjectImage(event.target.result as string)
+                                            setImageFile(file)
+                                            setImageFileName(file.name)
                                         }
                                     }
                                     reader.readAsDataURL(file)
