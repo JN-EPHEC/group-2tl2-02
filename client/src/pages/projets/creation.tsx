@@ -168,7 +168,6 @@ function Crea() {
             if (isValid) {
                 formData.append('videoLink', trimmedLink)
                 formData.append('videoTitle', trimmedLink)
-                console.log('videoLink ajouté au FormData:', trimmedLink)
             } else {
                 console.log('videoLink rejeté:', `"${trimmedLink}"`, 'Raison:', !trimmedLink.length ? 'vide' :
                     excludedLinks.some(excluded => trimmedLink === excluded) ? 'exclu' :

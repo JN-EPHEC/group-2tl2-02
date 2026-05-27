@@ -33,7 +33,6 @@ function Acceuil() {
         }
 
         const routeId = project?.id ?? project?.I_id ?? project?._id
-        console.log('handleProjectClick: project, resolved routeId ->', project, routeId)
         if (routeId) navigate(`/projet/${routeId}`)
         else navigate("/projet")
     }
