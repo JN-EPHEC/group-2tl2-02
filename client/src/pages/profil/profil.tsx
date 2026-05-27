@@ -1,3 +1,42 @@
+    // Retirer un projet des favoris
+    const handleRemoveFavorite = async (project: any, event: any) => {
+        event.stopPropagation();
+        const routeId = getProjectRouteId(project);
+        if (!routeId) return;
+
+        try {
+            const userId = localStorage.getItem("userId");
+            if (!userId) {
+                setError("Vous devez être connecté pour retirer un favori.");
+                return;
+            }
+            const response = await fetch(`/api/users/${userId}/favorites/${routeId}`, {
+                method: "DELETE"
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Erreur lors du retrait du favori");
+            }
+            setFavorites(favorites.filter(p => getProjectRouteId(p) !== routeId));
+            setUser(prev => ({
+                ...prev,
+                stats: {
+                    ...prev.stats,
+                    favoris: Math.max(0, prev.stats.favoris - 1)
+                }
+            }));
+            const originalError = error;
+            setError("Projet retiré des favoris !");
+            setTimeout(() => setError(originalError), 3000);
+        } catch (err) {
+            console.error("Erreur lors du retrait du favori:", err);
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Erreur lors du retrait du favori"
+            );
+        }
+    };
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import styles from "./profil.module.css"
@@ -271,22 +310,14 @@ function Profil() {
                                         <div className={styles.projectCardInfo}>
                                             <div className={styles.projectCardHeader}>
                                                 <h2 className={styles.projectTitle}>{project.title || "Projet favori"}</h2>
-                                                <div className={styles.projectButtons}>
-                                                    <button
-                                                        type="button"
-                                                        className={styles.editProjectButton}
-                                                        onClick={(event) => handleProjectEdit(project, event)}
-                                                    >
-                                                        Modifier
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className={styles.deleteProjectButton}
-                                                        onClick={(event) => handleProjectDelete(project, event)}
-                                                    >
-                                                        Supprimer
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className={styles.deleteProjectButton}
+                                                    style={{ marginLeft: 8 }}
+                                                    onClick={(event) => handleRemoveFavorite(project, event)}
+                                                >
+                                                    Retirer des favoris
+                                                </button>
                                             </div>
                                             <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
                                             <span className={styles.projectMeta}>Favori</span>
