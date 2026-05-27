@@ -4,13 +4,14 @@ jest.mock('fs', () => ({
     mkdirSync: jest.fn(),
 }));
 
+
 jest.mock('multer', () => {
-    const multerMock: any = jest.fn(() => ({
+    const multerMock: any = jest.fn((options: any) => ({
         single: jest.fn(),
         array: jest.fn(),
         fields: jest.fn(),
     }));
-    multerMock.diskStorage = jest.fn().mockReturnValue({});
+    multerMock.diskStorage = jest.fn((opts: any) => opts);
     return multerMock;
 });
 
@@ -51,128 +52,51 @@ describe('uploadImage middleware', () => {
     });
 
     it('accepte les fichiers image/jpeg', () => {
-        let capturedFileFilter: Function | null = null;
-        (multer as unknown as jest.Mock).mockImplementationOnce((options: any) => {
-            capturedFileFilter = options.fileFilter;
-            return { single: jest.fn() };
-        });
-
-        jest.isolateModules(() => {
-            require('../uploadImage');
-        });
-
-        if (capturedFileFilter) {
-            const cb = jest.fn();
-            capturedFileFilter({}, { mimetype: 'image/jpeg' }, cb);
-            expect(cb).toHaveBeenCalledWith(null, true);
-        }
+        const { fileFilter } = require('../uploadImage');
+        const cb = jest.fn();
+        fileFilter({}, { mimetype: 'image/jpeg' }, cb);
+        expect(cb).toHaveBeenCalledWith(null, true);
     });
 
     it('accepte les fichiers image/png', () => {
-        let capturedFileFilter: Function | null = null;
-        (multer as unknown as jest.Mock).mockImplementationOnce((options: any) => {
-            capturedFileFilter = options.fileFilter;
-            return { single: jest.fn() };
-        });
-
-        jest.isolateModules(() => {
-            require('../uploadImage');
-        });
-
-        if (capturedFileFilter) {
-            const cb = jest.fn();
-            capturedFileFilter({}, { mimetype: 'image/png' }, cb);
-            expect(cb).toHaveBeenCalledWith(null, true);
-        }
+        const { fileFilter } = require('../uploadImage');
+        const cb = jest.fn();
+        fileFilter({}, { mimetype: 'image/png' }, cb);
+        expect(cb).toHaveBeenCalledWith(null, true);
     });
 
     it('refuse les fichiers non image (ex: pdf)', () => {
-        let capturedFileFilter: Function | null = null;
-        (multer as unknown as jest.Mock).mockImplementationOnce((options: any) => {
-            capturedFileFilter = options.fileFilter;
-            return { single: jest.fn() };
-        });
-
-        jest.isolateModules(() => {
-            require('../uploadImage');
-        });
-
-        if (capturedFileFilter) {
-            const cb = jest.fn();
-            capturedFileFilter({}, { mimetype: 'application/pdf' }, cb);
-            expect(cb).toHaveBeenCalledWith(expect.any(Error));
-        }
+        const { fileFilter } = require('../uploadImage');
+        const cb = jest.fn();
+        fileFilter({}, { mimetype: 'application/pdf' }, cb);
+        expect(cb).toHaveBeenCalledWith(expect.any(Error));
     });
 
     it('accepte les fichiers image/gif', () => {
-        let capturedFileFilter: Function | null = null;
-        (multer as unknown as jest.Mock).mockImplementationOnce((options: any) => {
-            capturedFileFilter = options.fileFilter;
-            return { single: jest.fn() };
-        });
-
-        jest.isolateModules(() => {
-            require('../uploadImage');
-        });
-
-        if (capturedFileFilter) {
-            const cb = jest.fn();
-            capturedFileFilter({}, { mimetype: 'image/gif' }, cb);
-            expect(cb).toHaveBeenCalledWith(null, true);
-        }
+        const { fileFilter } = require('../uploadImage');
+        const cb = jest.fn();
+        fileFilter({}, { mimetype: 'image/gif' }, cb);
+        expect(cb).toHaveBeenCalledWith(null, true);
     });
 
     it('accepte les fichiers image/webp', () => {
-        let capturedFileFilter: Function | null = null;
-        (multer as unknown as jest.Mock).mockImplementationOnce((options: any) => {
-            capturedFileFilter = options.fileFilter;
-            return { single: jest.fn() };
-        });
-
-        jest.isolateModules(() => {
-            require('../uploadImage');
-        });
-
-        if (capturedFileFilter) {
-            const cb = jest.fn();
-            capturedFileFilter({}, { mimetype: 'image/webp' }, cb);
-            expect(cb).toHaveBeenCalledWith(null, true);
-        }
+        const { fileFilter } = require('../uploadImage');
+        const cb = jest.fn();
+        fileFilter({}, { mimetype: 'image/webp' }, cb);
+        expect(cb).toHaveBeenCalledWith(null, true);
     });
 
     it('teste la destination du storage multer', () => {
-        let capturedDestination: Function | null = null;
-        (multer.diskStorage as jest.Mock).mockImplementationOnce((options: any) => {
-            capturedDestination = options.destination;
-            return {};
-        });
-
-        jest.isolateModules(() => {
-            require('../uploadImage');
-        });
-
-        if (capturedDestination) {
-            const cb = jest.fn();
-            capturedDestination({}, {}, cb);
-            expect(cb).toHaveBeenCalledWith(null, expect.any(String));
-        }
+        const { storage } = require('../uploadImage');
+        const cb = jest.fn();
+        storage.destination({}, { fieldname: 'image' }, cb);
+        expect(cb).toHaveBeenCalledWith(null, expect.any(String));
     });
 
     it('teste le filename du storage multer', () => {
-        let capturedFilename: Function | null = null;
-        (multer.diskStorage as jest.Mock).mockImplementationOnce((options: any) => {
-            capturedFilename = options.filename;
-            return {};
-        });
-
-        jest.isolateModules(() => {
-            require('../uploadImage');
-        });
-
-        if (capturedFilename) {
-            const cb = jest.fn();
-            capturedFilename({}, { originalname: 'test.jpg' }, cb);
-            expect(cb).toHaveBeenCalledWith(null, expect.stringMatching(/\d+-\d+\.jpg$/));
-        }
+        const { storage } = require('../uploadImage');
+        const cb = jest.fn();
+        storage.filename({}, { originalname: 'test.jpg' }, cb);
+        expect(cb).toHaveBeenCalledWith(null, expect.stringMatching(/\d+-\d+\.jpg$/));
     });
 });

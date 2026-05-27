@@ -21,7 +21,6 @@ function Crea() {
     const [projectDescription, setProjectDescription] = useState("")
     const [projectImage, setProjectImage] = useState("")
     const [imageFile, setImageFile] = useState<File | null>(null)
-    const [imageFileName, setImageFileName] = useState("")
     const [estimatedDuration, setEstimatedDuration] = useState("")
     const [needs3D, setNeeds3D] = useState(false)
     const [needsSoldering, setNeedsSoldering] = useState(false)
@@ -239,7 +238,6 @@ function Crea() {
         setProjectDescription("")
         setProjectImage("")
         setImageFile(null)
-        setImageFileName("")
         setEstimatedDuration("")
         setNeeds3D(false)
         setNeedsSoldering(false)
@@ -284,7 +282,6 @@ function Crea() {
                                         if (event.target?.result) {
                                             setProjectImage(event.target.result as string)
                                             setImageFile(file)
-                                            setImageFileName(file.name)
                                         }
                                     }
                                     reader.readAsDataURL(file)

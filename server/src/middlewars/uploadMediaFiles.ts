@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
         } else if (file.fieldname === 'video') {
             cb(null, videoDir);
         } else {
-            cb(new Error('Champ de fichier inconnu'));
+            cb(new Error('Champ de fichier inconnu'), '');
         }
     },
     filename: (req, file, cb) => {

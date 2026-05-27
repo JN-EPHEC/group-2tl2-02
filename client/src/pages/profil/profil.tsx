@@ -73,9 +73,13 @@ function Profil() {
                 const originalError = error
                 setError("Projet supprimé avec succès !")
                 setTimeout(() => setError(originalError), 3000)
-            } catch (err) {
-                console.error("Erreur lors de la suppression du projet:", err)
-                setError(err.message || "Erreur lors de la suppression du projet")
+                        } catch (err) {
+                                console.error("Erreur lors de la suppression du projet:", err)
+                                setError(
+                                    err instanceof Error
+                                        ? err.message
+                                        : "Erreur lors de la suppression du projet"
+                                )
             }
         }
     }
