@@ -310,14 +310,6 @@ function Profil() {
                                         <div className={styles.projectCardInfo}>
                                             <div className={styles.projectCardHeader}>
                                                 <h2 className={styles.projectTitle}>{project.title || "Projet favori"}</h2>
-                                                <button
-                                                    type="button"
-                                                    className={styles.deleteProjectButton}
-                                                    style={{ marginLeft: 8 }}
-                                                    onClick={(event) => handleRemoveFavorite(project, event)}
-                                                >
-                                                    Retirer des favoris
-                                                </button>
                                             </div>
                                             <p className={styles.projectMeta}>{project.description || "Aucune description disponible."}</p>
                                             <span className={styles.projectMeta}>Favori</span>
