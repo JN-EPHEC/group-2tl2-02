@@ -7,6 +7,14 @@ import { Model } from 'sequelize';
 import fs from 'fs';
 import path from 'path';
 
+const getBaseUrl = (req: Request) => {
+    const configuredUrl = process.env.BASE_URL;
+    if (configuredUrl && configuredUrl.trim() !== '') {
+        return configuredUrl.replace(/\/$/, '');
+    }
+    const host = req.get('host') || 'localhost:3000';
+    return `${req.protocol}://${host}`;
+};
 
 
 // login et inscription :
@@ -103,6 +111,7 @@ export const createProject = async (req: Request, res: Response) => {
             }
         }
 
+        const baseUrl = getBaseUrl(req);
      
         const newProject = await Project.create({
             title,
@@ -121,7 +130,7 @@ export const createProject = async (req: Request, res: Response) => {
             const newImage = await Image.create({
                 I_img: localPath,
                 I_fileName: imageFile.originalname,
-                I_url: `http://localhost:3000${localPath}`
+                I_url: `${baseUrl}${localPath}`
             });
             await (newProject as any).addImage(newImage);
         } 
@@ -155,7 +164,7 @@ export const createProject = async (req: Request, res: Response) => {
         // Cas 1 : Vidéo uploadée via multipart/form-data (fichier)
         if (files && files.video && files.video.length > 0) {
             const videoFile = files.video[0];
-            const videoUrl = `http://localhost:3000/uploads/videos/${videoFile.filename}`;
+            const videoUrl = `${baseUrl}/uploads/videos/${videoFile.filename}`;
             const newVideo = await video.create({
                 type: 'local',
                 mp4: videoUrl,
@@ -340,6 +349,8 @@ export const updateProject = async (req: Request, res: Response) => {
 
         await project.update(updateData);
 
+        const baseUrl = getBaseUrl(req);
+
         // Mise à jour image via fichier uploadé
         const files = (req as any).files;
         if (files && files.image && files.image.length > 0) {
@@ -348,7 +359,7 @@ export const updateProject = async (req: Request, res: Response) => {
             const newImage = await Image.create({
                 I_img: localPath,
                 I_fileName: imageFile.originalname,
-                I_url: `http://localhost:3000${localPath}`
+                I_url: `${baseUrl}${localPath}`
             });
             await (project as any).addImage(newImage);
         } else if (imageUrl) {
@@ -360,7 +371,7 @@ export const updateProject = async (req: Request, res: Response) => {
         // Cas 1 : Vidéo uploadée via multipart/form-data (fichier)
         if (files && files.video && files.video.length > 0) {
             const videoFile = files.video[0];
-            const videoUrl = `http://localhost:3000/uploads/videos/${videoFile.filename}`;
+            const videoUrl = `${baseUrl}/uploads/videos/${videoFile.filename}`;
             const newVideo = await video.create({
                 type: 'local',
                 mp4: videoUrl,
@@ -654,12 +665,14 @@ export const uploadUserAvatar = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Aucune image fournie" });
         }
 
+        const baseUrl = getBaseUrl(req);
+
         // Créer la nouvelle image
         const localPath = `/uploads/images/${(req as any).file.filename}`;
         const newImage = await Image.create({
             I_img: localPath,
             I_fileName: (req as any).file.originalname,
-            I_url: `http://localhost:3000${localPath}`
+            I_url: `${baseUrl}${localPath}`
         });
 
         // Ajouter l'image comme avatar de l'utilisateur

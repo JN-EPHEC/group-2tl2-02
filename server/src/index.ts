@@ -12,12 +12,13 @@ import { swaggerSpec } from './config/swagger';
 
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(express.json());
 
 // 👇 Servir les fichiers statiques du dossier uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-const port = 3000;
+const port = Number(process.env.PORT) || 3000;
 
 app.use(requestLogger);
 
