@@ -2,19 +2,24 @@
 > Système de gestion pour projets d'électronique.
 
 ## 📌 Présentation
-Ce projet est le backend d'une application de gestion de composants et de schémas électroniques. Il est structuré pour être robuste, typé et facile à maintenir.
+Cette application web permet aux utilisateurs de créer, partager et consulter des idées de projets électroniques. Chaque membre peut proposer ses propres concepts, découvrir les réalisations des autres utilisateurs et échanger autour de nouvelles idées.
+
+L'application repose sur une architecture full stack, avec une interface utilisateur développée en React et TypeScript, ainsi qu'une API backend réalisée avec Node.js. Les données sont stockées dans une base de données PostgreSQL, garantissant une gestion fiable et structurée des informations.
+
+L'objectif du projet est de fournir une plateforme simple et collaborative permettant aux passionnés d'électronique de partager leurs idées et de s'inspirer mutuellement pour de futurs projets.
 
 ## 🛠️ Stack Technique
 
 ### 🖥️ Frontend (Dossier /client)
 * **HTML5** : Structure des pages de l'interface.
 * **CSS3** : Mise en forme et design responsive.
-* **JavaScript (Vanilla)** : Interactions dynamiques côté client.
+* **React** : Interactions dynamiques côté client.
 
 ### ⚙️ Backend (Dossier /server)
 * **Runtime** : Node.js (v20+)
 * **Langage** : TypeScript (Typage fort pour la sécurité).
 * **Outils** : `nodemon`, `ts-node`.
+* **Base de Données** : Postgres.
 
 # 📂 Structure du Projet
 
