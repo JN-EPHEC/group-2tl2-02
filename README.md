@@ -51,9 +51,6 @@ PROJET_DEV3/
 │       ├── 📄 App.css / App.tsx       # Routage global et styles de l'application
 │       ├── 📄 index.css               # Directives CSS globales
 │       └── 📄 main.tsx                # Point d'entrée de l'application React
-│   ├── 📄 .env.development            # Variables d'environnement pour le développement
-│   ├── 📄 .env.production             # Variables d'environnement pour la production
-│   ├── 📄 eslint.config.js            # Configuration du linter de code
 │   ├── 📄 index.html                  # Point d'ancrage HTML principal
 │   ├── 📄 package.json                # Dépendances et scripts du Frontend
 │   └── 📄 vite.config.ts              # Configuration du bundler Vite
@@ -72,15 +69,10 @@ PROJET_DEV3/
 │   │   └── 📁 utils/                  # Fonctions utilitaires globales
 │   ├── 📁 uploads/images/             # Stockage des schémas et images téléversés
 │   ├── 📄 index.ts                    # Point d'entrée officiel de l'API backend
-│   ├── 📄 .env.example                # Modèle de configuration des variables d'environnement
 │   ├── 📄 Dockerfile                  # Configuration de conteneurisation du backend
 │   ├── 🧪 jest.config.js              # Configuration de la suite de tests Jest
 │   └── 🧪 TESTS.md                    # Procédures et documentation des tests
 │
-├── 🌐 DEPLOYMENT_CHECKLIST.md          # Liste de contrôle avant mise en production
-├── 🌐 DEPLOYMENT_CONFIG.md             # Fichiers et configurations cibles du serveur
-├── 🌐 DEPLOYMENT_GUIDE.md              # Guide pas-à-pas pour le déploiement VPS
-├── 🌐 DEPLOYMENT_README.md             # Synthèse des requis de mise en production
 ├── 📄 QUICK_START.md                  # Guide de démarrage rapide en local
 └── 📄 README.md                       # Documentation maîtresse à la racine du projet
 ```
