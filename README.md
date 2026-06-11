@@ -16,16 +16,68 @@ Ce projet est le backend d'une application de gestion de composants et de schém
 * **Langage** : TypeScript (Typage fort pour la sécurité).
 * **Outils** : `nodemon`, `ts-node`.
 
-## 📂 Structure du Projet
+# 📂 Structure du Projet
+
+L'application adopte une architecture découplée (FullStack), séparant hermétiquement le client (Frontend) et le serveur (Backend).
+
+### 🏷️ Légende
+* 📁 **Dossier Principal / Module**
+* 📄 **Fichier de Configuration / Script**
+* 🧪 **Zone de Tests et Validation**
+* 🌐 **Documentation de Déploiement Production**
+
+---
+
 ```text
 PROJET_DEV3/
-├── client/           # Interface utilisateur (Frontend)
-├── server/           # Logique métier (Backend)
-│   ├── src/          # Fichiers sources (.ts)
-│   ├── dist/         # Fichiers compilés (.js)
-│   └── package.json  # Configuration et scripts
-├── .gitignore        # Fichiers exclus de Git
-└── README.md
+├── .github/                           # Configuration des Workflows GitHub (CI/CD)
+│
+├── 📁 client/                         # 🖥️ APPLICATION FRONTEND (React / Vite)
+│   ├── 📁 public/                     # Actifs statiques publics
+│   └── 📁 src/                        # Code source de l'interface
+│       ├── 📁 pages/                  # Organisation de l'application par vues
+│       │   ├── 📁 connection/         # Page de connexion (connection.tsx + CSS Module)
+│       │   ├── 📁 developpement/      # Statut d'avancement des fonctionnalités
+│       │   ├── 📁 home/               # Page d'accueil de la plateforme
+│       │   ├── 📁 info/               # Pages d'information (À propos, Contact, FAQ)
+│       │   ├── 📁 panier/             # Gestion de la sélection de composants
+│       │   ├── 📁 profil/             # Gestion et modification du profil utilisateur
+│       │   └── 📁 projets/            # Espace de création des projets d'électronique
+│       ├── 📄 App.css / App.tsx       # Routage global et styles de l'application
+│       ├── 📄 index.css               # Directives CSS globales
+│       └── 📄 main.tsx                # Point d'entrée de l'application React
+│   ├── 📄 .env.development            # Variables d'environnement pour le développement
+│   ├── 📄 .env.production             # Variables d'environnement pour la production
+│   ├── 📄 eslint.config.js            # Configuration du linter de code
+│   ├── 📄 index.html                  # Point d'ancrage HTML principal
+│   ├── 📄 package.json                # Dépendances et scripts du Frontend
+│   └── 📄 vite.config.ts              # Configuration du bundler Vite
+│
+├── 📁 server/                         # ⚙️ APPLICATION BACKEND (Node.js / Express)
+│   ├── 📁 config/                     # Configuration globale (base de données)
+│   ├── 🧪 coverage/                   # Rapports de couverture de tests générés par Jest
+│   │   └── 📁 lcov-report/            # Interface HTML du rapport de couverture
+│   ├── 📁 src/                        # Code source TypeScript du serveur
+│   │   ├── 🧪 __mocks__/              # Mocking des données et services pour les tests
+│   │   ├── 📁 config/                 # Initialisation des briques d'infrastructure
+│   │   ├── 📁 controllers/            # Logique métier (Traitement des requêtes HTTP)
+│   │   ├── 📁 middlewares/            # Middlewares de sécurité (JWT, filtres)
+│   │   ├── 📁 models/                 # Modèles ORM Sequelize (PostgreSQL)
+│   │   ├── 📁 routes/                 # Définition des endpoints de l'API REST
+│   │   └── 📁 utils/                  # Fonctions utilitaires globales
+│   ├── 📁 uploads/images/             # Stockage des schémas et images téléversés
+│   ├── 📄 index.ts                    # Point d'entrée officiel de l'API backend
+│   ├── 📄 .env.example                # Modèle de configuration des variables d'environnement
+│   ├── 📄 Dockerfile                  # Configuration de conteneurisation du backend
+│   ├── 🧪 jest.config.js              # Configuration de la suite de tests Jest
+│   └── 🧪 TESTS.md                    # Procédures et documentation des tests
+│
+├── 🌐 DEPLOYMENT_CHECKLIST.md          # Liste de contrôle avant mise en production
+├── 🌐 DEPLOYMENT_CONFIG.md             # Fichiers et configurations cibles du serveur
+├── 🌐 DEPLOYMENT_GUIDE.md              # Guide pas-à-pas pour le déploiement VPS
+├── 🌐 DEPLOYMENT_README.md             # Synthèse des requis de mise en production
+├── 📄 QUICK_START.md                  # Guide de démarrage rapide en local
+└── 📄 README.md                       # Documentation maîtresse à la racine du projet
 ```
 
 ## Trucs a installer 
